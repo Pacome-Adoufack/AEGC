@@ -1,0 +1,162 @@
+import React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import "../styles/Reservation.css";
+
+const Reservation = () => {
+  const { activityId } = useParams();
+  console.log("Activity ID:", activityId);
+
+  const [data, setData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    gender: "",
+    profession: "",
+  });
+
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData({
+      ...data,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+  
+    if (!token) {
+      setMessage("Vous devez être connecté pour réserver.");
+      return;
+    }
+  
+    fetch("http://localhost:3000/reservation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // important
+      },
+      body: JSON.stringify({ ...data, activityId }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setMessage("Réservation réussie !");
+        console.log("Réservation réussie", data);
+        setTimeout(() => {
+          navigate("/home");
+        }, 2000);
+      })
+      .catch((error) => {
+        setMessage("Erreur lors de la réservation : " + error.message);
+        console.error("Erreur lors de la réservation", error);
+      });
+  };
+  
+  return (
+    <div className="reservation-container">
+      {message && (
+        <div
+          className={`register-message ${
+            message.includes("Fehler") ? "error" : "success"
+          }`}
+        >
+          {message}
+        </div>
+      )}
+      <h1 className="reservation-title">Réservation</h1>
+      <p className="reservation-description">
+        Merci de votre intérêt pour nos activités. Veuillez remplir le
+        formulaire de réservation ci-dessous.
+      </p>
+      <form onSubmit={handleSubmit} className="reservation-form">
+        <div className="form-group">
+          <label htmlFor="firstname">Nom:</label>
+          <input
+            type="text"
+            id="firstname"
+            name="firstname"
+            value={data.firstname}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="lastname">Prénom:</label>
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            value={data.lastname}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={data.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="phone">Numéro de téléphone:</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={data.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="gender">Sexe:</label>
+          <input
+            type="text"
+            id="gender"
+            name="gender"
+            value={data.gender}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="profession">Profession:</label>
+          <input
+            type="text"
+            id="profession"
+            name="profession"
+            value={data.profession}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit" className="reservation-button">
+          Réserver
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default Reservation;
