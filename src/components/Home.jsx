@@ -47,7 +47,7 @@ const Home = () => {
             alt=""
             className="image-second"
           />
-          <h1 className="home-title">Bienvenue sur AEGC</h1>
+          {/* <h1 className="home-title">AEGC</h1> */}
         </div>
       </div>
       <section className="first-section">

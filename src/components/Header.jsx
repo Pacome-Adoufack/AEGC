@@ -8,10 +8,11 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setIsLoggedIn(false);
-    setIsMenuOpen(false);
   };
-
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
