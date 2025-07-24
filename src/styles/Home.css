@@ -200,40 +200,47 @@
 .newsletter-button:hover {
   background-color: #259B2E;
 }
+@keyframes tiltShake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(-8deg); }
+  75% { transform: rotate(5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Media Queries */
 @media (max-width: 1048px) {
-  .home-container {
-    width: 90%;
-    margin: 0 auto;
-  }
-  .first-image {
-    margin-left: -300px;
-  }
-  .first-image {
+  .image-first {
     width: 100%;
   }
-  .first-section{
+
+  .first-section {
     margin: 0 20px;
   }
+
+  .image-second-container {
+    top: 100px;
+    left: 150px;
+  }
 }
+
 @media (max-width: 768px) {
   .home-container {
-    width: 70%;
-    margin: 0 auto;
+    width: 90%;
   }
-  .first-image{
-    margin-left: -40px;
-    position: relative;
+
+  .first-image {
+    margin-left: 0;
   }
+
   .image-second-container {
     flex-direction: column;
     align-items: center;
+    width: 60%;
     height: auto;
     padding: 1rem;
-    position: absolute;
     top: 20%;
-    left: -7%;
-    width: 50%;
-    height: 30%;
+    left: 0;
   }
 
   .image-second {
@@ -248,85 +255,48 @@
   }
 
   .image-first {
-    width: 100%;
     height: auto;
-    margin-left: 0;
+  }
+
+  .activity-images-grid {
+    grid-template-columns: 1fr;
   }
 }
+
 @media (max-width: 540px) {
   .first-section-title {
     font-size: 1.2rem;
-    text-align: center;
     margin-bottom: 20px;
   }
 
   .activity-images-grid {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     padding: 0 10px;
-  }
-
-  .activity-card {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    gap: 20px;
   }
 
   .activity-card img {
-    width: 500px;
+    width: 100%;
     height: auto;
-    object-fit: cover;
-  }
-
-  .activity-card-content {
-    padding: 10px;
   }
 
   .activity-card-content h2 {
     font-size: 1rem;
-    margin-bottom: 5px;
   }
 
   .activity-card-content p {
     font-size: 0.9rem;
-    margin: 4px 0;
   }
 
   .activity-date,
   .activity-location {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
     font-size: 0.85rem;
-  }
-  
-  .activity-location {
-    margin-left: -20px;
-  }
-
-  .icon {
-    margin-left: 0;
-    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .reserve-button {
-    display: block;
-    margin-top: 10px;
-    padding: 8px;
-    text-align: center;
-    background-color: #36bb6d;
-    color: white;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  .reserve-button:hover {
-    background-color: #2ca25f;
+    width: 100%;
   }
 }
-

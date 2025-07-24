@@ -63,6 +63,20 @@
   transition: transform 0.3s ease;
   aspect-ratio: 1 / 1;
 }
+.gallery-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: #259b2f96; /* vert transparent */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.gallery-item:hover::before {
+  opacity: 1;
+}
+
 
 .gallery-item:hover {
   transform: translateY(-5px);
@@ -74,7 +88,10 @@
   object-fit: cover;
   display: block;
   transition: transform 0.5s ease;
+  position: relative;
+  z-index: 0;
 }
+
 
 .gallery-item:hover .gallery-image {
   transform: scale(1.05);

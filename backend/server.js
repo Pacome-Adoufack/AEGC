@@ -27,7 +27,7 @@ const resend = new Resend(process.env.RESEND_API);
 // Connexion à MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/economicswebseite");
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log("MongoDB connected successfully");
 
     // Création d'une collection test si elle n'existe pas
