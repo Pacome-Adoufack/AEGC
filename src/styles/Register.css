@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30%;
+  width: 40%;
   margin: 4rem auto;
   padding: 2rem;
   background-color: #f9f9f9;
@@ -12,26 +12,13 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .register-container form {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 50%;
-}
-
-.register-image {
-  flex: 1;
-  background-color: #f0f4f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.register-image img {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
 }
 
 .register-container h2 {
@@ -51,7 +38,6 @@
 .register-container input {
   width: 100%;
   padding: 0.7rem;
-  margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
@@ -59,17 +45,19 @@
 }
 
 .register-container input:focus {
-  border-color: #3498db;
+  border-color: #259b2e;
   outline: none;
 }
 
-.register-container button {
+.register-button {
   display: flex;
+  align-items: center;
   justify-content: center;
   width: 50%;
   margin: auto;
   padding: 0.8rem;
-  background-color: #3b82f6;
+  background-color: #259B2E;
+  color: white;
   border: none;
   font-size: 1.1rem;
   border-radius: 8px;
@@ -77,16 +65,23 @@
   transition: background-color 0.3s ease;
 }
 
-.register-container button:hover {
-  background-color: #2563eb;
+/* .register-container button:hover {
+  background-color: #218c29;
+} */
+
+.register-container button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
 }
 
 .register-message {
-  margin-top: 1.5rem;
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
   font-weight: bold;
+  width: 50%;
+  margin: 1rem auto;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .register-message.success {
@@ -97,4 +92,59 @@
 .register-message.error {
   background-color: #e74c3c;
   color: white;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: none;
+}
+
+.input-wrapper input {
+  width: 87%;
+  flex: 1;
+  padding-right: 2.5rem; /* espace pour l’icône */
+}
+
+.input-wrapper i {
+  position: absolute;
+  bottom: 0px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #555;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .register-container {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .register-message {
+    width: 90%;
+  }
+
+  .register-container button {
+    width: 70%;
+  }
 }

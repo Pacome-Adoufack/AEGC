@@ -5,22 +5,71 @@ import { Link } from "react-router-dom";
 
 const Activity = () => {
   const [activities, setActivities] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/activities");
-        const data = await response.json();
-        setActivities(data);
-        console.log("Activités chargées :", data);
-        
+        // 1. Récupère les activités
+        const resActivities = await fetch(
+          "http://localhost:3000/api/activities"
+        );
+        const activities = await resActivities.json();
+
+        // 2. Récupère les réservations utilisateur (avec token)
+        const resReservations = await fetch(
+          "http://localhost:3000/reservation",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const reservations = await resReservations.json();
+        const reservedActivityIds = reservations.map((r) => r.activity._id);
+
+        // 3. Ajoute un champ `isReserved` dans chaque activité
+        const updatedActivities = activities.map((act) => ({
+          ...act,
+          isReserved: reservedActivityIds.includes(act._id),
+          reservationId:
+            reservations.find((r) => r.activity._id === act._id)?._id || null,
+        }));
+
+        setData(updatedActivities);
+        console.log("Données finales :", updatedActivities);
       } catch (error) {
-        console.error("Erreur lors du chargement des activités :", error);
+        console.error("Erreur de récupération :", error);
       }
     };
 
-    fetchActivities();
+    fetchData();
   }, []);
+  const handleCancel = async (Id) => {
+    try {
+      const res = await fetch(`http://localhost:3000/reservation/${Id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+  
+      if (res.ok) {
+        setData((prevData) =>
+          prevData.map((a) =>
+            a.reservationId === Id
+              ? { ...a, isReserved: false, reservationId: null }
+              : a
+          )
+        );
+      } else {
+        console.error("Erreur lors de l'annulation de la réservation");
+      }
+    } catch (error) {
+      console.error("Erreur réseau :", error);
+    }
+  };
+  
 
   return (
     <div className="newspaper-layout">
@@ -36,7 +85,7 @@ const Activity = () => {
             <a href="/conference">AEGC Conference</a>
           </li>
           <li>
-            <a href="/photos">AEGC Photos</a>
+            <a href="/picture">AEGC Photos</a>
           </li>
         </ul>
       </nav>
@@ -45,18 +94,18 @@ const Activity = () => {
         <div className="meeting-content">
           <h1>Nos activités</h1>
           <div className="activity-images-grid">
-            {activities.map((activity) => (
+            {data.map((activity) => (
               <div key={activity._id} className="activity-card">
                 <img src={activity.image} alt={activity.name} />
                 <div className="activity-card-content">
                   <h2>{activity.name}</h2>
                   <p>{activity.description}</p>
                   <p className="activity-date">
-                  <FaCalendarAlt className="icon"/>
+                    <FaCalendarAlt className="icon" />
                     <span>{new Date(activity.date).toLocaleDateString()}</span>
                   </p>
                   <p className="activity-location">
-                    <FaMapMarkerAlt className="icon"/>
+                    <FaMapMarkerAlt className="icon" />
                     <span>{activity.location}</span>
                   </p>
                   <p>
@@ -65,20 +114,24 @@ const Activity = () => {
                       {activity.presenter}
                     </a>
                   </p>
-                 <div>
-                 <Link
-                    to={`/reservation/${activity._id}`}
-                    className="delete-button"
-                  >
-                    Annuler une réservation
-                  </Link>
-                  <Link
-                    to={`/reservation/${activity._id}`}
-                    className="reserve-button"
-                  >
-                    Réserver
-                  </Link>
-                 </div>
+
+                  <div>
+                    {activity.isReserved ? (
+                      <button
+                        className="delete-button"
+                        onClick={() => handleCancel(activity.reservationId)}
+                      >
+                        Annuler la réservation
+                      </button>
+                    ) : (
+                      <Link
+                        to={`/reservation/${activity._id}`}
+                        className="reserve-button"
+                      >
+                        Réserver
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

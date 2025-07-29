@@ -45,18 +45,18 @@
   transition: all 0.2s ease-in-out;
 }
 
-.login-form input:focus {
+/* .login-form input:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-}
+} */
 
 /* Bouton de connexion */
 .login-button {
   padding: 0.8rem;
   font-size: 1rem;
   font-weight: 600;
-  background-color: #007bff;
+  background-color: #259B2E;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -64,9 +64,9 @@
   transition: background-color 0.2s ease-in-out;
 }
 
-.login-button:hover {
+/* .login-button:hover {
   background-color: #0056b3;
-}
+} */
 
 /* Messages */
 .login-message {
@@ -78,13 +78,13 @@
 }
 
 .login-message.success {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #259B2E;
+  color: white;
 }
 
 .login-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: #e74c3c;
+  color: white;
 }
 
 /* Lien mot de passe oublié */

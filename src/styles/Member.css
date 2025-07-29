@@ -1,0 +1,35 @@
+.president-container {
+    max-width: 900px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background-color: #f9fafb;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+  }
+  
+  .president-container h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #1a202c;
+  }
+  
+  .president-container img {
+    display: block;
+    max-width: 300px;
+    height: auto;
+    border-radius: 12px;
+    margin: 0 auto 2rem auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .president-container p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #4a5568;
+    text-align: justify;
+    padding: 0 1rem;
+  }
+  

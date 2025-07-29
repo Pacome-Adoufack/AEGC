@@ -111,7 +111,7 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const payload = { userId: user._id };
+    const payload = { id: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
 
     res.json({ user: user, token: token });
@@ -304,7 +304,7 @@ app.post("/reservation", authMiddleware, async (req, res) => {
       profession,
       activityId,
     } = req.body;
-    const user = req.user.id || req.user.userId; // récupéré depuis le token
+    const user = req.user.id;
     console.log("User ID :", user);
 
     if (
@@ -345,6 +345,7 @@ app.post("/reservation", authMiddleware, async (req, res) => {
 // Assure-toi que ton middleware d'authentification ajoute req.user
 app.get("/reservation", authMiddleware, async (req, res) => {
   try {
+    console.log("Requête utilisateur :", req.user);
     const reservations = await Reservation.find({ user: req.user.id }).populate(
       "activity"
     );

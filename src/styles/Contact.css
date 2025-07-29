@@ -31,6 +31,7 @@
     text-transform: uppercase;
     text-align: center;
     font-size: 2rem;
+    color: black;
   }
   
   .form-group {
@@ -43,6 +44,7 @@
     font-weight: 600;
     font-size: 1.1rem;
     margin-bottom: 0.6rem;
+    color: black;
   }
   
   .form-input,
@@ -86,7 +88,7 @@
   
   .submit-button {
     width: 100%;
-    background-color:#3b82f6;
+    background-color:#259B2E;
     color: white;
     font-weight: 700;
     font-size: 1.2rem;
@@ -94,17 +96,16 @@
     border-radius: 16px;
     border: none;
     cursor: pointer;
-    box-shadow: 0 8px 20px #004d40aa;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     font-family: inherit;
   }
-  
+/*   
   .submit-button:hover,
   .submit-button:focus {
     background-color: #2563eb;
     box-shadow: 0 12px 30px #004d40cc;
     outline: none;
-  }
+  } */
   
   .message-text {
     margin-top: 2.5rem;

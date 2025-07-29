@@ -94,7 +94,7 @@
   justify-content: center;
   text-align: center;
   background-color: #9dcbee1e;
-  border-radius: 10px;
+  margin-left: -35px;
   margin-top: -50px;
   margin-bottom: 0px;
   padding-bottom: 50px;
@@ -108,9 +108,9 @@
 .picture-section{
   padding: 40px 20px;
   background-color: #89b98d6c;
-  border-radius: 12px;
   margin-top: 30px;
   margin-top: 0px;
+  margin-left: -35px;
 }
 
 .journals-title {
@@ -162,10 +162,11 @@
 .newsletter-section {
   background-color: #0055a4c5;
   padding: 40px 20px;
-  border-radius: 12px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   margin-top: 0px;
+  margin-bottom: -33px;
+  margin-left: -35px;
 }
 
 .newsletter-title {

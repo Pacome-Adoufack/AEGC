@@ -69,10 +69,10 @@ const OrgChart = () => {
         <div className="org-level">
             <div className="org-node communication">
               <div className="org-title">Chargés de la Communication</div>
-              <Link to="/communication" className="link">
+              <Link to="/communication one" className="link">
               <div className="org-name">Voundi Voundi</div>
               </Link>
-              <Link to="/communication" className="link">
+              <Link to="/communication two" className="link">
               <div className="org-name">Gervais Erwan</div>
               </Link>
             </div>
@@ -106,10 +106,10 @@ const OrgChart = () => {
           </Link>
             <div className="org-node">
               <div className="org-title">Conseillers</div>
-              <Link to="/conseillers" className="link">
+              <Link to="/conseiller one" className="link">
               <div className="org-name">Eloundou Georges</div>
               </Link>
-              <Link to="/conseillers" className="link">
+              <Link to="/conseiller two" className="link">
               <div className="org-name">Signn Michelle</div>
               </Link>
             </div>

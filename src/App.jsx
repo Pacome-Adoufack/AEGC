@@ -29,6 +29,20 @@ import OrgChart from "./components/OrgChart.jsx";
 import Ethics from "./components/Ethics.jsx";
 import Release from "./components/Release.jsx";
 import Faq from "./components/Faq.jsx";
+import President from "./member/President.jsx";
+import VicePresident from "./member/VicePresident.jsx";
+import SecretaireGeneral from "./member/SecretaireGeneral.jsx";
+import Tresorier from "./member/Tresorier.jsx";
+import ResponsableGrh from "./member/ResponsableGrh.jsx";
+import RelationExterieure from "./member/RelationExterieure.jsx";
+import CommunicationOne from "./member/CommunicationOne.jsx";
+import CommunicationTwo from "./member/CommunicationTwo.jsx";
+import CommissaireCompte from "./member/CommissaireCompte.jsx";
+import Projet from "./member/Projet.jsx";
+import Censeur from "./member/Censeur.jsx";
+import Administrative from "./member/Administrative.jsx";
+import ConseillerOne from "./member/ConseillerOne.jsx";
+import ConseillerTwo from "./member/ConseillerTwo.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -84,6 +98,20 @@ function App() {
             <Route path="/ethique" element={<Ethics />} />
             <Route path="/communiqué" element={<Release />} />
             <Route path="/questionnaire" element={<Faq />} />
+            <Route path="/president" element={<President />} />
+            <Route path="/vice president" element={<VicePresident />} />
+            <Route path="/secretaire general" element={<SecretaireGeneral />} />
+            <Route path="/tresorier" element={<Tresorier />} />
+            <Route path="/responsable GRH" element={<ResponsableGrh />} />
+            <Route path="/relations exterieures" element={<RelationExterieure />} />
+            <Route path="/communication one" element={<CommunicationOne />} />
+            <Route path="/communication two" element={<CommunicationTwo />} />
+            <Route path="/commissaire aux comptes" element={<CommissaireCompte />} />
+            <Route path="/charges des projets" element={<Projet />} />
+            <Route path="/censeurs" element={<Censeur />} />
+            <Route path="/responsable des affaires administratives et diplomatiques" element={<Administrative />} />
+            <Route path="/conseiller one" element={<ConseillerOne />} />
+            <Route path="/conseiller two" element={<ConseillerTwo />} />
 
           </Routes>
         </div>

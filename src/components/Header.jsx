@@ -134,7 +134,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   AEGC Conférence
                 </Link>
                 <Link
-                  to="/activity/photos"
+                  to="/picture"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   AEGC Photos
@@ -176,10 +176,10 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
               <Link to="/about" onClick={() => setIsMenuOpen(false)}>
                   A propos de nous
                 </Link>
-                <Link to="/about/membres" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/membres" onClick={() => setIsMenuOpen(false)}>
                   Les Membres
                 </Link>
-                <Link to="/about/contact" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
                   Contacts
                 </Link>
                 <Link to="/organigrame" onClick={() => setIsMenuOpen(false)}>

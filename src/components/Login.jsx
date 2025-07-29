@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -35,6 +35,7 @@ export default function Login({ setIsLoggedIn }) {
         setMessage("Connexion réussie !");
         setIsLoggedIn(true);
         //enregistre le token dans le localstorage
+        
         // ou sessionStorage selon la case à cocher "Se souvenir de moi"
 
         console.log("Connexion réussie", data);

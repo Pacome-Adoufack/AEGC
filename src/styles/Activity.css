@@ -1,4 +1,9 @@
-
+.meeting-content h1{
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #2c3e50;
+}
 .activity-images-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));

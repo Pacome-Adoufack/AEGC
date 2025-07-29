@@ -45,7 +45,7 @@
   .subscribe-button {
     padding: 12px;
     font-size: 16px;
-    background-color: #007bff;
+    background-color: #259B2E;
     color: white;
     border: none;
     border-radius: 8px;
@@ -54,11 +54,11 @@
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
   
-  .subscribe-button:hover {
+  /* .subscribe-button:hover {
     background-color: #007bff;
     box-shadow: 0 4px 10px rgba(18, 5, 201, 0.5);
   }
-  
+   */
   /* Responsive */
   @media (max-width: 600px) {
     .subscribe-container {
