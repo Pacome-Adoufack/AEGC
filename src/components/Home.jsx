@@ -15,6 +15,8 @@ import {
 import "../styles/Home.css";
 import Picture from "./Picture";
 import logo from "../assets/logo.png";
+import SeminarHome from "./SeminarHome";
+import Release from "./Release";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -42,47 +44,15 @@ const Home = () => {
           className="image-first"
         />
         <div className="image-second-container">
-          <img
-            src={logo}
-            alt=""
-            className="image-second"
-          />
+          <img src={logo} alt="" className="image-second" />
           {/* <h1 className="home-title">AEGC</h1> */}
         </div>
       </div>
       <section className="first-section">
-        <h4 className="first-section-title">Nos Prochains Séminaire</h4>
-        <div className="activity-images-grid">
-          {data.map((data) => (
-            <div key={data._id} className="activity-card">
-              <img src={data.image} alt={data.name} />
-              <div className="activity-card-content">
-                <h2>{data.name}</h2>
-                <p>{data.description}</p>
-                <p className="activity-date">
-                  <FaCalendarAlt className="icon" />
-                  <span>{new Date(data.date).toLocaleDateString()}</span>
-                </p>
-                <p className="activity-location">
-                  <FaMapMarkerAlt className="icon" />
-                  <span>{data.location}</span>
-                </p>
-                <p>
-                  <strong>Présenté par :</strong>{" "}
-                  <a className="doctor-link" href="/adoufack">
-                    {data.presenter}
-                  </a>
-                </p>
-                <Link
-                  to={`/reservation/${data._id}`}
-                  className="reserve-button"
-                >
-                  Réserver
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+        <SeminarHome />
+      </section>
+      <section className="second-section">
+        <Release/>
       </section>
       {/* <section className="journals-section-modern">
         <h4 className="journals-title">Nos Journaux</h4>

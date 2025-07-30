@@ -93,11 +93,18 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  background-color: #9dcbee1e;
+  background-color: #9dcbeebd;
   margin-left: -35px;
   margin-top: -50px;
   margin-bottom: 0px;
   padding-bottom: 50px;
+}
+.second-section{
+ background-color: #679175;
+ margin-left: -35px;
+ margin-top: -50px;
+ margin-bottom: 0px;
+ padding-bottom: 50px;
 }
 .journals-section-modern {
   padding: 40px 20px;

@@ -26,7 +26,7 @@
   
   .release-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
   }
   
@@ -48,16 +48,18 @@
   
   .release-thumbnail {
     position: relative;
-    height: 200px;
-    background-color: #f5f7fa;
+    height: 250px;
+    background-color: #0084ff;
     overflow: hidden;
   }
   
   .release-thumbnail img {
     width: 90%;
-    height: 90%;
+    height: 80%;
     object-fit: cover;
     transition: transform 0.5s ease;
+    margin: 20px;
+    margin-top: 70px;
   }
   
   .release-card:hover .release-thumbnail img {
@@ -166,6 +168,11 @@
   }
   
   /* Responsive Design */
+  @media (max-width: 1024px) {
+    .release-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
   @media (max-width: 768px) {
     .release-container {
       padding: 1.5rem;

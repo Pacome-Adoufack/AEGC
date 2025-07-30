@@ -60,7 +60,7 @@ function Release() {
         {pdfFiles.map((item) => (
           <div key={item.id} className="release-card">
             <div className="release-thumbnail">
-              <img src={item.thumbnail} alt={`Miniature ${item.title}`} />
+              <img src={logo} alt={`Miniature ${item.title}`} />
               <div className="pdf-label">PDF</div>
             </div>
 

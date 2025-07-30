@@ -6,35 +6,47 @@ import logo from "../assets/logo.png";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const toggleDropdown = (name) => {
+    if (openDropdown === name) {
+      setOpenDropdown(null);
+    } else {
+      setOpenDropdown(name);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     setIsLoggedIn(false);
   };
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <header className="header">
-      <img className="logo" src={logo} alt="Logo" />
+      <div className="logo-container">
+        <img className="logo" src={logo} alt="Logo" />
+      </div>
 
-      {isMenuOpen ? (
-        <FaTimes
-          className="hamburger-icon"
-          onClick={toggleMenu}
-          aria-label="Fermer le menu"
-        />
-      ) : (
-        <FaBars
-          className="hamburger-icon"
-          onClick={toggleMenu}
-          aria-label="Ouvrir le menu"
-        />
-      )}
-
+      <div className="hamburger">
+        {isMenuOpen ? (
+          <FaTimes
+            className="hamburger-icon"
+            onClick={toggleMenu}
+            aria-label="Fermer le menu"
+          />
+        ) : (
+          <FaBars
+            className="hamburger-icon"
+            onClick={toggleMenu}
+            aria-label="Ouvrir le menu"
+          />
+        )}
+      </div>
       <div className={`header_nav ${isMenuOpen ? "open" : ""}`}>
         <nav className="nav_account">
           <ul className="nav_list">
@@ -86,8 +98,13 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
             </li>
 
             <li className="dropdown">
-              <button className="dropdown-button">Journaux</button>
-              <div className="dropdown-menu">
+              <button
+                className="dropdown-button"
+                onClick={() => toggleDropdown("activites")}
+              >
+                Activités
+              </button>
+              <div className={`dropdown-menu ${openDropdown === "activites" ? "open" : ""}`}>
                 <Link to="/review" onClick={() => setIsMenuOpen(false)}>
                   AEGC Review
                 </Link>
@@ -133,10 +150,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 >
                   AEGC Conférence
                 </Link>
-                <Link
-                  to="/picture"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+                <Link to="/picture" onClick={() => setIsMenuOpen(false)}>
                   AEGC Photos
                 </Link>
                 <Link
@@ -150,7 +164,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
 
             <li className="not-Dropdown">
               <Link
-                to="/home"
+                to="/#"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
                   display: "inline-block",
@@ -173,7 +187,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
             <li className="dropdown">
               <button className="dropdown-button">À propos</button>
               <div className="dropdown-menu">
-              <Link to="/about" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/about" onClick={() => setIsMenuOpen(false)}>
                   A propos de nous
                 </Link>
                 <Link to="/membres" onClick={() => setIsMenuOpen(false)}>
