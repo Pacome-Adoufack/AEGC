@@ -14,13 +14,14 @@ import Contact from "./models/Contact.js";
 import Reservation from "./models/Reservation.js";
 import Subscribe from "./models/Subscribe.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
-import Picture from "./models/Picture.js";
+import Image from "./models/Picture.js";
 import multer from "multer";
+import upload from "./middlewares/upload.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+
 
 const resend = new Resend(process.env.RESEND_API);
 
@@ -402,39 +403,7 @@ app.post("/subscribe", async (req, res) => {
     res.status(500).json({ error: "Erreur lors de lenregistrement." });
   }
 });
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
-  },
-});
 
-const upload = multer({ storage });
-
-app.post("/upload", upload.single("image"), async (req, res) => {
-  try {
-    if (!req.file) {
-      console.log("Aucun fichier reçu.");
-      return res.status(400).json({ error: "Aucun fichier reçu" });
-    }
-
-    console.log("Fichier reçu :", req.file);
-    const imagePath = req.file.path;
-    const newPicture = new Picture({ image: imagePath });
-    await newPicture.save();
-
-    res.status(201).json({
-      message: "Image uploaded successfully",
-      imageUrl: imagePath,
-    });
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    res.status(500).json({ error: "Error uploading image" });
-  }
-});
 app.post("/picture", async (req, res) => {
   try {
     const { image } = req.body;
@@ -536,6 +505,20 @@ app.get("/faq", async (req, res) => {
       success: false,
       error: "Server error"
     });
+  }
+});
+app.get("/images", async (req, res) => {
+  try {
+    const images = await Image.find();
+    const result = images.map((image) => ({
+      name: image.name,
+      contentType: image.img.contentType,
+      year: image.year,
+      img: `data:${image.img.contentType};base64,${image.img.data.toString("base64")}`,
+    }));
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 });
 

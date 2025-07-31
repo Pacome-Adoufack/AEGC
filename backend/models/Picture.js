@@ -1,9 +1,20 @@
 import mongoose from "mongoose";
 
-const pictureSchema = new mongoose.Schema({
-    image: { type: String, required: true },
-    }, { timestamps: true });
+const imageSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  img: {
+    data: Buffer,
+    contentType: String,
+  },
+  year: {
+    type: Number,
+    required: false, // ou true si tu veux forcer
+  },
+}, { timestamps: true });
 
-const Picture = mongoose.model("picture", pictureSchema);
+const Image = mongoose.model("Image", imageSchema);
 
-export default Picture;
+export default Image;
