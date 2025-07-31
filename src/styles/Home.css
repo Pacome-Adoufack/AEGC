@@ -87,6 +87,102 @@
 .activity-card:hover {
   transform: translateY(-5px);
 }
+.film-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  bottom: 100px;
+  left: 300px;
+}
+
+.wave {
+  width: 50px;
+  height: 50px;
+  background: #F39C12;
+  border-radius: 50%;
+  position: relative;
+  animation: ripple 2s infinite;
+  box-shadow: 0 0 20px rgba(197, 195, 89, 0.6);
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+}
+
+.film-button {
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background: none;
+  border: none;
+}
+
+.film-button a {
+  color: #2c3e50;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.film-button a:hover {
+  color: #0084ff;
+}
+.video{
+  position: absolute;
+  top:-50px;
+  left: 500px;
+  z-index: 2;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85); /* fond sombre */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.video-wrapper {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.close-button {
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  background: transparent;
+  color: white;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+}
+
+
 .first-section {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,6 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import video from "../assets/video.mp4";
 import { Link } from "react-router-dom";
 import Faq from "../components/Faq";
 import {
@@ -21,6 +22,25 @@ import Images from "./Images";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const videoRef = useRef(null);
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const handlePlay = () => {
+    setShowOverlay(true);
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.play();
+      }
+    }, 100);
+  };
+
+  const handleClose = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    setShowOverlay(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,62 +66,41 @@ const Home = () => {
         />
         <div className="image-second-container">
           <img src={logo} alt="" className="image-second" />
-          {/* <h1 className="home-title">AEGC</h1> */}
+        </div>
+        <div>
+        <div className="film-container">
+        <div className="wave"></div>
+        <button className="film-button" onClick={handlePlay}>
+          Le Film AEGC
+        </button>
+      </div>
+
+      {showOverlay && (
+        <div className="overlay">
+          <div className="video-wrapper">
+            <button className="close-button" onClick={handleClose}>✕</button>
+            <video
+              ref={videoRef}
+              width="800"
+              controls
+            >
+              <source src={video} type="video/mp4" />
+              Votre navigateur ne supporte pas la lecture de vidéos.
+            </video>
+          </div>
+        </div>
+      )}
         </div>
       </div>
       <section className="first-section">
         <SeminarHome />
       </section>
       <section className="second-section">
-        <Release/>
+        <Release />
       </section>
       <section className="picture-section">
-        <Images/>
+        <Images />
       </section>
-      {/* <section className="journals-section-modern">
-        <h4 className="journals-title">Nos Journaux</h4>
-        <div className="journals-grid-modern">
-          <div className="icon1">
-            <FaUser className="icon-journal" />
-            <h3>
-              <a href="/review">AEGC Review</a>
-            </h3>
-          </div>
-          <div className="icon1">
-            <FaHeart className="icon-journal" />
-            <h3>
-              <a href="/papers">AEGC Papers and Processing</a>
-            </h3>
-          </div>
-          <div className="icon1">
-            <FaStar className="icon-journal" />
-            <h3>
-              <a href="/economic">AEGC Economic Review</a>
-            </h3>
-          </div>
-          <div className="icon1">
-            <FaShareAlt className="icon-journal" />
-            <h3>
-              <a href="/management">Management Review</a>
-            </h3>
-          </div>
-          <div className="icon1">
-            <FaComment className="icon-journal" />
-            <h3>
-              <a href="/research">Research</a>
-            </h3>
-          </div>
-          <div className="icon1">
-            <FaBell className="icon-journal" />
-            <h3>
-              <a href="/metadata">AEGC Metadata</a>
-            </h3>
-          </div>
-        </div>
-      </section> */}
-      {/* <section className="picture-section">
-        <Picture />
-      </section> */}
       <section className="newsletter-section">
         <h4 className="newsletter-title">Restez informé-e</h4>
         <p className="newsletter-description">
