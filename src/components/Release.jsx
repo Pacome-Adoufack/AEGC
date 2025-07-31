@@ -53,7 +53,7 @@ function Release() {
     <div className="release-container">
       <h1 className="release-title">Communiqués officiels</h1>
       <p className="release-subtitle">
-        Retrouvez ici tous les documents officiels de l'association
+        Retrouvez ici tous les communiqués officiels de l'association
       </p>
 
       <div className="release-list">

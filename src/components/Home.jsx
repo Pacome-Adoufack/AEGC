@@ -17,6 +17,7 @@ import Picture from "./Picture";
 import logo from "../assets/logo.png";
 import SeminarHome from "./SeminarHome";
 import Release from "./Release";
+import Images from "./Images";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -53,6 +54,9 @@ const Home = () => {
       </section>
       <section className="second-section">
         <Release/>
+      </section>
+      <section className="picture-section">
+        <Images/>
       </section>
       {/* <section className="journals-section-modern">
         <h4 className="journals-title">Nos Journaux</h4>
@@ -95,9 +99,9 @@ const Home = () => {
           </div>
         </div>
       </section> */}
-      <section className="picture-section">
+      {/* <section className="picture-section">
         <Picture />
-      </section>
+      </section> */}
       <section className="newsletter-section">
         <h4 className="newsletter-title">Restez informé-e</h4>
         <p className="newsletter-description">

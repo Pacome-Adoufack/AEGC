@@ -12,15 +12,6 @@
   position: relative;
 }
 
-.gallery-title::after {
-  content: '';
-  display: block;
-  width: 100px;
-  height: 4px;
-  background: linear-gradient(to right, #3498db, #2ecc71);
-  margin: 0.5rem auto;
-}
-
 .year-filters {
   display: flex;
   justify-content: center;
