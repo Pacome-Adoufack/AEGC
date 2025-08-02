@@ -43,7 +43,7 @@ async function insertImages() {
           data: imgData,
           contentType: `image/${extension}`,
         },
-        year: 2025, // ou une autre logique pour définir l'année
+        year: 2024, // ou une autre logique pour définir l'année
       });
 
       await image.save();

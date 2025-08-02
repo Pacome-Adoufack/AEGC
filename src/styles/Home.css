@@ -161,11 +161,11 @@
 .video-wrapper {
   position: relative;
   max-width: 90%;
-  max-height: 90%;
+  max-height: 70%;
 }
 
 .video-wrapper video {
-  width: 100%;
+  width: 80%;
   height: auto;
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
@@ -173,8 +173,8 @@
 
 .close-button {
   position: absolute;
-  top: -30px;
-  right: -30px;
+  top: -27px;
+  right: 90px;
   background: transparent;
   color: white;
   font-size: 2rem;

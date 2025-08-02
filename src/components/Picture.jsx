@@ -50,13 +50,14 @@ function Picture() {
   const [hoveredImage, setHoveredImage] = useState(null);
 
   // Extraire les années uniques pour les filtres
-  const years = ["all", ...new Set(images.map((img) => img.year))];
+  const years = ["all", ...new Set(images.map((img) => String(img.year)))];
+
 
   // Filtrer les images selon l'année sélectionnée
   const filteredImages =
     selectedYear === "all"
       ? images
-      : images.filter((img) => img.year === selectedYear);
+      : images.filter((img) => img.year === Number(selectedYear));
 
   return (
     <div className="gallery-container">
@@ -64,16 +65,19 @@ function Picture() {
 
       {/* Filtres par année */}
       <div className="year-filters">
-        {years.map((year) => (
-          <button
-            key={year}
-            onClick={() => setSelectedYear(year)}
-            className={`year-filter ${selectedYear === year ? "active" : ""}`}
-          >
-            {year === "all" ? "Toutes les années" : year}
-          </button>
-        ))}
-      </div>
+  {years.map((year) => (
+    <button
+      key={year}
+      onClick={() => setSelectedYear(year === "all" ? "all" : Number(year))}
+      className={`year-filter ${
+        selectedYear === (year === "all" ? "all" : Number(year)) ? "active" : ""
+      }`}
+    >
+      {year === "all" ? "Toutes les années" : year}
+    </button>
+  ))}
+</div>
+
 
       {/* Galerie d'images */}
       <div className="masonry-gallery">

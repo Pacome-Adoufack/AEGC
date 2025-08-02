@@ -43,6 +43,7 @@ import Censeur from "./member/Censeur.jsx";
 import Administrative from "./member/Administrative.jsx";
 import ConseillerOne from "./member/ConseillerOne.jsx";
 import ConseillerTwo from "./member/ConseillerTwo.jsx";
+import Images from "./components/Images.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -94,6 +95,7 @@ function App() {
             <Route path="/subscribe" element={<Subscribe />} />
             <Route path="/seminaire" element={<Seminar />} />
             <Route path="/picture" element={<Picture />} />
+            <Route path="/images" element={<Images />} />
             <Route path="/organigrame" element={<OrgChart />} />
             <Route path="/ethique" element={<Ethics />} />
             <Route path="/communiqué" element={<Release />} />

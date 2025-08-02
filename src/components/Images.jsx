@@ -5,12 +5,21 @@ const Images = () => {
   const [images, setImages] = useState([]);
   const [selectedYear, setSelectedYear] = useState("all");
   const [hoveredImage, setHoveredImage] = useState(null);
-  const years = ["all", ...new Set(images.map((img) => img.year))];
+  const [visibleCount, setVisibleCount] = useState(12); // ✅ Nouvel état
+
+  const years = ["all", ...new Set(images.map((img) => String(img.year)))];
 
   const filteredImages =
     selectedYear === "all"
       ? images
-      : images.filter((img) => img.year === selectedYear);
+      : images.filter((img) => img.year === Number(selectedYear));
+
+  // Limite d'images affichées
+  const visibleImages = filteredImages.slice(0, visibleCount);
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 12); // ✅ Augmente de 12 à chaque clic
+  };
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -28,10 +37,7 @@ const Images = () => {
         const data = await response.json();
         setImages(data);
       } catch (error) {
-        console.error(
-          "❌ Erreur lors du chargement des images:",
-          error.message
-        );
+        console.error("❌ Erreur lors du chargement des images:", error.message);
       }
     };
 
@@ -41,41 +47,58 @@ const Images = () => {
   return (
     <div className="gallery-container">
       <h2 className="gallery-title">📷 Galerie Photos</h2>
+
       <div className="year-filters">
         {years.map((year) => (
           <button
             key={year}
-            onClick={() => setSelectedYear(year)}
+            onClick={() => {
+              setSelectedYear(year);
+              setVisibleCount(12); // ✅ Réinitialise l'affichage quand on filtre
+            }}
             className={`year-filter ${selectedYear === year ? "active" : ""}`}
           >
             {year === "all" ? "Toutes les années" : year}
           </button>
         ))}
       </div>
+
       <div className="masonry-gallery">
-        {images.map((img, index) => (
+        {visibleImages.map((img, index) => (
           <div
             key={index}
             onMouseEnter={() => setHoveredImage(index)}
             onMouseLeave={() => setHoveredImage(null)}
             className="gallery-item"
           >
-            <img src={img.img} alt={img.name} className="gallery-image"
-            loading="lazy"
-             />
-             <div>
-                <div
-                    className={`image-overlay ${
-                    hoveredImage === index ? "visible" : ""
-                    }`}
-                >
-                    <h3>{img.name}</h3>
-                    <p>{img.year}</p>
-                </div>
-             </div>
+            <img
+              src={img.img}
+              alt={img.name}
+              className="gallery-image"
+              loading="lazy"
+            />
+            <div>
+              <div
+                className={`image-overlay ${
+                  hoveredImage === index ? "visible" : ""
+                }`}
+              >
+                <h3>{img.name}</h3>
+                <p>{img.year}</p>
+              </div>
+            </div>
           </div>
         ))}
       </div>
+
+      {/* ✅ Bouton "Voir plus" */}
+      {visibleCount < filteredImages.length && (
+        <div className="show-more-container">
+          <button className="show-more-button" onClick={handleShowMore}>
+            Voir plus d’images
+          </button>
+        </div>
+      )}
     </div>
   );
 };

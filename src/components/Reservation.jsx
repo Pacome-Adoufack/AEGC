@@ -43,7 +43,7 @@ const Reservation = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // important
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...data, activityId }),
     })
@@ -63,9 +63,21 @@ const Reservation = () => {
         }, 2000);
       })
       .catch((error) => {
-        setMessage("Erreur lors de la réservation : " + error.message);
         console.error("Erreur lors de la réservation", error);
+      
+        setMessage("Erreur lors de la réservation : " + error.message);
+        if (
+          error.message.toLowerCase().includes("unauthorized") ||
+          error.message.includes("401") ||
+          error.message.toLowerCase().includes("non autorisé")
+        ) {
+          console.log("Redirection vers /register dans 2 secondes...");
+          setTimeout(() => {
+            navigate("/register");
+          }, 2000);
+        }
       });
+      
   };
   
   return (

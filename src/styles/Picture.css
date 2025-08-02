@@ -39,7 +39,19 @@
   background: linear-gradient(to right, #3498db, #2ecc71);
   color: white;
 }
+.show-more-container {
+  text-align: center;
+  margin: 20px 0;
+}
 
+.show-more-button {
+  padding: 10px 20px;
+  background-color: #259B2E;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
 .masonry-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

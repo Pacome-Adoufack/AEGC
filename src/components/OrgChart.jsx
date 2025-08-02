@@ -16,7 +16,7 @@ const OrgChart = () => {
           <div className="org-level">
             <div className="org-node president">
               <div className="org-title">Président</div>
-              <div className="org-name">Ngono Aristide Merlin, Ph</div>
+              <div className="org-name">Ngono Aristide Merlin</div>
               <div className="org-details">Université de Dschang</div>
             </div>
           </div>

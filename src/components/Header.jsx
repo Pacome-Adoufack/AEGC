@@ -102,7 +102,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 className="dropdown-button"
                 onClick={() => toggleDropdown("activites")}
               >
-                Activités
+                Journal
               </button>
               <div className={`dropdown-menu ${openDropdown === "activites" ? "open" : ""}`}>
                 <Link to="/review" onClick={() => setIsMenuOpen(false)}>
@@ -150,7 +150,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 >
                   AEGC Conférence
                 </Link>
-                <Link to="/picture" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/images" onClick={() => setIsMenuOpen(false)}>
                   AEGC Photos
                 </Link>
                 <Link

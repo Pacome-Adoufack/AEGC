@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState} from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -6,15 +6,30 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 export default function Login({ setIsLoggedIn }) {
   const [data, setData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
+  // Lors du changement de l'email, vérifier s'il existe un mot de passe associé
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setData({ ...data, [name]: value });
+    const newData = { ...data, [name]: value };
+
+    // Si l'email change, chercher un mot de passe associé dans le localStorage
+    if (name === "email") {
+      const savedCredentials = JSON.parse(localStorage.getItem("savedCredentials") || "{}");
+      if (savedCredentials[value]) {
+        newData.password = savedCredentials[value];
+        setRememberMe(true);
+      } else {
+        newData.password = "";
+        setRememberMe(false);
+      }
+    }
+
+    setData(newData);
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -31,22 +46,28 @@ export default function Login({ setIsLoggedIn }) {
         }
         return res.json();
       })
-      .then((data) => {
+      .then((dataRes) => {
         setMessage("Connexion réussie !");
         setIsLoggedIn(true);
-        //enregistre le token dans le localstorage
-        
-        // ou sessionStorage selon la case à cocher "Se souvenir de moi"
 
-        console.log("Connexion réussie", data);
+        // Stocker les infos dans localStorage ou sessionStorage
         if (rememberMe) {
-          localStorage.setItem("token", data.token);
+          localStorage.setItem("token", dataRes.token);
           localStorage.setItem("isLoggedIn", "true");
+
+          // Sauvegarder le mot de passe par email
+          const savedCredentials = JSON.parse(localStorage.getItem("savedCredentials") || "{}");
+          savedCredentials[data.email] = data.password;
+          localStorage.setItem("savedCredentials", JSON.stringify(savedCredentials));
         } else {
-          sessionStorage.setItem("token", data.token);
+          sessionStorage.setItem("token", dataRes.token);
           sessionStorage.setItem("isLoggedIn", "true");
+
+          // Supprimer mot de passe enregistré si existant
+          const savedCredentials = JSON.parse(localStorage.getItem("savedCredentials") || "{}");
+          delete savedCredentials[data.email];
+          localStorage.setItem("savedCredentials", JSON.stringify(savedCredentials));
         }
-        
 
         setTimeout(() => {
           navigate("/home");
@@ -60,15 +81,15 @@ export default function Login({ setIsLoggedIn }) {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
-      {message && (
-        <div
-          className={`login-message ${
-            message.toLowerCase().includes("erreur") ? "error" : "success"
-          }`}
-        >
-          {message}
-        </div>
-      )}
+        {message && (
+          <div
+            className={`login-message ${
+              message.toLowerCase().includes("erreur") ? "error" : "success"
+            }`}
+          >
+            {message}
+          </div>
+        )}
         <h2 className="login-title">Se connecter</h2>
 
         <label htmlFor="email">E-Mail :</label>
@@ -80,6 +101,7 @@ export default function Login({ setIsLoggedIn }) {
           onChange={handleChange}
           required
         />
+
         <label htmlFor="password">Mot de passe :</label>
         <div className="input-wrapper">
           <input
@@ -89,6 +111,7 @@ export default function Login({ setIsLoggedIn }) {
             value={data.password}
             onChange={handleChange}
             required
+            autoComplete="current-password"
           />
           <button
             type="button"
@@ -116,6 +139,7 @@ export default function Login({ setIsLoggedIn }) {
         <button type="submit" className="login-button">
           Se connecter
         </button>
+
         <a href="/forgotpassword" className="forgot-password">
           Mot de passe oublié?
         </a>
