@@ -34,56 +34,6 @@ const About = () => {
           </ul>
         </section>
 
-        <section className="about-section">
-          <h2>Équipe Dirigeante 2024-2025</h2>
-          <div className="team-grid">
-            <div className="team-member">
-              <h3>Président</h3>
-              <p>Dr. Ngono Aristide Merlin</p>
-            </div>
-            <div className="team-member">
-              <h3>Vice-Président</h3>
-              <p>Dr. Myogo II Ossede Daave Franklin</p>
-            </div>
-            <div className="team-member">
-              <h3>Secrétaire Général</h3>
-              <p>Dr. Ondoa Beyene Blaise</p>
-            </div>
-            <div className="team-member">
-              <h3>Trésorière</h3>
-              <p>Dr. Zeh Inès Pétrolde</p>
-            </div>
-            <div className="team-member">
-              <h3>Commissaire aux Comptes</h3>
-              <p>Many Ayissi Jean Patrick</p>
-            </div>
-            <div className="team-member">
-              <h3>Communication</h3>
-              <p>Voundi Voundi Gervais Erwan</p>
-            </div>
-            <div className="team-member">
-              <h3>Chargé des Projets</h3>
-              <p>Djeudjang Teunkwa Leopold</p>
-            </div>
-            <div className="team-member">
-              <h3>Responsable RH</h3>
-              <p>Kinfack Cyril Pierre</p>
-            </div>
-            <div className="team-member">
-              <h3>Conseillers</h3>
-              <p>Eloundou Georges et Siguin Michelle</p>
-            </div>
-            <div className="team-member">
-              <h3>Relations Extérieures</h3>
-              <p>Tebou Tedon Marius Parfait</p>
-            </div>
-            <div className="team-member">
-              <h3>Affaires administratives</h3>
-              <p>Eloundou Ngono Raphael</p>
-            </div>
-          </div>
-        </section>
-
         <section className="contact-section">
           <h2>Contact</h2>
           <div className="contact-info">

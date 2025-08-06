@@ -31,22 +31,31 @@
     display: flex;
     justify-content: center;
     gap: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
     position: relative;
   }
   
   .org-level:not(:last-child)::after {
     content: '';
     position: absolute;
-    bottom: -15px;
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
-    height: 20px;
-    border-left: 2px solid #7f8c8d;
-    border-right: 2px solid #7f8c8d;
+    width: 2px;
+    height: 30px; /* longueur du trait vertical */
+    background-color: #7f8c8d;
+    z-index: 0;
   }
-  
+  .org-level::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #7f8c8d;
+    z-index: 0;
+  }
   .org-node {
     background-color: #f8f9fa;
     border: 1px solid #dfe6e9;
@@ -62,19 +71,19 @@
   .org-node::before {
     content: '';
     position: absolute;
-    top: -15px;
+    top: -20px;
     left: 50%;
     transform: translateX(-50%);
     width: 2px;
-    height: 15px;
+    height: 20px;
     background-color: #7f8c8d;
+    z-index: 0;
   }
-  
   .org-title {
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 8px;
-    color: #2c3e50;
+    color:#0084ff;
     border-bottom: 1px solid #bdc3c7;
     padding-bottom: 5px;
   }
@@ -89,6 +98,9 @@
     font-size: 12px;
     color: #7f8c8d;
     font-style: italic;
+  }
+  .org-titel{
+    color: #259B2E;
   }
   
   /* Styles spécifiques pour les postes importants */

@@ -171,6 +171,8 @@
   @media (max-width: 1024px) {
     .release-list {
       grid-template-columns: repeat(2, 1fr);
+      width: 95%;
+      margin: 0 auto;
     }
   }
   @media (max-width: 768px) {
@@ -189,10 +191,15 @@
     
     .release-list {
       grid-template-columns: 1fr;
+      height: auto;
     }
     
     .release-thumbnail {
-      height: 180px;
+      height: 300px;
+    }
+    .release-thumbnail img {
+      width: 80%;
+      height: 80%;
     }
   }
   

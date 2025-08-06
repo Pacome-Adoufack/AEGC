@@ -164,7 +164,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
 
             <li className="not-Dropdown">
               <Link
-                to="/#"
+                to="a"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
                   display: "inline-block",
@@ -194,7 +194,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   Les Membres
                 </Link>
                 <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
-                  Contacts
+                  Nous contacter
                 </Link>
                 <Link to="/organigrame" onClick={() => setIsMenuOpen(false)}>
                   Organigramme

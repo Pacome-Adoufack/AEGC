@@ -11,7 +11,7 @@ function Footer() {
             src={logo}
             alt="logo"
           />
-          <a href="/contact">Contacts</a>
+          <a href="/contact">Nous contacter</a>
         </section>
         <section>
           <h2>AEGC</h2>
@@ -38,10 +38,10 @@ function Footer() {
         <section>
           <h2>Suivez-nous</h2>
           <ul className="social-links">
-            <li><a href="https://www.facebook.com/AEGC/">Facebook</a></li>
-            <li><a href="https://twitter.com/AEGC">Twitter</a></li>
-            <li><a href="https://www.instagram.com/AEGC/">Instagram</a></li>
-            <li><a href="https://www.linkedin.com/company/aegc/">LinkedIn</a></li>
+            <li><a href="https://whatsapp.com/channel/0029VaiK9Uh9MF98zYaAId36" target="_blank" rel="noopener noreferrer">Whatsapp</a></li>
+            <li><a href="https://www.linkedin.com/company/association-des-economistes-et-gestionnaires-du-cameroun/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <li><a href="" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+            <li><a href="" target="_blank" rel="noopener noreferrer">X</a></li>
           </ul>
         </section>
       </div>

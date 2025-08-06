@@ -68,28 +68,26 @@ const Home = () => {
           <img src={logo} alt="" className="image-second" />
         </div>
         <div>
-        <div className="film-container">
-        <div className="wave"></div>
-        <button className="film-button" onClick={handlePlay}>
-          Le Film AEGC
-        </button>
-      </div>
-
-      {showOverlay && (
-        <div className="overlay">
-          <div className="video-wrapper">
-            <button className="close-button" onClick={handleClose}>✕</button>
-            <video
-              ref={videoRef}
-              width="800"
-              controls
-            >
-              <source src={video} type="video/mp4" />
-              Votre navigateur ne supporte pas la lecture de vidéos.
-            </video>
+          <div className="film-container">
+            <div className="wave"></div>
+            <button className="film-button" onClick={handlePlay}>
+              Le Film AEGC
+            </button>
           </div>
-        </div>
-      )}
+
+          {showOverlay && (
+            <div className="overlay">
+              <div className="video-wrapper">
+                <button className="close-button" onClick={handleClose}>
+                  ✕
+                </button>
+                <video ref={videoRef} width="800" controls>
+                  <source src={video} type="video/mp4" />
+                  Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <section className="first-section">

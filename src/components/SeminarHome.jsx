@@ -124,14 +124,15 @@ const SeminarHome = () => {
                       </p>
                     </div>
 
-                    <p>
+                    <p className="presenter">
                       <strong>Présenté par :</strong>{" "}
                       <Link className="doctor-link" to={`/speaker/${activity.presenterId}`}>
                         {activity.presenter}
                       </Link>
                     </p>
 
-                    <div className="card-actions">
+                   <div className="boutton-section">
+                   <div className="card-actions">
                       {reservation ? (
                         <button onClick={() => handleDeleteReservation(reservation._id)} className="delete-button">
                           Annuler réservation
@@ -144,9 +145,10 @@ const SeminarHome = () => {
                     </div>
                     <div className="question-container">
                         <Link to={`/questionnaire`} className="question-button">
-                            Evaluer l'activité
+                            Evaluation
                         </Link>
                     </div>
+                   </div>
                   </div>
                 </div>
               );

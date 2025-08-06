@@ -103,7 +103,7 @@ const Seminar = () => {
             <Link to="/conference">AEGC Conférences</Link>
           </li>
           <li>
-            <Link to="/picture">AEGC Photos</Link>
+            <Link to="/images">AEGC Photos</Link>
           </li>
         </ul>
       </nav>
