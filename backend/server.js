@@ -15,6 +15,7 @@ import Reservation from "./models/Reservation.js";
 import Subscribe from "./models/Subscribe.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import Image from "./models/Picture.js";
+import Picture from "./models/Picture.js";
 import multer from "multer";
 import upload from "./middlewares/upload.js";
 
@@ -48,6 +49,11 @@ const connectDB = async () => {
 };
 
 connectDB();
+
+app.get('/', (req, res) => {
+  res.send('Backend is running');
+});
+
 
 app.post("/register", async (req, res) => {
   const {
@@ -424,7 +430,7 @@ app.post("/picture", async (req, res) => {
     res.status(500).json({ error: "Erreur lors de lenregistrement." });
   }
 });
-app.get("picture", async (req, res) => {
+app.get("/picture", async (req, res) => {
   try {
     const picture = await Picture.find();
     res.json(picture);

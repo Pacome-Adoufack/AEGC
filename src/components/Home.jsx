@@ -41,11 +41,12 @@ const Home = () => {
     }
     setShowOverlay(false);
   };
+  const backendURL = "https://economics-backend-1dbw.onrender.com";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/activities");
+        const response = await fetch(`${backendURL}/api/activities`);
         const result = await response.json();
         setData(result);
         console.log("Fetched data:", result);
@@ -53,9 +54,10 @@ const Home = () => {
         console.error("Error fetching data:", error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
   return (
     <div className="home-container">
       <div className="first-image">
