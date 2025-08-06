@@ -15,9 +15,10 @@ import Reservation from "./models/Reservation.js";
 import Subscribe from "./models/Subscribe.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import Image from "./models/Picture.js";
-import Picture from "./models/Picture.js";
 import multer from "multer";
 import upload from "./middlewares/upload.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(cors());
@@ -49,11 +50,6 @@ const connectDB = async () => {
 };
 
 connectDB();
-
-app.get('/', (req, res) => {
-  res.send('Backend is running');
-});
-
 
 app.post("/register", async (req, res) => {
   const {
