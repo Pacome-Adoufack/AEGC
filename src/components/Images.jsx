@@ -24,7 +24,7 @@ const Images = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch("http://localhost:3000/images", {
+        const response = await fetch("https://aegc-test.onrender.com", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

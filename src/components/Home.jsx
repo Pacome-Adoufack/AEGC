@@ -45,7 +45,7 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/activities");
+        const response = await fetch("https://aegc-test.onrender.com");
         const result = await response.json();
         setData(result);
         console.log("Fetched data:", result);
