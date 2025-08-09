@@ -51,6 +51,7 @@ const connectDB = async () => {
 
 connectDB();
 
+
 app.post("/register", async (req, res) => {
   const {
     name,
