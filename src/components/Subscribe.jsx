@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/Subscripe.css";
 import { useState } from "react";
+import { API_BASE_URL } from "../components/Url";
 
 function Subscribe() {
   const [data, setData] = useState({
@@ -19,7 +20,7 @@ function Subscribe() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:3000/subscribe", {
+    fetch(`${API_BASE_URL}/subscribe`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

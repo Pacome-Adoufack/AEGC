@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Register.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { API_BASE_URL } from "../components/Url";
 
 export default function Register() {
   const [data, setData] = useState({
@@ -45,7 +46,7 @@ export default function Register() {
       return;
     }
 
-    fetch("http://localhost:3000/register", {
+    fetch(`${API_BASE_URL}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/Activity.css";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../components/Url";
 
 const Seminar = () => {
   const [activities, setActivities] = useState([]);
@@ -16,7 +17,7 @@ const Seminar = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/activities");
+        const response = await fetch(`${API_BASE_URL}/api/activities`);
         if (!response.ok)
           throw new Error("Erreur lors du chargement des activités");
         const data = await response.json();
@@ -41,7 +42,7 @@ const Seminar = () => {
 
         if (!token) return;
 
-        const response = await fetch("http://localhost:3000/reservation", {
+        const response = await fetch(`${API_BASE_URL}/reservation`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -67,7 +68,7 @@ const Seminar = () => {
       return;
 
     try {
-      const response = await fetch(`http://localhost:3000/reservation/${Id}`, {
+      const response = await fetch(`${API_BASE_URL}/reservation/${Id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

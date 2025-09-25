@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Picture.css";
+import {API_BASE_URL} from "../components/Url"
 
 const Images = () => {
   const [images, setImages] = useState([]);
@@ -24,7 +25,7 @@ const Images = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch("http://localhost:3000/images", {
+        const response = await fetch(`${API_BASE_URL}/images`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/Activity.css";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import {API_BASE_URL} from "../components/Url"
 
 const Activity = () => {
   const [activities, setActivities] = useState([]);
@@ -12,13 +13,13 @@ const Activity = () => {
       try {
         // 1. Récupère les activités
         const resActivities = await fetch(
-          "http://localhost:3000/api/activities"
+          `${API_BASE_URL}/api/activities`
         );
         const activities = await resActivities.json();
 
         // 2. Récupère les réservations utilisateur (avec token)
         const resReservations = await fetch(
-          "http://localhost:3000/reservation",
+          `${API_BASE_URL}/reservation`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +48,7 @@ const Activity = () => {
   }, []);
   const handleCancel = async (Id) => {
     try {
-      const res = await fetch(`http://localhost:3000/reservation/${Id}`, {
+      const res = await fetch(`${API_BASE_URL}/reservation/${Id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

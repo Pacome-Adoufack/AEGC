@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import "../styles/Reservation.css";
+import { API_BASE_URL } from "../components/Url";
 
 const Reservation = () => {
   const { activityId } = useParams();
@@ -39,7 +40,7 @@ const Reservation = () => {
       return;
     }
   
-    fetch("http://localhost:3000/reservation", {
+    fetch(`${API_BASE_URL}/reservation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import { FaGithub } from "react-icons/fa";
 import "../styles/Contact.css";
+import { API_BASE_URL } from "../components/Url";
 
 export default function Contact() {
 //   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function Contact() {
       return;
     }
 
-    fetch("http://localhost:3000/contact", {
+    fetch(`${API_BASE_URL}/contact`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

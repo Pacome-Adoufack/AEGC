@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/ResetPassword.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { API_BASE_URL } from "../components/Url";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -16,7 +17,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     const checkToken = async () => {
-      const res = await fetch(`http://localhost:3000/reset-password/${token}`);
+      const res = await fetch(`${API_BASE_URL}/reset-password/${token}`);
       if (res.ok) {
         setTokenValid(true);
       } else {
@@ -36,7 +37,7 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/reset-password/${token}`,
+        `${API_BASE_URL}/reset-password/${token}`,
         {
           method: "POST",
           headers: {
