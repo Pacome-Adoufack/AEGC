@@ -1,0 +1,26 @@
+  version: '3.8'
+  services:
+    aegc-front:
+      build: 
+        context: ./frontend
+        dockerfile: Dockerfile
+      container_name: aegc-front-${APP_VERSION}
+      image: aegc-front:${APP_VERSION}
+      env_file:
+        - ./.env
+      ports:
+        - "${PORT_FRONT}:80"
+      restart: always
+    
+    aegc-back:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile
+      container_name: aegc-back-${APP_VERSION}
+      image: aegc-back:${APP_VERSION}
+      env_file:
+        - ./.env
+      ports:
+      - ${PORT_BACK}:3000
+      restart: always
+
