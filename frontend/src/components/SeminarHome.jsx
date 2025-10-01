@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Activity.css";
-import { FaCalendarAlt, FaMapMarkerAlt, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaArrowLeft,
+  FaArrowRight,
+} from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../components/Url";
+import firstImage from "../assets/firstImage.png";
+import logo1 from "../assets/logo1.png";
 
 const SeminarHome = () => {
   const [activities, setActivities] = useState([]);
@@ -13,7 +20,8 @@ const SeminarHome = () => {
     const fetchActivities = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/activities`);
-        if (!response.ok) throw new Error("Erreur lors du chargement des activités");
+        if (!response.ok)
+          throw new Error("Erreur lors du chargement des activités");
         const data = await response.json();
         setActivities(data);
       } catch (error) {
@@ -27,14 +35,16 @@ const SeminarHome = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        const token =
+          localStorage.getItem("token") || sessionStorage.getItem("token");
         if (!token) return;
 
         const response = await fetch(`${API_BASE_URL}/reservation`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok) throw new Error("Erreur lors du chargement des réservations");
+        if (!response.ok)
+          throw new Error("Erreur lors du chargement des réservations");
 
         const data = await response.json();
         setReservations(data);
@@ -47,7 +57,8 @@ const SeminarHome = () => {
   }, []);
 
   const handleDeleteReservation = async (Id) => {
-    if (!window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?")) return;
+    if (!window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?"))
+      return;
 
     try {
       const response = await fetch(`${API_BASE_URL}/reservation/${Id}`, {
@@ -60,7 +71,9 @@ const SeminarHome = () => {
         throw new Error(errorData.error || "Erreur lors de l'annulation.");
       }
 
-      setReservations((prev) => prev.filter((r) => r._id.toString() !== Id.toString()));
+      setReservations((prev) =>
+        prev.filter((r) => r._id.toString() !== Id.toString())
+      );
     } catch (error) {
       console.error(error);
       setMessage(`Erreur : ${error.message}`);
@@ -86,7 +99,10 @@ const SeminarHome = () => {
         {message && <p className="message">{message}</p>}
 
         <div className="scroll-controls">
-          <button className="arrow-button left" onClick={() => scrollGallery("left")}>
+          <button
+            className="arrow-button left"
+            onClick={() => scrollGallery("left")}
+          >
             <FaArrowLeft />
           </button>
 
@@ -94,69 +110,130 @@ const SeminarHome = () => {
             {activities.map((activity) => {
               const reservation = reservations.find((r) => {
                 if (!r.activity) return false;
-                const rId = typeof r.activity === "object" ? r.activity._id : r.activity;
+                const rId =
+                  typeof r.activity === "object" ? r.activity._id : r.activity;
                 return String(rId) === String(activity._id);
               });
 
               return (
                 <div key={activity._id} className="activity-card">
-                  <img src={activity.image} alt={activity.name} />
+                  <img src={logo1} alt={logo1} className="logo1" />
                   <div className="activity-card-content">
-                    <h2>{activity.name}</h2>
-                    <p>{activity.description}</p>
+                    <div className="first-card">
+                      <h2>{activity.name}</h2>
+                      <p>{activity.description}</p>
+                    </div>
 
                     <div className="activity-meta">
                       <p className="activity-date">
                         <FaCalendarAlt className="icon" />
                         <span>
-                          {new Date(activity.date).toLocaleDateString("fr-FR", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {activity.date}
                         </span>
                       </p>
-                      <p className="activity-location">
-                        <FaMapMarkerAlt className="icon" />
-                        <span>{activity.location}</span>
+
+                      {/* Trait vertical */}
+                      <div className="divider"></div>
+
+                      <p className="activity-timezone">
+                        🕑 Heure de Paris :{" "}
+                        <span>
+                          {activity.timeParis}
+                        </span>
+                      </p>
+
+                      {/* Trait vertical */}
+                      <div className="divider"></div>
+
+                      <p className="activity-timezone">
+                        🕑 Heure de Yaoundé :{" "}
+                        <span>
+                          {activity.timeYaounde}
+                        </span>
                       </p>
                     </div>
 
-                    <p className="presenter">
-                      <strong>Présenté par :</strong>{" "}
-                      <Link className="doctor-link" to={`/speaker/${activity.presenterId}`}>
-                        {activity.presenter}
-                      </Link>
-                    </p>
+                    <div className="activity-info">
+                      <p>
+                        <strong>Modérateur :</strong>{" "}
+                        <Link
+                          className="doctor-link"
+                          to={`/speaker/${activity.presenterId}`}
+                        >
+                          {activity.moderator}
+                        </Link>
+                        <p className="subtitle">{activity.subtitleModerator}</p>
+                      </p>
+                      <div className="participant-card">
+                        <p>
+                          <strong>Intervenant :</strong>{" "}
+                          <Link
+                            className="doctor-link"
+                            to={`/speaker/${activity.presenterId}`}
+                          >
+                            {activity.participantOne}
+                          </Link>
+                          <p className="subtitle">{activity.subtitleParticipantOne}</p>
+                        </p>
+                        <p>
+                          <strong>Intervenant :</strong>{" "}
+                          <Link
+                            className="doctor-link"
+                            to={`/speaker/${activity.presenterId}`}
+                          >
+                            {activity.participantTwo}
+                          </Link>
+                          <p className="subtitle">{activity.subtitleParticipantTwo}</p>
+                        </p>
+                        <p>
+                          <strong>Intervenant :</strong>{" "}
+                          <Link
+                            className="doctor-link"
+                            to={`/speaker/${activity.presenterId}`}
+                          >
+                            {activity.participantThree}
+                          </Link>
+                          <p className="subtitle">{activity.subtitleParticipantThree}</p>
+                        </p>
+                      </div>
+                    </div>
 
-                   <div className="boutton-section">
-                   <div className="card-actions">
-                      {reservation ? (
-                        <button onClick={() => handleDeleteReservation(reservation._id)} className="delete-button">
-                          Annuler réservation
-                        </button>
-                      ) : (
-                        <Link to={`/reservation/${activity._id}`} className="reserve-button">
-                          Réserver
-                        </Link>
-                      )}
-                    </div>
-                    <div className="question-container">
+                    <div className="boutton-section">
+                      <div className="card-actions">
+                        {reservation ? (
+                          <button
+                            onClick={() =>
+                              handleDeleteReservation(reservation._id)
+                            }
+                            className="delete-button"
+                          >
+                            Annuler réservation
+                          </button>
+                        ) : (
+                          <Link
+                            to={`/reservation/${activity._id}`}
+                            className="reserve-button"
+                          >
+                            Réserver
+                          </Link>
+                        )}
+                      </div>
+                      {/* <div className="question-container">
                         <Link to={`/questionnaire`} className="question-button">
-                            Evaluation
+                          Evaluation
                         </Link>
+                      </div> */}
                     </div>
-                   </div>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <button className="arrow-button right" onClick={() => scrollGallery("right")}>
+          <button
+            className="arrow-button right"
+            onClick={() => scrollGallery("right")}
+          >
             <FaArrowRight />
           </button>
         </div>

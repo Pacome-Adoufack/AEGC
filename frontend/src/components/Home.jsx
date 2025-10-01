@@ -19,6 +19,7 @@ import logo from "../assets/logo.png";
 import SeminarHome from "./SeminarHome";
 import Release from "./Release";
 import Images from "./Images";
+import firstImage from "../assets/firstImage.png";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -62,7 +63,7 @@ const Home = () => {
     <div className="home-container">
       <div className="first-image">
         <img
-          src="https://media.istockphoto.com/id/610041376/fr/photo/beau-lever-de-soleil-sur-la-mer.jpg?s=612x612&w=0&k=20&c=q4xfv_aYl3sdiEOCIby1SNdG4ffhd73CRXcyc2J0tV0="
+          src={firstImage}
           alt=""
           className="image-first"
         />

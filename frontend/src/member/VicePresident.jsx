@@ -1,34 +1,40 @@
-import React from 'react'
+import React from "react";
+import VicePresidentImg from "../assets/vice president.png";
 
 const VicePresident = () => {
   return (
     <div className="president-container">
       <h1>Vice-Président de l'AEGC</h1>
       <img
-        src="https://res.cloudinary.com/sedomicilier/image/upload/f_auto,q_auto/v1626092684/fiche/page/v3_side_photo/764/side-president-association.png"
-        alt="Président de l'association"
+        src={VicePresidentImg}
+        alt="Vice Président de l'association"
       />
       <p>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure id qui
-        doloribus nobis. Doloribus totam sint porro consectetur tempore
-        voluptatem amet, delectus illo animi soluta quod mollitia corporis quas
-        recusandae similique laboriosam nobis fugit in praesentium dolorem
-        facere illum harum ducimus. Aut facere cum minima perspiciatis assumenda
-        mollitia cupiditate repudiandae debitis ratione autem accusantium
-        reprehenderit, praesentium, dolor ad laborum animi! Assumenda natus,
-        omnis placeat eos blanditiis odit explicabo sapiente, fugit fuga,
-        aliquam magni minima magnam. Laboriosam fugiat, ipsam voluptates quo
-        maxime perspiciatis ut enim consequuntur, fugit nam quae quisquam ex
-        voluptatem non temporibus illo vel, eius officia voluptatibus quia iusto
-        voluptas? Cupiditate ipsam nihil dolores unde voluptatum porro mollitia
-        deleniti, minus at enim modi possimus ipsa fugiat, incidunt,
-        perspiciatis iure animi magnam accusantium nostrum. Nobis sapiente
-        ducimus necessitatibus eaque maxime repellat vitae impedit est illo
-        odit. Voluptatibus nam doloribus soluta odit reiciendis quidem porro
-        libero atque, est ipsa repudiandae quisquam?
+        Daave Franklin MVOGO II OSSEDE est un chercheur en économie, titulaire
+        d’un doctorat PhD obtenu à l’université de Dschang (à l’ouest Cameroun)
+        option : analyse des politiques économiques. Il analyse dans sa thèse
+        l’effet du développement financier sur l’entrepreneuriat dans les pays
+        en développement se situant dans un dualisme entre l’entrepreneuriat
+        d’opportunité et l’entrepreneuriat de nécessité. Dès lors, ses travaux
+        de recherche portent sur l’économie du développement en général, et sur
+        l’entrepreneuriat en particulier. Son objectif est d’amener les pays en
+        développement à booster leur production nationale au moyen de certains
+        instruments économiques, afin d’assurer la consommation interne et
+        accroitre la compétitivité internationale. Outre ses recherches, il est
+        actuellement enseignant assistant à l’Institut Universitaire Siantou
+        (IUS) où il concilie recherche, enseignement et tâches administratives.
+        Grâce à son grand amour pour la recherche et sa passion à la promouvoir
+        dans son pays et dans l’ensemble des pays africains, il est également
+        vice-président de l’Association des Economistes et Gestionnaires du
+        Cameroun (AEGC). Avec toute l’équipe, il travaille en étroite
+        collaboration valorisant ainsi la recherche à partir de plusieurs
+        activités qu’organise l’association. Il a aussi travaillé au sein du
+        gouvernement où il a exercé en qualité de chargé des études
+        économétriques au cabinet du Ministère des petites et Moyennes
+        Entreprises, de l’Economie Sociale et de l’Artisanat (MINPEMEESA).
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default VicePresident
+export default VicePresident;

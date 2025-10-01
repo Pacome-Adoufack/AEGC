@@ -30,16 +30,18 @@
 }
 .first-image{
   position: relative;
+
 }
 .image-first {
-  width: 60%;
-  height: 500px;
+  width: 800px;      
+  height: 600px;
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 3rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  margin-left: 500px;
+  margin: 0 auto 80px auto;
+  display: block;
+  margin-right: 450px;
 }
+
 .image-second-container{
   border: 1px solid #ccc;
   border-radius: 20px 20px 20px 0px;

@@ -17,13 +17,12 @@ import authMiddleware from "./middlewares/authMiddleware.js";
 import Image from "./models/Picture.js";
 import multer from "multer";
 import upload from "./middlewares/upload.js";
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 
 const resend = new Resend(process.env.RESEND_API);
 
@@ -40,7 +39,9 @@ const connectDB = async () => {
 
     if (!collectionNames.includes("test")) {
       await db.createCollection("test");
-      await db.collection("test").insertOne({ message: "Initial document" });
+      await db
+        .collection("test")
+        .insertOne({ message: "Initial document test" });
       console.log("Test collection created with initial document");
     }
   } catch (err) {
@@ -50,7 +51,6 @@ const connectDB = async () => {
 };
 
 connectDB();
-
 
 app.post("/register", async (req, res) => {
   const {
@@ -135,15 +135,39 @@ app.get("/api/activities", async (req, res) => {
 });
 app.post("/api/activities", async (req, res) => {
   try {
-    const { name, description, image, date, location, presenter } = req.body;
+    const {
+      name,
+      description,
+      date,
+      timeParis,
+      timeYaounde,
+      location,
+      moderator,
+      subtitleModerator,
+      participantOne,
+      participantTwo,
+      participantThree,
+      subtitleParticipantOne,
+      subtitleParticipantTwo,
+      subtitleParticipantThree,
+    } = req.body;
 
     const activity = new Activity({
       name,
       description,
-      image,
+      // image,
       date,
+      timeParis,
+      timeYaounde,
       location,
-      presenter,
+      moderator,
+      subtitleModerator,
+      participantOne,
+      participantTwo,
+      participantThree,
+      subtitleParticipantOne,
+      subtitleParticipantTwo,
+      subtitleParticipantThree,
     });
 
     const savedActivity = await activity.save();
@@ -500,13 +524,13 @@ app.get("/faq", async (req, res) => {
     res.status(200).json({
       success: true,
       count: faqs.length,
-      data: faqs
+      data: faqs,
     });
   } catch (error) {
     console.error("Error fetching FAQs:", error);
     res.status(500).json({
       success: false,
-      error: "Server error"
+      error: "Server error",
     });
   }
 });

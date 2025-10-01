@@ -1,34 +1,36 @@
-import React from 'react'
+import React from "react";
+import ConseillerTwoImg from "../assets/conseiller two.png";
 
 const ConseillerTwo = () => {
   return (
     <div className="president-container">
       <h1>Conseiller de l'AEGC</h1>
       <img
-        src="https://res.cloudinary.com/sedomicilier/image/upload/f_auto,q_auto/v1626092684/fiche/page/v3_side_photo/764/side-president-association.png"
+        src={ConseillerTwoImg}
         alt="Président de l'association"
       />
       <p>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure id qui
-        doloribus nobis. Doloribus totam sint porro consectetur tempore
-        voluptatem amet, delectus illo animi soluta quod mollitia corporis quas
-        recusandae similique laboriosam nobis fugit in praesentium dolorem
-        facere illum harum ducimus. Aut facere cum minima perspiciatis assumenda
-        mollitia cupiditate repudiandae debitis ratione autem accusantium
-        reprehenderit, praesentium, dolor ad laborum animi! Assumenda natus,
-        omnis placeat eos blanditiis odit explicabo sapiente, fugit fuga,
-        aliquam magni minima magnam. Laboriosam fugiat, ipsam voluptates quo
-        maxime perspiciatis ut enim consequuntur, fugit nam quae quisquam ex
-        voluptatem non temporibus illo vel, eius officia voluptatibus quia iusto
-        voluptas? Cupiditate ipsam nihil dolores unde voluptatum porro mollitia
-        deleniti, minus at enim modi possimus ipsa fugiat, incidunt,
-        perspiciatis iure animi magnam accusantium nostrum. Nobis sapiente
-        ducimus necessitatibus eaque maxime repellat vitae impedit est illo
-        odit. Voluptatibus nam doloribus soluta odit reiciendis quidem porro
-        libero atque, est ipsa repudiandae quisquam?
+        Michèle Pierrette SIGNIN TCHOUPE est membre et conseiller de
+        l’Association des Économistes et des Gestionnaires du Cameroun. Sa tâche
+        au sein du bureau exécutif consiste à participer à la définition des
+        orientations stratégiques de l’association, intervenir dans
+        l’organisation des activités et des évènements organisés par
+        l’association et enfin contribuer à la mise en place du système de
+        gouvernance de l’association. Elle est également Academic Member de
+        l’European Corporate Governance Institute (ECGI). Elle rédige
+        actuellement une thèse de Doctorat (Ph.D) en cotutelle entre
+        l’Université de Douala au Cameroun et l’Université de Corse Pascal Paoli
+        en France. Ses recherches portent sur la gouvernance d’entreprise et le
+        management africain, en particulier dans les entreprises familiales, les
+        Start-up et les PME. Ses travaux lui ont déjà permis de participer à des
+        colloques au niveau national et international, de prendre part à des
+        projets de recherche dans d’autres universités africaines et de
+        bénéficier d’une bourse de mobilité dans un laboratoire de recherche en
+        France grâce au programme « Pépinière Doctorale en SeGes » en zone
+        CEMAC.
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default ConseillerTwo
+export default ConseillerTwo;

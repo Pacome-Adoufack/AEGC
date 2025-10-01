@@ -27,14 +27,16 @@ const OrgChart = () => {
           <Link to="/vice president" className="link">
             <div className="org-node">
               <div className="org-title">Vice-Président</div>
-              <div className="org-name">Daave MVOGO II OSSEDE</div>
-              <div className="org-titel">Doctorant en analyse politique </div>
+              <div className="org-name">Daave Franklin MVOGO II OSSEDE</div>
+              <div className="org-titel">
+                PhD en analyse de politiques économiques{" "}
+              </div>
             </div>
           </Link>
           <Link to="/secretaire general" className="link">
             <div className="org-node">
               <div className="org-title">Secrétaire Général</div>
-              <div className="org-name">Blaise BEYENE ONDOUA  </div>
+              <div className="org-name">Blaise BEYENE ONDOUA </div>
               <div className="org-titel">PhD en Economie mathématique </div>
             </div>
           </Link>
@@ -45,51 +47,67 @@ const OrgChart = () => {
         <div className="org-level">
           <Link to="/tresorier" className="link">
             <div className="org-node">
-              <div className="org-title">Trésorier</div>
+              <div className="org-title">Trésorière</div>
               <div className="org-name">Inès Pérolde ZEH</div>
-              <div className="org-titel">PhD en économie du travail</div>
+              <div className="org-titel">
+                PhD en économie des ressources humaines
+              </div>
             </div>
           </Link>
           <Link to="/responsable GRH" className="link">
             <div className="org-node">
-              <div className="org-title">Responsable GRH</div>
-              <div className="org-name">Cyril Pierre Kenfack </div>
-              <div className="org-titel">Doctorant en management </div>
+              <div className="org-title">Responsable RH</div>
+              <div className="org-name">Cyril Pierre Kinfack </div>
+              <div className="org-titel">
+                PHD(s) en Sciences et techniques de Gestion{" "}
+              </div>
             </div>
           </Link>
           <Link to="/relations exterieures" className="link">
             <div className="org-node">
-              <div className="org-title">Relations extérieures</div>
+              <div className="org-title">
+                Responsable des relations extérieures
+              </div>
               <div className="org-name">Marius Parfait Tebou Tedong </div>
-              <div className="org-titel">Actuaire P&C, Analyste de Données, Axa Partners IPA</div>
+              <div className="org-titel">
+                Pricing actuary P&C Analyst, data analyst{" "}
+              </div>
             </div>
           </Link>
         </div>
 
         {/* Niveau 4 - Autres membres */}
         <div className="org-level">
-          <div className="org-node">
-            <div className="org-title">Chargés de la Communication</div>
-            <Link to="/communication one" className="link">
-              <div className="org-name">Gervais VOUNDI VOUNDI </div>
-              <div className="org-titel">Conseillé consultatif national</div>
-            </Link>
-            {/* <Link to="/communication two" className="link">
+          <Link to="/communication one" className="link">
+            <div className="org-node">
+              <div className="org-title">Responsable de la communication</div>
+              <div className="org-name">Erwan VOUNDI </div>
+              <div className="org-titel">Étudiant chercheur et Analyste financier</div>
+            </div>
+          </Link>
+          {/* <Link to="/communication two" className="link">
               <div className="org-name">Gervais Erwan</div>
+              <div className="org-titel">Étudiant chercheur et Analyste financier</div>
             </Link> */}
-          </div>
+
           <Link to="/commissaire aux comptes" className="link">
             <div className="org-node">
               <div className="org-title">Commissaire aux Comptes</div>
-              <div className="org-name">Jean Parick MANY AYISSI </div>
-              <div className="org-titel">MSc en banque et finance UCAC</div>
+              <div className="org-name">Jean Patrick Ulrich MANY AYISSI </div>
+              <div className="org-titel">
+                Maître en Ingénierie Economique et Financière
+              </div>
             </div>
           </Link>
           <Link to="/charges des projets" className="link">
             <div className="org-node">
               <div className="org-title">Chargés des projets</div>
-              <div className="org-name">Léopold DJEUDJANG TEUNKWA</div>
-              <div className="org-titel">Ingénieur Economiste et Financier</div>
+              <div className="org-name">Léopold DJEUDJANG TEUNKWA </div>
+              <div className="org-titel">
+                Ingénieur Économiste et Financier, Expert en Analyse et
+                Évaluation des Projets, Assistant au Département des
+                Statistiques d'Entreprises à l'INS
+              </div>
             </div>
           </Link>
         </div>
@@ -99,8 +117,10 @@ const OrgChart = () => {
           <Link to="/censeurs" className="link">
             <div className="org-node">
               <div className="org-title">Censeurs</div>
-              <div className="org-name">Gaetan Aimé BALLA MEKONGO</div>
-              <div className="org-titel">Economiste</div>
+              <div className="org-name">Gaëtan Aime BALLA MEKONGO</div>
+              <div className="org-titel">
+                Maître en Ingénierie Économique et financière
+              </div>
             </div>
           </Link>
           <Link
@@ -111,19 +131,21 @@ const OrgChart = () => {
               <div className="org-title">
                 Responsable des affaires administratives et diplomatiques
               </div>
-              <div className="org-name">Raphaél Eloundou</div>
+              <div className="org-name">Raphael ELOUNDOU NGONO</div>
               <div className="org-titel">Magistrat des Comptes</div>
             </div>
           </Link>
           <div className="org-node">
             <div className="org-title">Conseillers</div>
             <Link to="/conseiller one" className="link">
-              <div className="org-name">Eloundou Georges</div>
-              <div className="org-titel">...</div>
+              <div className="org-name">Georges NGNOUWAL ELOUNDOU</div>
+              <div className="org-titel">PhD en Économie Mathématique</div>
             </Link>
             <Link to="/conseiller two" className="link">
               <div className="org-name">Michèle Pierrette SIGNIN TCHOUPE </div>
-              <div className="org-titel">Doctorante en Sciences de Gestion</div>
+              <div className="org-titel">
+                PhD student en Sciences de Gestion
+              </div>
             </Link>
           </div>
         </div>

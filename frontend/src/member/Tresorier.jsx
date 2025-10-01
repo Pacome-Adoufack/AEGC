@@ -1,34 +1,29 @@
-import React from 'react'
+import React from "react";
+import tresorierImg from "../assets/tresorier.png";
 
 const Tresorier = () => {
   return (
     <div className="president-container">
       <h1>Trésorier de l'AEGC</h1>
       <img
-        src="https://res.cloudinary.com/sedomicilier/image/upload/f_auto,q_auto/v1626092684/fiche/page/v3_side_photo/764/side-president-association.png"
-        alt="Président de l'association"
+        src={tresorierImg}
+        alt="tresorier de l'association"
       />
       <p>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure id qui
-        doloribus nobis. Doloribus totam sint porro consectetur tempore
-        voluptatem amet, delectus illo animi soluta quod mollitia corporis quas
-        recusandae similique laboriosam nobis fugit in praesentium dolorem
-        facere illum harum ducimus. Aut facere cum minima perspiciatis assumenda
-        mollitia cupiditate repudiandae debitis ratione autem accusantium
-        reprehenderit, praesentium, dolor ad laborum animi! Assumenda natus,
-        omnis placeat eos blanditiis odit explicabo sapiente, fugit fuga,
-        aliquam magni minima magnam. Laboriosam fugiat, ipsam voluptates quo
-        maxime perspiciatis ut enim consequuntur, fugit nam quae quisquam ex
-        voluptatem non temporibus illo vel, eius officia voluptatibus quia iusto
-        voluptas? Cupiditate ipsam nihil dolores unde voluptatum porro mollitia
-        deleniti, minus at enim modi possimus ipsa fugiat, incidunt,
-        perspiciatis iure animi magnam accusantium nostrum. Nobis sapiente
-        ducimus necessitatibus eaque maxime repellat vitae impedit est illo
-        odit. Voluptatibus nam doloribus soluta odit reiciendis quidem porro
-        libero atque, est ipsa repudiandae quisquam?
+        Inès Pérolde ZEH est enseignante à l’Université de Bertoua, Cameroun.
+        Après l’obtention d’une licence en Monnaie, Banque et Finance à
+        l’Université de Yaoundé 2, elle obtient un Master 2 en Economie des
+        Ressource Humaines (Nouveau Programme de Troisième Cycle
+        Interuniversitaire-NPTCI CCCO Bénin 2016) et un PhD dans la même option
+        (African Economic Research Consortium-AERC, Kenya) à travers le
+        programme de PhD Collaboratif. Lors de sa formation JFE (AERC, Kenya
+        2018), elle se spécialise en Economie du Développement et en
+        Econométrie. Ses domaines d’intérêt actuels sont le genre en relation
+        avec l’économie agricole, la microéconométrie du développement mais pas
+        que. Elle est responsable du Département de Microéconomie de l’AEGC.
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default Tresorier
+export default Tresorier;

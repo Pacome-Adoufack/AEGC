@@ -1,34 +1,49 @@
-import React from 'react'
+import React from "react";
+import sgImg from "../assets/sg.png";
 
 const SecretaireGeneral = () => {
   return (
     <div className="president-container">
       <h1>Secrétaire géneral de l'AEGC</h1>
       <img
-        src="https://res.cloudinary.com/sedomicilier/image/upload/f_auto,q_auto/v1626092684/fiche/page/v3_side_photo/764/side-president-association.png"
-        alt="Président de l'association"
+        src={sgImg}
+        alt="SG de l'association"
       />
       <p>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure id qui
-        doloribus nobis. Doloribus totam sint porro consectetur tempore
-        voluptatem amet, delectus illo animi soluta quod mollitia corporis quas
-        recusandae similique laboriosam nobis fugit in praesentium dolorem
-        facere illum harum ducimus. Aut facere cum minima perspiciatis assumenda
-        mollitia cupiditate repudiandae debitis ratione autem accusantium
-        reprehenderit, praesentium, dolor ad laborum animi! Assumenda natus,
-        omnis placeat eos blanditiis odit explicabo sapiente, fugit fuga,
-        aliquam magni minima magnam. Laboriosam fugiat, ipsam voluptates quo
-        maxime perspiciatis ut enim consequuntur, fugit nam quae quisquam ex
-        voluptatem non temporibus illo vel, eius officia voluptatibus quia iusto
-        voluptas? Cupiditate ipsam nihil dolores unde voluptatum porro mollitia
-        deleniti, minus at enim modi possimus ipsa fugiat, incidunt,
-        perspiciatis iure animi magnam accusantium nostrum. Nobis sapiente
-        ducimus necessitatibus eaque maxime repellat vitae impedit est illo
-        odit. Voluptatibus nam doloribus soluta odit reiciendis quidem porro
-        libero atque, est ipsa repudiandae quisquam?
+        Économiste-statisticien et Data Analyst, Blaise ONDOUA BEYENE est
+        titulaire d’un Doctorat (PhD) en économie mathématique, statistique et
+        économétrie, avec une formation d’Analyste Statisticien (AS) acquise à
+        l’Institut Sous régional de Statistique et d’Economie Appliquée (ISSEA).
+        Il est passionné par les problématiques de développement
+        socio-économique, de durabilité et d’évaluation d’impact. Auteur de plus
+        de dix-sept articles scientifiques publiés dans des revues
+        internationales à comité de lecture, il a développé une expertise
+        reconnue en data mining, text mining, web mining, analyse causale et
+        modélisation économétrique avancée, notamment à partir d’approches
+        paramétriques et non paramétriques et à inférence causale. Ses
+        compétences en statistique couvrent l’ensemble du cycle de production
+        statistique, de la planification et la conception d’outils de collecte
+        (quantitatifs et qualitatifs), jusqu’au traitement et à l’analyse
+        avancée des données à l’aide de logiciels spécialisés tels que Stata, R,
+        SPSS, Python, Nvivo et SQL. Il mobilise ces compétences et celle de
+        chercheur pour produire des Policy briefs clairs et orientés vers
+        l’action, accessibles aux décideurs des organisations. Consultant expert
+        en montage, suivi et évaluation de projets humanitaires et de
+        développement, Blaise ONDOUA BEYENE maîtrise également la gestion
+        stratégique de projets, la mobilisation de ressources, le
+        suivi-évaluation, ainsi que la communication scientifique et
+        organisationnelle, essentielle à la prise de décision et à la
+        valorisation des résultats. Il a contribué à de nombreux projets
+        financés par des bailleurs de fonds et mis en œuvre par des
+        organisations nationales et internationales telles que le PNUD, UNICEF,
+        CERAPE, PNDP et la Fondation Tri-National de la Sangha (FTNS). Blaise
+        ONDOUA BEYENE met ses compétences au service des institutions,
+        organisations et centres de recherche qui souhaitent renforcer leur
+        capacité analytique, évaluer l’impact de leurs interventions et
+        concevoir des solutions durables et inclusives.
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default SecretaireGeneral
+export default SecretaireGeneral;
