@@ -104,35 +104,27 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
               >
                 Journal
               </button>
-              <div className={`dropdown-menu ${openDropdown === "activites" ? "open" : ""}`}>
-                <Link to="/review" onClick={() => setIsMenuOpen(false)}>
+              <div
+                className={`dropdown-menu ${
+                  openDropdown === "activites" ? "open" : ""
+                }`}
+              >
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   AEGC Review
                 </Link>
-                <Link to="/journal/papers" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   AEGC Papers and Processing
                 </Link>
-                <Link
-                  to="/journal/economic"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   AEGC Economic Review
                 </Link>
-                <Link
-                  to="/journal/management"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   Management Review
                 </Link>
-                <Link
-                  to="/journal/research"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   Research
                 </Link>
-                <Link
-                  to="/journal/metadata"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   AEGC Metadata
                 </Link>
               </div>
@@ -141,6 +133,12 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
             <li className="dropdown">
               <button className="dropdown-button">Activités</button>
               <div className="dropdown-menu">
+                <Link
+                  to="/seminaire"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  AEGC Webinaire
+                </Link>
                 <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
                   AEGC Séminaire
                 </Link>
@@ -152,12 +150,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 </Link>
                 <Link to="/images" onClick={() => setIsMenuOpen(false)}>
                   AEGC Photos
-                </Link>
-                <Link
-                  to="/activity/webinaire"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  AEGC Webinaire
                 </Link>
               </div>
             </li>
@@ -190,9 +182,9 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 <Link to="/about" onClick={() => setIsMenuOpen(false)}>
                   A propos de nous
                 </Link>
-                <Link to="/membres" onClick={() => setIsMenuOpen(false)}>
+                {/* <Link to="/membres" onClick={() => setIsMenuOpen(false)}>
                   Les Membres
-                </Link>
+                </Link> */}
                 <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
                   Nous contacter
                 </Link>

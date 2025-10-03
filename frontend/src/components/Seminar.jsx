@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "../styles/Activity.css";
+import "../styles/Seminar.css";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../components/Url";
+import logo1 from "../assets/logo1.png";
 
 const Seminar = () => {
   const [activities, setActivities] = useState([]);
@@ -111,78 +112,150 @@ const Seminar = () => {
 
       <div className="meeting-container">
         <div className="meeting-content">
-          <h1>Nos Séminaires</h1>
+          <h1>Nos Prochains Séminaires</h1>
           {message && <p className="message">{message}</p>}
 
-          <div className="activity-images-grid">
-            {activities.map((activity) => {
-              const reservation = reservations.find((r) => {
-                if (!r.activity) return false;
-                const rId =
-                  typeof r.activity === "object" ? r.activity._id : r.activity;
-                return String(rId) === String(activity._id);
-              });
+          <div className="scroll-controls">
+            {/* <button
+              className="arrow-button left"
+              onClick={() => scrollGallery("left")}
+            >
+              <FaArrowLeft />
+            </button> */}
 
-              return (
-                <div key={activity._id} className="activity-card">
-                  <img src={activity.image} alt={activity.name} />
-                  <div className="activity-card-content">
-                    <h2>{activity.name}</h2>
-                    <p>{activity.description}</p>
+            <div className="activity-scroll-container" id="scroll-gallery">
+              {activities.map((activity) => {
+                const reservation = reservations.find((r) => {
+                  if (!r.activity) return false;
+                  const rId =
+                    typeof r.activity === "object"
+                      ? r.activity._id
+                      : r.activity;
+                  return String(rId) === String(activity._id);
+                });
 
-                    <div className="activity-meta">
-                      <p className="activity-date">
-                        <FaCalendarAlt className="icon" />
-                        <span>
-                          {new Date(activity.date).toLocaleDateString("fr-FR", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </p>
-                      <p className="activity-location">
-                        <FaMapMarkerAlt className="icon" />
-                        <span>{activity.location}</span>
-                      </p>
-                    </div>
+                return (
+                  <div key={activity._id} className="activity-card">
+                    <img src={logo1} alt={logo1} className="logo1" />
+                    <div className="activity-card-content">
+                      <div className="first-card">
+                        <h2>{activity.name}</h2>
+                        <p>{activity.description}</p>
+                      </div>
 
-                    <p>
-                      <strong>Présenté par :</strong>{" "}
-                      <Link
-                        className="doctor-link"
-                        to={`/speaker/${activity.presenterId}`}
-                      >
-                        {activity.presenter}
-                      </Link>
-                    </p>
+                      <div className="activity-meta">
+                        <p className="activity-date">
+                          <FaCalendarAlt className="icon" />
+                          <span>{activity.date}</span>
+                        </p>
 
-                    <div className="card-actions">
-                      {reservation ? (
-                        <button
-                          onClick={() =>
-                            handleDeleteReservation(reservation._id)
-                          }
-                          className="delete-button"
-                        >
-                          Annuler réservation
-                        </button>
-                      ) : (
-                        <Link
-                          to={`/reservation/${activity._id}`}
-                          className="reserve-button"
-                        >
-                          Réserver
+                        {/* Trait vertical */}
+                        <div className="divider"></div>
+
+                        <p className="activity-timezone">
+                          🕑 Heure de Paris : <span>{activity.timeParis}</span>
+                        </p>
+
+                        {/* Trait vertical */}
+                        <div className="divider"></div>
+
+                        <p className="activity-timezone">
+                          🕑 Heure de Yaoundé :{" "}
+                          <span>{activity.timeYaounde}</span>
+                        </p>
+                      </div>
+
+                      <div className="activity-info">
+                        <p>
+                          <strong>Modérateur :</strong>{" "}
+                          <Link
+                            className="doctor-link"
+                            to={`/speaker/${activity.presenterId}`}
+                          >
+                            {activity.moderator}
+                          </Link>
+                          <p className="subtitle">
+                            {activity.subtitleModerator}
+                          </p>
+                        </p>
+                        <div className="participant-card">
+                          <p>
+                            <strong>Intervenant :</strong>{" "}
+                            <Link
+                              className="doctor-link"
+                              to={`/speaker/${activity.presenterId}`}
+                            >
+                              {activity.participantOne}
+                            </Link>
+                            <p className="subtitle">
+                              {activity.subtitleParticipantOne}
+                            </p>
+                          </p>
+                          <p>
+                            <strong>Intervenant :</strong>{" "}
+                            <Link
+                              className="doctor-link"
+                              to={`/speaker/${activity.presenterId}`}
+                            >
+                              {activity.participantTwo}
+                            </Link>
+                            <p className="subtitle">
+                              {activity.subtitleParticipantTwo}
+                            </p>
+                          </p>
+                          <p>
+                            <strong>Intervenant :</strong>{" "}
+                            <Link
+                              className="doctor-link"
+                              to={`/speaker/${activity.presenterId}`}
+                            >
+                              {activity.participantThree}
+                            </Link>
+                            <p className="subtitle">
+                              {activity.subtitleParticipantThree}
+                            </p>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="boutton-section">
+                        <div className="card-actions">
+                          {reservation ? (
+                            <button
+                              onClick={() =>
+                                handleDeleteReservation(reservation._id)
+                              }
+                              className="delete-button"
+                            >
+                              Annuler réservation
+                            </button>
+                          ) : (
+                            <Link
+                              to={`/reservation/${activity._id}`}
+                              className="reserve-button"
+                            >
+                              Réserver
+                            </Link>
+                          )}
+                        </div>
+                        {/* <div className="question-container">
+                        <Link to={`/questionnaire`} className="question-button">
+                          Evaluation
                         </Link>
-                      )}
+                      </div> */}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+
+            {/* <button
+              className="arrow-button right"
+              onClick={() => scrollGallery("right")}
+            >
+              <FaArrowRight />
+            </button> */}
           </div>
         </div>
       </div>

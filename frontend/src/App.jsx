@@ -44,6 +44,8 @@ import Administrative from "./member/Administrative.jsx";
 import ConseillerOne from "./member/ConseillerOne.jsx";
 import ConseillerTwo from "./member/ConseillerTwo.jsx";
 import Images from "./components/Images.jsx";
+import Development from "./components/Development.jsx";
+import SeminarHome from "./components/SeminarHome.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -114,7 +116,8 @@ function App() {
             <Route path="/responsable des affaires administratives et diplomatiques" element={<Administrative />} />
             <Route path="/conseiller one" element={<ConseillerOne />} />
             <Route path="/conseiller two" element={<ConseillerTwo />} />
-
+            <Route path="/development" element={<Development/>} />
+            <Route path="/webinaire" element={<SeminarHome/>} />
           </Routes>
         </div>
       </Router>

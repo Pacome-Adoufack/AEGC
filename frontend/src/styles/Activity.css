@@ -1,3 +1,8 @@
+/* .meeting-content{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+} */
 .meeting-content h1{
   text-align: center;
   margin-bottom: 1.5rem;
@@ -6,7 +11,7 @@
 }
 
 .activity-card {
-  min-width: 300px;
+  max-width: 900px;
   background: white;
   border-radius: 10px;
   flex-shrink: 0;
