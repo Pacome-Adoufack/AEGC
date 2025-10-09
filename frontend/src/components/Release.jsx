@@ -2,22 +2,22 @@ import React from "react";
 import "../styles/Release.css";
 import logo from "../assets/logo.png";
 
-// Importation dynamique des PDF depuis le dossier public/pdf
 const pdfFiles = [
   {
     id: 1,
-    title: "Communiqué de presse - Janvier 2025",
-    date: "15/01/2025",
-    description: "Annonce des nouveaux projets de recherche pour l'année 2025",
-    filename: "Communiqué_AEGC (4).pdf",
+    title: "Notre Prochain Webinaire",
+    date: "02/10/2025",
+    description:
+      "Mesurer l´impact des politiques publiques : Comprendre le modèle des différences en différences",
+    filename: "prochain webinaire.pdf",
     thumbnail: logo,
   },
   {
     id: 2,
-    title: "Rapport annuel 2024",
-    date: "10/02/2025",
-    description: "Bilan des activités et réalisations de l'association pour l'année 2024",
-    filename: "rapport-annuel-2024.pdf",
+    title: "Présentation des Bourses de Mobilité AEGC",
+    date: "08/10/2025",
+    description: "Encourager la recherche, renforcer les liens universitaires",
+    filename: "Bourse_AEGC_International.pdf",
     thumbnail: logo,
   },
   {
@@ -32,21 +32,18 @@ const pdfFiles = [
 
 function Release() {
   const handleDownload = (filename) => {
-    // Chemin vers le dossier public/pdf (utilisation directe du chemin relatif)
     const fileUrl = `/pdf/${filename}`;
-
-    // Création d'un lien temporaire pour le téléchargement
     const link = document.createElement("a");
     link.href = fileUrl;
-    link.download = filename;
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const handleView = (filename) => {
-    // Ouverture dans un nouvel onglet
-    window.open(`/pdf/${filename}`, "_blank");
+    const fileUrl = `/pdf/${filename}`;
+    window.open(fileUrl, "_blank");
   };
 
   return (
@@ -60,7 +57,7 @@ function Release() {
         {pdfFiles.map((item) => (
           <div key={item.id} className="release-card">
             <div className="release-thumbnail">
-              <img src={logo} alt={`Miniature ${item.title}`} />
+              <img src={item.thumbnail} alt={`Miniature ${item.title}`} />
               <div className="pdf-label">PDF</div>
             </div>
 

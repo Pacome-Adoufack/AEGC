@@ -144,14 +144,17 @@ const Reservation = () => {
         </div>
         <div className="form-group">
           <label htmlFor="gender">Sexe:</label>
-          <input
-            type="text"
+          <select
             id="gender"
             name="gender"
             value={data.gender}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">-- Sélectionnez votre sexe --</option>
+            <option value="Masculin">Masculin</option>
+            <option value="Féminin">Féminin</option>
+          </select>
         </div>
         <div className="form-group">
           <label htmlFor="profession">Profession:</label>

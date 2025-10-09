@@ -147,9 +147,11 @@ app.post("/api/activities", async (req, res) => {
       participantOne,
       participantTwo,
       participantThree,
+      participantFour,
       subtitleParticipantOne,
       subtitleParticipantTwo,
       subtitleParticipantThree,
+      subtitleParticipantFour,
     } = req.body;
 
     const activity = new Activity({
@@ -165,9 +167,11 @@ app.post("/api/activities", async (req, res) => {
       participantOne,
       participantTwo,
       participantThree,
+      participantFour,
       subtitleParticipantOne,
       subtitleParticipantTwo,
       subtitleParticipantThree,
+      subtitleParticipantFour,
     });
 
     const savedActivity = await activity.save();

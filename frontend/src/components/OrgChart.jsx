@@ -82,7 +82,9 @@ const OrgChart = () => {
             <div className="org-node">
               <div className="org-title">Responsable de la communication</div>
               <div className="org-name">Erwan VOUNDI </div>
-              <div className="org-titel">Étudiant chercheur et Analyste financier</div>
+              <div className="org-titel">
+                Étudiant chercheur et Analyste financier
+              </div>
             </div>
           </Link>
           {/* <Link to="/communication two" className="link">
@@ -114,15 +116,23 @@ const OrgChart = () => {
 
         {/* Niveau 5 - Conseillers et autres */}
         <div className="org-level">
-          <Link to="/censeurs" className="link">
-            <div className="org-node">
-              <div className="org-title">Censeurs</div>
+          <div className="org-node">
+            <div className="org-title">Censeurs</div>
+            <Link to="/censeur one" className="link">
+              <div className="org-name">Dr.Salim Yazid Hamed</div>
+              <div className="org-titel">
+              Docteur en sciences économiques, option ingénierie
+              économique et financière
+              </div>
+            </Link>
+            <Link to="/censeur two" className="link">
               <div className="org-name">Gaëtan Aime BALLA MEKONGO</div>
               <div className="org-titel">
                 Maître en Ingénierie Économique et financière
               </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
+
           <Link
             to="/responsable des affaires administratives et diplomatiques"
             className="link"

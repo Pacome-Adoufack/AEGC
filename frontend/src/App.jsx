@@ -39,13 +39,14 @@ import CommunicationOne from "./member/CommunicationOne.jsx";
 import CommunicationTwo from "./member/CommunicationTwo.jsx";
 import CommissaireCompte from "./member/CommissaireCompte.jsx";
 import Projet from "./member/Projet.jsx";
-import Censeur from "./member/Censeur.jsx";
 import Administrative from "./member/Administrative.jsx";
 import ConseillerOne from "./member/ConseillerOne.jsx";
 import ConseillerTwo from "./member/ConseillerTwo.jsx";
 import Images from "./components/Images.jsx";
 import Development from "./components/Development.jsx";
 import SeminarHome from "./components/SeminarHome.jsx";
+import CenseurOne from "./member/CenseurOne.jsx";
+import CenseurTwo from "./member/CenseurTwo.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -112,7 +113,8 @@ function App() {
             <Route path="/communication two" element={<CommunicationTwo />} />
             <Route path="/commissaire aux comptes" element={<CommissaireCompte />} />
             <Route path="/charges des projets" element={<Projet />} />
-            <Route path="/censeurs" element={<Censeur />} />
+            <Route path="/censeur one" element={<CenseurOne />} />
+            <Route path="/censeur two" element={<CenseurTwo />} />
             <Route path="/responsable des affaires administratives et diplomatiques" element={<Administrative />} />
             <Route path="/conseiller one" element={<ConseillerOne />} />
             <Route path="/conseiller two" element={<ConseillerTwo />} />

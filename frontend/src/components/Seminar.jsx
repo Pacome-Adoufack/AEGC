@@ -167,7 +167,7 @@ const Seminar = () => {
 
                       <div className="activity-info">
                         <p>
-                          <strong>Modérateur :</strong>{" "}
+                          <strong>Modérateur :</strong>{" "} <br />
                           <Link
                             className="doctor-link"
                             to={`/speaker/${activity.presenterId}`}
@@ -180,7 +180,7 @@ const Seminar = () => {
                         </p>
                         <div className="participant-card">
                           <p>
-                            <strong>Intervenant :</strong>{" "}
+                            <strong>Intervenant :</strong>{" "} <br />
                             <Link
                               className="doctor-link"
                               to={`/speaker/${activity.presenterId}`}
@@ -213,6 +213,18 @@ const Seminar = () => {
                             </Link>
                             <p className="subtitle">
                               {activity.subtitleParticipantThree}
+                            </p>
+                          </p>
+                          <p>
+                            <strong>Intervenant :</strong>{" "}
+                            <Link
+                              className="doctor-link"
+                              to={`/speaker/${activity.presenterId}`}
+                            >
+                              {activity.participantFour}
+                            </Link>
+                            <p className="subtitle">
+                              {activity.subtitleParticipantFour}
                             </p>
                           </p>
                         </div>

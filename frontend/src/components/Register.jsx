@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Register.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -16,10 +16,41 @@ export default function Register() {
     university: "",
     password: "",
   });
+
+  const [countries, setCountries] = useState([]);
+  const [phoneCode, setPhoneCode] = useState("");
   const [messageType, setMessageType] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  // ✅ Charger la liste des pays depuis l'API
+  useEffect(() => {
+    fetch("https://restcountries.com/v3.1/all?fields=name,cca2,flags,idd")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Pays chargés:", data);
+
+        const sortedCountries = data
+          .map((country) => {
+            const root = country.idd?.root;
+            const suffix = country.idd?.suffixes?.[0];
+            return {
+              name: country.name?.common || "Inconnu",
+              code: country.cca2,
+              flag: country.flags?.png,
+              callingCode: root && suffix ? `${root}${suffix}` : root || "",
+            };
+          })
+          .filter((c) => c.callingCode !== "")
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        setCountries(sortedCountries);
+      })
+      .catch((err) =>
+        console.error("Erreur lors du chargement des pays:", err)
+      );
+  }, []);
 
   const isPasswordValid = (password) => {
     const passwordRegex =
@@ -29,10 +60,12 @@ export default function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
-    });
+    setData({ ...data, [name]: value });
+
+    if (name === "country") {
+      const selected = countries.find((c) => c.name === value);
+      setPhoneCode(selected ? selected.callingCode : "");
+    }
   };
 
   const handleSubmit = (e) => {
@@ -48,31 +81,24 @@ export default function Register() {
 
     fetch(`${API_BASE_URL}/register`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
       .then((res) => {
-        if (!res.ok) {
+        if (!res.ok)
           return res.text().then((text) => {
             throw new Error(text);
           });
-        }
         return res.json();
       })
       .then((data) => {
         setMessageType("success");
         setMessage("Enregistrement réussi!");
-        console.log("Enregistrement réussi", data);
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        setTimeout(() => navigate("/login"), 2000);
       })
       .catch((error) => {
         setMessageType("error");
         setMessage("Erreur lors de l'enregistrement: " + error.message);
-        console.error("Erreur lors de l'enregistrement", error);
       });
   };
 
@@ -84,6 +110,7 @@ export default function Register() {
       <div className="register-container">
         <form onSubmit={handleSubmit}>
           <h2>S'inscrire</h2>
+
           <label htmlFor="name">Nom:</label>
           <input
             type="text"
@@ -115,34 +142,75 @@ export default function Register() {
           />
 
           <label htmlFor="gender">Sexe:</label>
-          <input
-            type="text"
+          <select
             id="gender"
             name="gender"
             value={data.gender}
             onChange={handleChange}
             required
-          />
-
-          <label htmlFor="telefonNummer">Numéro de téléphone:</label>
-          <input
-            type="text"
-            id="telefonNummer"
-            name="telefonNummer"
-            value={data.telefonNummer}
-            onChange={handleChange}
-            required
-          />
+          >
+            <option value="">-- Sélectionnez votre sexe --</option>
+            <option value="Masculin">Masculin</option>
+            <option value="Féminin">Féminin</option>
+          </select>
 
           <label htmlFor="country">Pays:</label>
-          <input
-            type="text"
+          <select
             id="country"
             name="country"
             value={data.country}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">-- Sélectionnez un pays --</option>
+            {countries.map((c) => (
+              <option key={c.code} value={c.name}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+
+          <label htmlFor="telefonNummer">Numéro de téléphone:</label>
+          <div
+            className="phone-input"
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            {/* On récupère le pays sélectionné */}
+            {data.country &&
+              (() => {
+                const selectedCountry = countries.find(
+                  (c) => c.name === data.country
+                );
+                return selectedCountry ? (
+                  <img
+                    src={selectedCountry.flag}
+                    alt={selectedCountry.name}
+                    width="30"
+                    style={{ marginRight: "8px" }}
+                  />
+                ) : null;
+              })()}
+
+            {/* Indicatif du pays */}
+            <span
+              className="phone-code"
+              style={{ marginRight: "8px", color: "black" }}
+            >
+              {data.country
+                ? countries.find((c) => c.name === data.country)?.callingCode
+                : ""}
+            </span>
+
+            <input
+              type="text"
+              id="telefonNummer"
+              name="telefonNummer"
+              placeholder="Ex: 699123456"
+              value={data.telefonNummer}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
           <label htmlFor="city">Ville:</label>
           <input
@@ -173,7 +241,9 @@ export default function Register() {
               value={data.password}
               onChange={handleChange}
               required
+              autoComplete="current-password"
             />
+
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -188,7 +258,9 @@ export default function Register() {
             </button>
           </div>
 
-          <button className="register-button" type="submit">S'inscrire</button>
+          <button className="register-button" type="submit">
+            S'inscrire
+          </button>
         </form>
       </div>
     </>

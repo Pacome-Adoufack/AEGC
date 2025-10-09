@@ -36,7 +36,7 @@
 }
 
 .register-container input {
-  width: 100%;
+  width: 97%;
   padding: 0.7rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -104,7 +104,6 @@
     transform: translateY(0);
   }
 }
-
 .input-wrapper {
   position: relative;
   display: flex;
@@ -131,6 +130,23 @@
   display: flex;
   align-items: center;
 }
+select {
+  width: 100%;
+  margin-right: 50px;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: #259b2e;
+  outline: none;
+}
+
 
 
 /* Responsive */

@@ -13,7 +13,7 @@ const activitySchema = new mongoose.Schema({
     // },
     description: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     date: {
@@ -37,42 +37,52 @@ const activitySchema = new mongoose.Schema({
     },
     moderator: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     subtitleModerator: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     participantOne: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     participantTwo: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     participantThree: {
         type: String,
-        required: true,
+        required: false,
+        trim: true
+    },
+    participantFour: {
+        type: String,
+        required: false,
         trim: true
     },
     subtitleParticipantOne: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     subtitleParticipantTwo: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     subtitleParticipantThree: {
         type: String,
-        required: true,
+        required: false,
+        trim: true
+    },
+    subtitleParticipantFour: {
+        type: String,
+        required: false,
         trim: true
     },
 }, {

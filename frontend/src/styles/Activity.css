@@ -114,6 +114,10 @@
   color: #333;
   font-weight: 600;
 }
+/* .activity-scroll-container{
+  display: flex;
+  flex-direction: row;
+} */
 
 .activity-meta {
   display: flex;
@@ -276,8 +280,8 @@
   padding: 0.8rem 1rem;
   border-radius: 8px;
   margin-right: 1rem;
+  margin-left: 400px;
 }
-
 .delete-button:hover {
   background-color: rgba(255, 77, 79, 0.1);
   color: #ff1a1d;

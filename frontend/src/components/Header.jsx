@@ -119,6 +119,9 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   AEGC Economic Review
                 </Link>
                 <Link to="/development" onClick={() => setIsMenuOpen(false)}>
+                  Cameroon Economics Review
+                </Link>
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   Management Review
                 </Link>
                 <Link to="/development" onClick={() => setIsMenuOpen(false)}>
@@ -133,10 +136,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
             <li className="dropdown">
               <button className="dropdown-button">Activités</button>
               <div className="dropdown-menu">
-                <Link
-                  to="/seminaire"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+                <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
                   AEGC Webinaire
                 </Link>
                 <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
@@ -147,6 +147,12 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   AEGC Conférence
+                </Link>
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
+                  AEGC Prix
+                </Link>
+                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
+                  AEGC Bourses
                 </Link>
                 <Link to="/images" onClick={() => setIsMenuOpen(false)}>
                   AEGC Photos
