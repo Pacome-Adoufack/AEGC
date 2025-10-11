@@ -24,3 +24,14 @@
       - ${PORT_BACK}:3000
       restart: always
 
+    nginx:
+      image: nginx:latest
+      container_name: nginx_proxy
+      ports:
+        - "80:80"   # HTTP public
+        - "443:443" # HTTPS si tu veux SSL
+      volumes:
+        - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      depends_on:
+        - aegc-front
+
