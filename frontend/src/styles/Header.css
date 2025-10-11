@@ -112,10 +112,10 @@ body {
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.not-Dropdown a:hover,
-.not-Dropdown a:focus {
+/* .not-Dropdown a:hover, */
+/* .not-Dropdown a:focus {
   transform: translateY(4px); /* Déplacement vers le bas */
-}
+} */
 
 /* Version alternative avec pseudo-élément pour un effet plus sophistiqué */
 .not-Dropdown a::after {

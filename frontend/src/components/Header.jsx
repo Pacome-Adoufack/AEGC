@@ -162,7 +162,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
 
             <li className="not-Dropdown">
               <Link
-                to="a"
+                to="/a"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
                   display: "inline-block",
@@ -181,7 +181,27 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 ></span>
               </Link>
             </li>
-
+            <li className="not-Dropdown">
+              <Link
+                to="/formations"
+                onClick={() => setIsMenuOpen(false)}
+                style={{
+                  display: "inline-block",
+                  transition: "transform 0.3s ease, color 0.3s ease",
+                }}
+              >
+                Formations
+                <span
+                  style={{
+                    display: "block",
+                    height: "2px",
+                    width: "0",
+                    background: "#36bb6d",
+                    transition: "width 0.3s ease",
+                  }}
+                ></span>
+              </Link>
+            </li>
             <li className="dropdown">
               <button className="dropdown-button">À propos</button>
               <div className="dropdown-menu">
@@ -201,27 +221,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   Éthique
                 </Link>
               </div>
-            </li>
-            <li className="not-Dropdown">
-              <Link
-                to="/home"
-                onClick={() => setIsMenuOpen(false)}
-                style={{
-                  display: "inline-block",
-                  transition: "transform 0.3s ease, color 0.3s ease",
-                }}
-              >
-                <FaSearch />
-                <span
-                  style={{
-                    display: "block",
-                    height: "2px",
-                    width: "0",
-                    background: "#36bb6d",
-                    transition: "width 0.3s ease",
-                  }}
-                ></span>
-              </Link>
             </li>
           </ul>
         </nav>

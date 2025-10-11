@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
 
 function Research() {
+
+
   return (
-    <div>Research</div>
-  )
+    <div>
+      <h2>Recherche globale</h2>
+    </div>
+  );
 }
 
-export default Research
+export default Research;
