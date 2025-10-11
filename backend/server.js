@@ -15,6 +15,8 @@ import Reservation from "./models/Reservation.js";
 import Subscribe from "./models/Subscribe.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import Image from "./models/Picture.js";
+import Formation from "./models/Formations.js";
+import ReservationFormation from "./models/ReservationFormation.js";
 import multer from "multer";
 import upload from "./middlewares/upload.js";
 import path from "path";
@@ -552,6 +554,89 @@ app.get("/images", async (req, res) => {
     res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 });
+app.get("/api/formations", async (req, res) => {
+  try {
+    const formations = await Formation.find();
+    res.json(formations);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+app.post("/api/formations", async (req, res) => {
+  try {
+    const formation = new Formation(req.body);
+    const saved = await formation.save();
+    res.status(201).json(saved);
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: err.message });
+  }
+});
+app.get("/api/formations/:id", async (req, res) => {
+  try {
+    const formation = await Formation.findById(req.params.id);
+    if (!formation) {
+      return res.status(404).json({ error: "Formation non trouvée" });
+    }
+    res.json(formation);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+app.post("/api/reservation-formation", authMiddleware, async (req, res) => {
+  try {
+    const { firstName,lastName, email, phone, formationId, message } = req.body;
+    const user = req.user.id;
+
+    if (!user || !firstName || !lastName || !email || !phone || !formationId) {
+      return res.status(400).json({ error: "Alle Felder sind erforderlich." });
+    }
+
+    const newReservation = new ReservationFormation({
+      user,
+      firstName,
+      lastName,
+      email,
+      phone,
+      formationId,
+      message,
+    });
+
+    await newReservation.save();
+
+    res.status(201).json({ message: "Réservation réussie !" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la création de la réservation." });
+  }
+});
+app.get("/api/reservation-formation", authMiddleware, async (req, res) => {
+  try {
+    const reservations = await ReservationFormation.find({ user: req.user.id }).populate('formationId');
+    res.json(reservations);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des réservations." });
+  }
+});
+app.delete("/api/reservation-formation/:id", async (req, res) => {
+  try {
+    const reservation = await ReservationFormation.findByIdAndDelete(req.params.id);
+    if (!reservation) {
+      return res.status(404).json({ error: "Réservation non trouvée." });
+    }
+    res.json({ message: "Réservation annulée avec succès." });
+  } catch (err) {
+    res.status(500).json({ error: "Erreur lors de l'annulation de la réservation." });
+  }
+});
+
 
 app.listen(3000, "0.0.0.0", () => {
   console.log("Server is running on http://0.0.0.0:3000");
