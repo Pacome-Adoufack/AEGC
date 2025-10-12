@@ -31,7 +31,7 @@
         - "80:80"   # HTTP public
         - "443:443" # HTTPS si tu veux SSL
       volumes:
-        - ./nginx/conf.d:/etc/nginx/conf.d:ro
+        - /home/user00adm/nginx/conf.d:/etc/nginx/conf.d:ro
       depends_on:
         - aegc-front
 
