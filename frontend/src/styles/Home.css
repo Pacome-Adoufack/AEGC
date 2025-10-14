@@ -315,12 +315,14 @@
 
 /* Media Queries */
 @media (max-width: 1048px) {
-.first-section{
-  
+.first-image{
+  height: auto;
 }
   .image-first {
     width: 75%;
     margin-left: 200px;
+    object-fit: contain;
+    height: auto;
   }
 
   .first-section {
@@ -340,6 +342,19 @@
 @media (max-width: 768px) {
   .home-container {
     width: 90%;
+  }
+  .first-section{
+    margin: -20px -50px;
+  }
+  .second-section{
+    margin: -20px -50px;
+  }
+  .picture-section{
+    margin: 20px -50px;
+  }
+  .newsletter-section{
+    margin: -20px -70px;
+    margin-bottom: -35px;
   }
 
   .first-image {
@@ -378,39 +393,19 @@
 }
 
 @media (max-width: 540px) {
-  .first-section-title {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
+  .first-image{
+    margin: 0px -20px 80px -20px;
   }
+  .image-second-container{
+    width: 50%;
+    height: 50%;
+    top: 30px;
 
-  .activity-images-grid {
-    display: flex;
-    flex-direction: column;
-    padding: 0 10px;
-    gap: 20px;
   }
-
-  .activity-card img {
-    width: 100%;
-    height: auto;
+  .image-second{
+    width: 90%;
   }
-
-  .activity-card-content h2 {
-    font-size: 1rem;
-  }
-
-  .activity-card-content p {
-    font-size: 0.9rem;
-  }
-
-  .activity-date,
-  .activity-location {
-    font-size: 0.85rem;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .reserve-button {
-    width: 100%;
-  }
+.film-container{
+  margin-bottom: -70px;
+}
 }

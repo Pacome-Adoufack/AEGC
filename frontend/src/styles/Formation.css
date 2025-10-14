@@ -46,7 +46,7 @@
 .formation-card img {
   width: 100%;
   height: 220px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 20px;
   background-color: #007bff;
 }

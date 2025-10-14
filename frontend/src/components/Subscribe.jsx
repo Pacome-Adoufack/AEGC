@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/Subscripe.css";
 import { useState } from "react";
 import { API_BASE_URL } from "../components/Url";
+import aboner from "../assets/abonement.jpg";
 
 function Subscribe() {
   const [data, setData] = useState({
@@ -57,7 +58,7 @@ function Subscribe() {
           </div>
         )}
       <img
-        src="/src/assets/image1.png"
+        src={aboner}
         alt="newsletter"
         className="subscribe-image"
       />

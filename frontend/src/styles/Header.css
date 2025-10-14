@@ -226,6 +226,9 @@ body {
 }
 
 @media (min-width: 1048px) {
+  .dropdown{
+    font-size: medium;
+  }
   .hamburger-icon {
     display: none;
   }
@@ -377,24 +380,43 @@ body {
     padding: 20px 0;
     max-height: 500px;
     background-color: #0084ff;
-    margin-top: 300px;
+    height: auto;
+    overflow: visible;
+    margin-top: 400px;
   }
-
+.nav_account .nav_list {
+    margin-bottom: 20px;
+  }
   .nav_list {
     flex-direction: column;
     gap: 10px;
     padding: 0 20px;
     width: 100%;
+    margin-bottom: -40px;
   }
 
   .nav_list a,
-  .nav_list select
-  .nav_list .dropdown{
+  .nav_list select,
+  .nav_list .dropdown,
+  .nav_list .dropdown-button {
+    display: block;
     font-size: 18px;
     padding: 12px 0;
     width: 100%;
     text-align: left;
+    color: #e0e0e0;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
   }
+  
+  .nav_list a:hover,
+  .nav_list .dropdown-button:hover {
+    background-color: #36bb6d;
+    color: #fff;
+  }
+  
 
   .logout-button {
     font-size: 16px;
@@ -402,5 +424,9 @@ body {
     width: 100%;
     text-align: center;
   }
-  
+  .dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
 }

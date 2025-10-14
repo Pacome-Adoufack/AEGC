@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL } from "../components/Url";
 import "../styles/FormationsDetails.css";
-import logo from "../assets/logo.png";
+import logo from "../assets/formation.png";
 
 const FormationsCard = () => {
   const { formationId } = useParams();

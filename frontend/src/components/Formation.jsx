@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Formation.css";
-import logo from "../assets/logo.png";
+import logo from "../assets/formation.png";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../components/Url"; // pense à vérifier que ce fichier contient bien ton URL de base, ex: http://localhost:3000
 

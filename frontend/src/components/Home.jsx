@@ -70,7 +70,6 @@ const Home = () => {
         <div className="image-second-container">
           <img src={logo} alt="" className="image-second" />
         </div>
-        <div>
           <div className="film-container">
             <div className="wave"></div>
             <button className="film-button" onClick={handlePlay}>
@@ -92,7 +91,6 @@ const Home = () => {
             </div>
           )}
         </div>
-      </div>
       <section className="first-section">
         <SeminarHome />
       </section>
