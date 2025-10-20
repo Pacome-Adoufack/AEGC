@@ -2,4 +2,4 @@
 export const API_BASE_URL = "http://localhost:3000";
 
 // Pour la Production
-// export const API_BASE_URL = "http://aegc-web.com:5400";
+// export const API_BASE_URL = "https://back.aegc-web.com";
