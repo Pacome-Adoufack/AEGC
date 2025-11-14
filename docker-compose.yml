@@ -6,6 +6,7 @@
         dockerfile: Dockerfile
       container_name: aegc-front-${APP_VERSION}
       image: aegc-front:${APP_VERSION}
+      #pull_policy: never
       env_file:
         - ./.env
       ports:
@@ -14,7 +15,7 @@
       environment:
         - VIRTUAL_HOST=aegc-web.com
         - LETSENCRYPT_HOST=aegc-web.com
-        - LETSENCRYPT_EMAIL=cresson@gmail.com
+        - LETSENCRYPT_EMAIL=cressonmbeng@gmail.com
       networks:
         - web
     
@@ -24,6 +25,7 @@
         dockerfile: Dockerfile
       container_name: aegc-back-${APP_VERSION}
       image: aegc-back:${APP_VERSION}
+      #pull_policy: never
       env_file:
         - ./.env
       ports:
@@ -32,7 +34,7 @@
       environment:
         - VIRTUAL_HOST=back.aegc-web.com
         - LETSENCRYPT_HOST=back.aegc-web.com
-        - LETSENCRYPT_EMAIL=cresson@gmail.com
+        - LETSENCRYPT_EMAIL=cressonmbeng@gmail.com
       networks:
         - web
 
@@ -64,7 +66,7 @@
         - nginx-proxy
       environment:
         - NGINX_PROXY_CONTAINER=nginx-proxy
-        - DEFAULT_EMAIL=cresson@gmail.com
+        - DEFAULT_EMAIL=cressonmbeng@gmail.com
       networks:
         - web
       
