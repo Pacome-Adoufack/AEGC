@@ -1,4 +1,6 @@
 import React from "react";
+import "../styles/Member.css";
+import commissaireImage from "../assets/commissaire image.png";
 
 const CommissaireCompte = () => {
   return (
@@ -6,32 +8,30 @@ const CommissaireCompte = () => {
       <div className="relation-card">
         <h1 className="relation-title">Commissaire aux comptes de l'AEGC</h1>
         <img
-          src="https://res.cloudinary.com/sedomicilier/image/upload/f_auto,q_auto/v1626092684/fiche/page/v3_side_photo/764/side-president-association.png"
+          src={commissaireImage}
           alt="Président de l'association"
           className="relation-image"
         />
         <p className="relation-description">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure id qui
-          doloribus nobis. Doloribus totam sint porro consectetur tempore
-          voluptatem amet, delectus illo animi soluta quod mollitia corporis
-          quas recusandae similique laboriosam nobis fugit in praesentium
-          dolorem facere illum harum ducimus. Aut facere cum minima perspiciatis
-          assumenda mollitia cupiditate repudiandae debitis ratione autem
-          accusantium reprehenderit, praesentium, dolor ad laborum animi!
-          Assumenda natus, omnis placeat eos blanditiis odit explicabo sapiente,
-          fugit fuga, aliquam magni minima magnam. Laboriosam fugiat, ipsam
-          voluptates quo maxime perspiciatis ut enim consequuntur, fugit nam
-          quae quisquam ex voluptatem non temporibus illo vel, eius officia
-          voluptatibus quia iusto voluptas? Cupiditate ipsam nihil dolores unde
-          voluptatum porro mollitia deleniti, minus at enim modi possimus ipsa
-          fugiat, incidunt, perspiciatis iure animi magnam accusantium nostrum.
-          Nobis sapiente ducimus necessitatibus eaque maxime repellat vitae
-          impedit est illo odit. Voluptatibus nam doloribus soluta odit
-          reiciendis quidem porro libero atque, est ipsa repudiandae quisquam?
+          MANY Patrick est un Ingénieur Économiste et Financier. Il a soutenu
+          son mémoire à l'Université de Yaoundé 2 SOA (Cameroun) sur le thème :
+          Effets de la culture sur le capital humain et la croissance économique
+          en Afrique subsaharienne . Il est actuellement commissaire aux comptes
+          de l'Association des Économistes et Gestionnaires du Cameroun (AEGC).
+          Ses travaux portent principalement sur les industries culturelles et
+          créatives ainsi que les risques bancaires. Il a récemment participé à
+          la 1er édition des olympiades du marché financier d’Afrique Centrale
+          organisée par la Commission de surveillance des marchés financiers
+          d’Afrique Centrale (COSUMAF) au Cameroun. Parallèlement à ses
+          activités de recherche, il intervient régulièrement dans les activités
+          de la Conférence Banque Finance (Cobaf) du côté de l’université
+          Catholique d’Afrique Centrale. Il est également créateur de visuels
+          (flyers, spot vidéo, affiches …). <br /> Coordonnées: (+237) 656367040 <br />
+          many_patrick@yahoo.com
         </p>
         <div className="relation-download">
           <a
-            href="/pdf/CV_tebou_Marius.pdf"
+            href="/pdf/CV Many (2).pdf"
             download
             className="relation-button"
           >

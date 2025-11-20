@@ -33,12 +33,12 @@ const ConseillerTwo = () => {
         </p>
         <div className="relation-download">
           <a
-            href="/pdf/CV_tebou_Marius.pdf"
+            href="/pdf/CV michele.pdf"
             download
             className="relation-button"
           >
-            📄 Télécharger le CV du{" "}
-            <strong>Chargé des relations extérieures de l'AEGC</strong>
+            📄 Télécharger le CV de la{" "}
+            <strong>Conseillère de l'AEGC</strong>
           </a>
         </div>
       </div>

@@ -20,12 +20,12 @@ const CommunicationOne = () => {
         </p>
         <div className="relation-download">
           <a
-            href="/pdf/CV_tebou_Marius.pdf"
+            href="/pdf/CV Erwan Voundi .pdf"
             download
             className="relation-button"
           >
             📄 Télécharger le CV du{" "}
-            <strong>Chargé des relations extérieures de l'AEGC</strong>
+            <strong>Chargé de la communication de l'AEGC</strong>
           </a>
         </div>
       </div>

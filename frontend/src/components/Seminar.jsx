@@ -92,8 +92,8 @@ const Seminar = () => {
   };
 
   return (
-    <div className="newspaper-layout">
-      <nav className="newspaper-nav">
+   <>
+      {/* <nav className="newspaper-nav">
         <ul>
           <li>
             <Link to="/seminaires">AEGC Séminaires</Link>
@@ -108,7 +108,7 @@ const Seminar = () => {
             <Link to="/images">AEGC Photos</Link>
           </li>
         </ul>
-      </nav>
+      </nav> */}
 
       <div className="meeting-container">
         <div className="meeting-content">
@@ -215,7 +215,7 @@ const Seminar = () => {
                               {activity.subtitleParticipantThree}
                             </p>
                           </p>
-                          <p>
+                          {/* <p>
                             <strong>Intervenant :</strong>{" "}
                             <Link
                               className="doctor-link"
@@ -226,7 +226,7 @@ const Seminar = () => {
                             <p className="subtitle">
                               {activity.subtitleParticipantFour}
                             </p>
-                          </p>
+                          </p> */}
                         </div>
                       </div>
 
@@ -271,7 +271,7 @@ const Seminar = () => {
           </div>
         </div>
       </div>
-    </div>
+      </>
   );
 };
 

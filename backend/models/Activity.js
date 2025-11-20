@@ -6,11 +6,6 @@ const activitySchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    // image: {
-    //     type: String,
-    //     required: true,
-    //     trim: true
-    // },
     description: {
         type: String,
         required: false,
@@ -32,7 +27,7 @@ const activitySchema = new mongoose.Schema({
     },
     location: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     moderator: {
@@ -65,6 +60,21 @@ const activitySchema = new mongoose.Schema({
         required: false,
         trim: true
     },
+    participantFive: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    participantSix: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    participantSeven: {
+        type: String,
+        required: false,
+        trim: true
+    },
     subtitleParticipantOne: {
         type: String,
         required: false,
@@ -81,6 +91,21 @@ const activitySchema = new mongoose.Schema({
         trim: true
     },
     subtitleParticipantFour: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    subtitleParticipantFive: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    subtitleParticipantSix: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    subtitleParticipantSeven: {
         type: String,
         required: false,
         trim: true

@@ -127,19 +127,14 @@ const SeminarHome = () => {
                     <div className="activity-meta">
                       <p className="activity-date">
                         <FaCalendarAlt className="icon" />
-                        <span>
-                          {activity.date}
-                        </span>
+                        <span>{activity.date}</span>
                       </p>
 
                       {/* Trait vertical */}
                       <div className="divider"></div>
 
                       <p className="activity-timezone">
-                        🕑 Heure de Paris :{" "}
-                        <span>
-                          {activity.timeParis}
-                        </span>
+                        🕑 Heure de Paris : <span>{activity.timeParis}</span>
                       </p>
 
                       {/* Trait vertical */}
@@ -147,15 +142,13 @@ const SeminarHome = () => {
 
                       <p className="activity-timezone">
                         🕑 Heure de Yaoundé :{" "}
-                        <span>
-                          {activity.timeYaounde}
-                        </span>
+                        <span>{activity.timeYaounde}</span>
                       </p>
                     </div>
 
                     <div className="activity-info">
-                      <p>
-                        <strong>Modérateur :</strong>{" "} <br />
+                      <p className="moderator">
+                        <strong>Modérateur :</strong> {""}
                         <Link
                           className="doctor-link"
                           to={`/speaker/${activity.presenterId}`}
@@ -165,15 +158,17 @@ const SeminarHome = () => {
                         <p className="subtitle">{activity.subtitleModerator}</p>
                       </p>
                       <div className="participant-card">
-                      <p>
-                          <strong>Intervenant :</strong>{" "} <br />
+                        <p>
+                          <strong>Intervenant :</strong>{" "}
                           <Link
                             className="doctor-link"
                             to={`/speaker/${activity.presenterId}`}
                           >
                             {activity.participantOne}
                           </Link>
-                          <p className="subtitle">{activity.subtitleParticipantOne}</p>
+                          <p className="subtitle">
+                            {activity.subtitleParticipantOne}
+                          </p>
                         </p>
                         <p>
                           <strong>Intervenant :</strong>{" "}
@@ -183,7 +178,9 @@ const SeminarHome = () => {
                           >
                             {activity.participantTwo}
                           </Link>
-                          <p className="subtitle">{activity.subtitleParticipantTwo}</p>
+                          <p className="subtitle">
+                            {activity.subtitleParticipantTwo}
+                          </p>
                         </p>
                         <p>
                           <strong>Intervenant :</strong>{" "}
@@ -193,9 +190,11 @@ const SeminarHome = () => {
                           >
                             {activity.participantThree}
                           </Link>
-                          <p className="subtitle">{activity.subtitleParticipantThree}</p>
+                          <p className="subtitle">
+                            {activity.subtitleParticipantThree}
+                          </p>
                         </p>
-                        <p>
+                        {/* <p>
                           <strong>Intervenant :</strong>{" "}
                           <Link
                             className="doctor-link"
@@ -203,8 +202,10 @@ const SeminarHome = () => {
                           >
                             {activity.participantFour}
                           </Link>
-                          <p className="subtitle">{activity.subtitleParticipantFour}</p>
-                        </p>
+                          <p className="subtitle">
+                            {activity.subtitleParticipantFour}
+                          </p>
+                        </p> */}
                       </div>
                     </div>
 

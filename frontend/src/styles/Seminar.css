@@ -5,6 +5,14 @@
     font-size: 2rem;
     color: #2c3e50;
   }
+  .meeting-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    width: 90%;
+    margin: 0 auto;
+  }
   /* .activity-scroll-container{
     display: flex;
     flex-direction: column;
@@ -15,6 +23,7 @@
     border-radius: 10px;
     flex-shrink: 0;
     overflow: hidden;
+    margin-right: 100px;
   }
   .activity-card:hover {
     transform: translateY(-8px);

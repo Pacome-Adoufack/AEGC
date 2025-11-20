@@ -42,7 +42,7 @@ const SecretaireGeneral = () => {
         </p>
         <div className="relation-download">
           <a
-            href="/pdf/CV_blaise_ONDOUA_BEYENE.pdf"
+            href="/pdf/CV ONDOUA BEYENE Blaise.pdf"
             download
             className="relation-button"
           >

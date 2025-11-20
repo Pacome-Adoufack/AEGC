@@ -6,10 +6,10 @@ const pdfFiles = [
   {
     id: 1,
     title: "Notre Prochain Webinaire",
-    date: "02/10/2025",
+    date: "28/11/2025",
     description:
-      "Mesurer l´impact des politiques publiques : Comprendre le modèle des différences en différences",
-    filename: "prochain webinaire.pdf",
+      "De la donnée à la décision: Néttoyage, Instruments, Estimations et Prévisions en Micro et Macroéconomie - Applications en Santé de Banque",
+    filename: "Communiqué_AEGC_Novembre_2025 (1).pdf",
     thumbnail: logo,
   },
   {

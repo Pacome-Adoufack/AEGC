@@ -139,15 +139,15 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
                   AEGC Webinaire
                 </Link>
-                <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
+                {/* <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
                   AEGC Séminaire
-                </Link>
-                <Link
+                </Link> */}
+                {/* <Link
                   to="/activity/conference"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   AEGC Conférence
-                </Link>
+                </Link> */}
                 <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                   AEGC Prix
                 </Link>
@@ -162,7 +162,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
 
             <li className="not-Dropdown">
               <Link
-                to="/a"
+                to="/development"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
                   display: "inline-block",

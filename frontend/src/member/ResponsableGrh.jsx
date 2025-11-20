@@ -1,4 +1,6 @@
 import React from "react";
+import "../styles/Member.css";
+import rhImage from "../assets/rh.png";
 
 function ResponsableGrh() {
   return (
@@ -6,28 +8,28 @@ function ResponsableGrh() {
       <div className="relation-card">
         <h1 className="relation-title">Responsable GRH de l'AEGC</h1>
         <img
-          src="https://res.cloudinary.com/sedomicilier/image/upload/f_auto,q_auto/v1626092684/fiche/page/v3_side_photo/764/side-president-association.png"
+          src={rhImage}
           alt="Président de l'association"
           className="relation-image"
         />
         <p className="relation-description">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iure id qui
-          doloribus nobis. Doloribus totam sint porro consectetur tempore
-          voluptatem amet, delectus illo animi soluta quod mollitia corporis
-          quas recusandae similique laboriosam nobis fugit in praesentium
-          dolorem facere illum harum ducimus. Aut facere cum minima perspiciatis
-          assumenda mollitia cupiditate repudiandae debitis ratione autem
-          accusantium reprehenderit, praesentium, dolor ad laborum animi!
-          Assumenda natus, omnis placeat eos blanditiis odit explicabo sapiente,
-          fugit fuga, aliquam magni minima magnam. Laboriosam fugiat, ipsam
-          voluptates quo maxime perspiciatis ut enim consequuntur, fugit nam
-          quae quisquam ex voluptatem non temporibus illo vel, eius officia
-          voluptatibus quia iusto voluptas? Cupiditate ipsam nihil dolores unde
-          voluptatum porro mollitia deleniti, minus at enim modi possimus ipsa
-          fugiat, incidunt, perspiciatis iure animi magnam accusantium nostrum.
-          Nobis sapiente ducimus necessitatibus eaque maxime repellat vitae
-          impedit est illo odit. Voluptatibus nam doloribus soluta odit
-          reiciendis quidem porro libero atque, est ipsa repudiandae quisquam?
+          Pierre Cyrille KINFACK est doctorant en Gestion des Ressources
+          Humaines à l’Université de Yaoundé II, spécialisé dans les thématiques
+          du management humain, des TIC et du télétravail. Sa thèse porte sur le
+          lien entre télétravail et bien-être au travail dans le contexte des
+          universités camerounaises. Il cumule une solide expérience académique
+          et professionnelle : plus de cinq années d’enseignement (IPES et
+          université), l’encadrement d’étudiants (rapports de stage, mémoires),
+          et des fonctions de direction académique et administrative à l’ISAAPE.
+          Son expertise s’étend également à l’analyse de données qualitatives
+          (Nvivo, Maxqda). Auteur et co-auteur de plusieurs publications
+          scientifiques dans le domaine du management public, du télétravail et
+          de la transformation organisationnelle, il est membre actif de
+          laboratoires et réseaux de recherche tels que ERMASMOP-Afrique,
+          LaReMap et CEDIMES. Doté d’un sens du contact, d’une forte capacité
+          d’adaptation et de rigueur scientifique, il allie compétences en
+          gestion académique, recherche scientifique et management
+          organisationnel.
         </p>
         <div className="relation-download">
           <a
@@ -36,7 +38,7 @@ function ResponsableGrh() {
             className="relation-button"
           >
             📄 Télécharger le CV du{" "}
-            <strong>Chargé des relations extérieures de l'AEGC</strong>
+            <strong>Responsable des Ressources Humaines de l'AEGC</strong>
           </a>
         </div>
       </div>

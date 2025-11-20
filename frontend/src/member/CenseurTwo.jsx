@@ -32,7 +32,7 @@ const CenseurTwo = () => {
             className="relation-button"
           >
             📄 Télécharger le CV du{" "}
-            <strong>Chargé des relations extérieures de l'AEGC</strong>
+            <strong>Censeur Adjoint de l'AEGC</strong>
           </a>
         </div>
       </div>

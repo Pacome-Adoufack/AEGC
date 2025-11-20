@@ -330,11 +330,24 @@
   }
 
   .image-second-container {
+    width: 50%;
+    height: 200px; /* ✅ garde une hauteur visible */
     top: 100px;
     left: 10px;
+    background-color: #F39C12; /* réaffirme la couleur */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .image-second {
+    position: relative; /* ✅ évite qu’elle sorte du conteneur */
+    width: 80%;
+    height: auto;
+    top: 40px;
+    left: 0;
   }
   .film-container{
-    bottom: 150px;
+    bottom: 80px;
     left: 10px;
   }
 }
@@ -369,7 +382,7 @@
 
   .image-second {
     width: 80%;
-    top: -80px;
+    top: 40px;
     left: 10px;
   }
   .film-container{
@@ -409,3 +422,60 @@
   margin-bottom: -70px;
 }
 }
+@media (max-width: 400px) {
+  .first-image {
+    display: flex;
+    flex-direction: column; /* les images l'une sous l'autre */
+    align-items: center; /* centrer horizontalement */
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+
+  .image-first {
+    width: 100%;
+    height: auto;
+    margin: 0 auto 20px auto; /* espace entre les images */
+    object-fit: contain;
+  }
+
+  .image-second-container {
+    position: static; /* plus de décalage absolu */
+    width: 100%;
+    height: 250px;
+    margin: 0 auto 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-second {
+    width: 100%;
+    height: auto;
+    position: static;
+    margin-top: 50px;
+  }
+
+  .film-container {
+    position: absolute;
+    margin-bottom: -50px;
+    margin-left: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wave {
+    width: 40px;
+    height: 40px;
+    background-color: #007bff;
+  }
+
+  .film-button a {
+    font-size: 16px;
+  }
+}
+

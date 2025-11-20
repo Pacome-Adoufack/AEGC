@@ -27,11 +27,11 @@ const Tresorier = () => {
         </p>
         <div className="relation-download">
           <a
-            href="/pdf/CV_Ines_Perolde_ZEH.pdf"
+            href="/pdf/CVZEH June 2025_105451.pdf"
             download
             className="relation-button"
           >
-            📄 Télécharger le CV du <strong>Trésorier de l'AEGC</strong>
+            📄 Télécharger le CV de la <strong>Trésorière de l'AEGC</strong>
           </a>
         </div>
       </div>

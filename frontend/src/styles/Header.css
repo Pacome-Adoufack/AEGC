@@ -225,7 +225,7 @@ body {
   padding-left: 22px;
 }
 
-@media (min-width: 1048px) {
+/* @media (min-width: 1048px) {
   .dropdown{
     font-size: medium;
   }
@@ -261,10 +261,10 @@ body {
   .dropdown:hover .dropdown-menu {
     display: block;
   }
-}
+} */
 
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .header{
     height: 200px;
   }
@@ -291,8 +291,8 @@ body {
 
   .dropdown-menu a {
     padding-left: 30px;
-  }
-}
+  } */
+
 /* Bouton de déconnexion */
 .logout-button {
   background-color: transparent;
@@ -352,7 +352,7 @@ body {
 }
 
 /* Responsive Mobile */
-@media (max-width: 768px) {
+@media (max-width: 770px) {
   .hamburger{
     display: block;
   }
@@ -368,7 +368,8 @@ body {
     display: none;
     flex-direction: column;
     width: 100%;
-    overflow: hidden;
+    max-height: none; /* permet d’afficher tout le contenu */
+    overflow: visible; /* laisse le menu déroulant dépasser si nécessaire */
     padding: 0;
     margin-top: 100px;
     max-height: 0;
@@ -376,13 +377,15 @@ body {
   }
 
   .header_nav.open {
-    display: flex;
-    padding: 20px 0;
-    max-height: 500px;
+    width: 50% !important;  /* viewport width = tout l’écran */
+    margin-top: 0 !important; /* supprime le grand espace en haut */
     background-color: #0084ff;
-    height: auto;
-    overflow: visible;
-    margin-top: 400px;
+    position: fixed; /* optionnel si tu veux que le menu couvre le haut */
+    right: 0;
+    top: 15%;
+    z-index: 2000;
+    max-height: none !important; /* supprime la limite de hauteur */
+    overflow: visible !important; /* permet au contenu de s’afficher */
   }
 .nav_account .nav_list {
     margin-bottom: 20px;
@@ -429,4 +432,24 @@ body {
     visibility: visible;
     transform: translateY(0);
   }
+  .dropdown-menu {
+    position: relative !important;
+    width: 100% !important;
+    max-height: 300px; /* ou 400px selon la longueur */
+    overflow-y: auto;  /* active le scroll vertical */
+    background-color: #1e1e2f !important; /* garde ton fond noir */
+    z-index: 3000;
+  }
 }
+@media (max-width: 400px) {
+  .header_nav.open {
+    width: 60% !important;  /* viewport width = tout l’écran */
+    margin-top: 0 !important; /* supprime le grand espace en haut */
+    position: fixed; /* optionnel si tu veux que le menu couvre le haut */
+    right: 30px;
+    top: 15%;
+    z-index: 2000;
+  }
+}
+
+

@@ -84,7 +84,7 @@ const Home = () => {
                   ✕
                 </button>
                 <video ref={videoRef} width="800" controls>
-                  <source src={video} type="video/mp4" />
+                  {/* <source src={video} type="video/mp4" /> */}
                   Votre navigateur ne supporte pas la lecture de vidéos.
                 </video>
               </div>

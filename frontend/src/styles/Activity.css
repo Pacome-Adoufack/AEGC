@@ -6,7 +6,7 @@
 .meeting-content h1 {
   text-align: center;
   margin-bottom: 1.5rem;
-  font-size: 2rem;
+  font-size: rem;
   color: #2c3e50;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .activity-card h2 {
-  font-size: 1.6rem;
+  font-size: 2.5rem;
   margin: 0 0 1.2rem 0;
   color: #1a1a1a;
   font-weight: 600;
@@ -65,7 +65,7 @@
   border-radius: 12px;
   margin-top: 15px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12px;
   font-family: "Helvetica Neue", Arial, sans-serif;
 }
@@ -295,27 +295,138 @@
 /* Responsive Design */
 @media (max-width: 1048px) {
   .activity-card {
-    width: 100%;
-  }
-  .first-card {
-    width: 100%;
-  }
-  .activity-meta {
-    width: 800px;
-  }
-}
-@media (max-width: 768px) {
-  .activity-card {
+    max-width: 100% !important;
     width: 100%;
     margin-right: 0;
   }
+
   .first-card {
-    width: 500px;
+    width: 180% !important;
+    margin: 0 auto;
   }
-  .first-card h2 {
-    width: 100%;
-    font-size: 2rem;
+
+  .activity-meta {
+    flex-direction: row;
+    margin-left: 20px; /* Réduit la marge sur mobile */
+    width: calc(100% - 40px); /* Ajuste en conséquence */
+    flex-wrap: wrap; /* Permet le retour à la ligne si nécessaire */
+  }
+
+  .activity-info {
+    width: 150% !important;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center; /* centre tous les enfants horizontalement */
+    text-align: center; /* centre le texte */
+    margin-left: 50px;
+  }
+
+  .activity-info .moderator {
+    margin: 0; /* plus besoin de margin auto */
+  }
+
+  .participant-card {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr); /* ✅ 2 colonnes */
+    gap: 15px;
+    text-align: center;
+  }
+  .boutton-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -200px;
+  }
+  .activity-info p {
+    font-size: 16px !important;
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  .first-card {
+    margin-bottom: 20px;
+  }
+  .activity-info p {
+    font-size: 16px !important;
+  }
+  .activity-meta{
+    margin-left: 50px !important;
+  }
+  .activity-meta p{
+    font-size: 16px !important;
+  }
+  .boutton-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -30px;
+  }
+}
+@media (max-width: 540px) {
+  .logo1 {
+    width: 50% !important;
+    margin-left: -200px;
+    margin-bottom: -50px;
+    margin-top: -40px;
+  }
+  .activity-card {
+    max-width: 150% !important;
+    width: 150%;
+    margin-right: 0;
+  }
+.first-card{
+    width: 130% !important;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+  .first-card h2 {
+    font-size: 20px !important; /* cible le h2 */
+  }
+
+  .first-card p {
+    font-size: 20px !important; /* cible le p */
+  }
+  .activity-info{
+    margin-left: -50px;
+  }
+  .participant-card {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    text-align: center;
+  }
+  .boutton-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -100px;
+  }
+}
+@media (max-width: 400px){
+  .meeting-content h1 {
+    font-size: 1.5rem !important;
+  }
+  .logo1 {
+    width: 50% !important;
+    height: 100px !important;
+    margin-left: -350px;
+    margin-top: -10px;
+    margin-bottom: -10px;
+  }
+  .first-card{
+    width: 110% !important;
+    margin-left: -20px;
+    margin-bottom: 20px;
+  }
+  .activity-card {
+    max-width: 200% !important;
+    width: 200%;
+    margin-right: 0;
+  }
+  .activity-meta{
+    margin-left: 10px !important;
+  }
+  .activity-info{
+    display: grid !important;
+    margin-left: -80px;
+  }
 }

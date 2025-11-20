@@ -1,5 +1,6 @@
 import React from "react";
 import censeur1 from "../assets/censeurOne.png";
+import "../styles/Member.css";
 
 const CenseurOne = () => {
   return (
@@ -38,12 +39,12 @@ const CenseurOne = () => {
         </p>
         <div className="relation-download">
           <a
-            href="/pdf/CV_tebou_Marius.pdf"
+            href="*"
             download
             className="relation-button"
           >
             📄 Télécharger le CV du{" "}
-            <strong>Chargé des relations extérieures de l'AEGC</strong>
+            <strong>Censeur de l'AEGC</strong>
           </a>
         </div>
       </div>
