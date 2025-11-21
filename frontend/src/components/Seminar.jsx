@@ -125,6 +125,9 @@ const Seminar = () => {
 
             <div className="activity-scroll-container" id="scroll-gallery">
               {activities.map((activity) => {
+                const seminarDate = new Date(activity.date); // activité.date doit être au format YYYY-MM-DD ou similaire
+                const now = new Date();
+                const isPast = seminarDate < now;
                 const reservation = reservations.find((r) => {
                   if (!r.activity) return false;
                   const rId =
@@ -179,83 +182,57 @@ const Seminar = () => {
                           </p>
                         </p>
                         <div className="participant-card">
-                          <p>
-                            <strong>Intervenant :</strong>{" "} <br />
-                            <Link
-                              className="doctor-link"
-                              to={`/speaker/${activity.presenterId}`}
-                            >
-                              {activity.participantOne}
-                            </Link>
-                            <p className="subtitle">
-                              {activity.subtitleParticipantOne}
-                            </p>
-                          </p>
-                          <p>
-                            <strong>Intervenant :</strong>{" "}
-                            <Link
-                              className="doctor-link"
-                              to={`/speaker/${activity.presenterId}`}
-                            >
-                              {activity.participantTwo}
-                            </Link>
-                            <p className="subtitle">
-                              {activity.subtitleParticipantTwo}
-                            </p>
-                          </p>
-                          <p>
-                            <strong>Intervenant :</strong>{" "}
-                            <Link
-                              className="doctor-link"
-                              to={`/speaker/${activity.presenterId}`}
-                            >
-                              {activity.participantThree}
-                            </Link>
-                            <p className="subtitle">
-                              {activity.subtitleParticipantThree}
-                            </p>
-                          </p>
-                          {/* <p>
-                            <strong>Intervenant :</strong>{" "}
-                            <Link
-                              className="doctor-link"
-                              to={`/speaker/${activity.presenterId}`}
-                            >
-                              {activity.participantFour}
-                            </Link>
-                            <p className="subtitle">
-                              {activity.subtitleParticipantFour}
-                            </p>
-                          </p> */}
-                        </div>
+                        {activity.participants &&
+                        activity.participants.length > 0 ? (
+                          activity.participants.map((p, index) => (
+                            <div key={index}>
+                              <p>
+                                <strong>Intervenant :</strong>{" "}
+                                <Link
+                                  className="doctor-link"
+                                  to={`/speaker/${activity.presenterId}`}
+                                >
+                                  {p.name}
+                                </Link>
+                              </p>
+                              <p className="subtitle">{p.subtitle}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <p>Aucun intervenant pour ce séminaire.</p>
+                        )}
+                      </div>
                       </div>
 
                       <div className="boutton-section">
-                        <div className="card-actions">
-                          {reservation ? (
-                            <button
-                              onClick={() =>
-                                handleDeleteReservation(reservation._id)
-                              }
-                              className="delete-button"
-                            >
-                              Annuler réservation
-                            </button>
-                          ) : (
-                            <Link
-                              to={`/reservation/${activity._id}`}
-                              className="reserve-button"
-                            >
-                              Réserver
-                            </Link>
-                          )}
-                        </div>
-                        {/* <div className="question-container">
-                        <Link to={`/questionnaire`} className="question-button">
-                          Evaluation
-                        </Link>
-                      </div> */}
+                      <div className="card-actions">
+                        {/* Si le séminaire est déjà passé, montrer le bouton Questionnaire */}
+                        {isPast ? (
+                          <Link
+                            to={`/questionnaire`}
+                            className="reserve-button"
+                          >
+                            Questionnaire
+                          </Link>
+                        ) : reservation ? (
+                          <button
+                            onClick={() =>
+                              handleDeleteReservation(reservation._id)
+                            }
+                            className="delete-button"
+                          >
+                            Annuler réservation
+                          </button>
+                        ) : (
+                          <Link
+                            to={`/reservation/${activity._id}`}
+                            className="reserve-button"
+                          >
+                            Réserver
+                          </Link>
+                        )}
                       </div>
+                    </div>
                     </div>
                   </div>
                 );

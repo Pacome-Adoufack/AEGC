@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Header.css";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
+import { HiUser } from "react-icons/hi";
+
+
 import logo from "../assets/logo.png";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
@@ -148,10 +151,10 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 >
                   AEGC Conférence
                 </Link> */}
-                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/price" onClick={() => setIsMenuOpen(false)}>
                   AEGC Prix
                 </Link>
-                <Link to="/development" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/bourse" onClick={() => setIsMenuOpen(false)}>
                   AEGC Bourses
                 </Link>
                 <Link to="/images" onClick={() => setIsMenuOpen(false)}>
@@ -222,6 +225,14 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 </Link>
               </div>
             </li>
+            {/* <li>
+              <Link
+                to="/userprofile"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <HiUser size={30} />
+              </Link>
+            </li> */}
           </ul>
         </nav>
       </div>

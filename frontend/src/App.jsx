@@ -50,6 +50,9 @@ import CenseurTwo from "./member/CenseurTwo.jsx";
 import Formation from "./components/Formation.jsx";
 import ReservationFormation from "./components/ReservationFormation.jsx";
 import FormationsCard  from "./components/FormationsCard.jsx";
+import { Bourse } from "./components/Bourse.jsx";
+import Price from "./components/Price.jsx";
+import UserProfile from "./components/UserProfile.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -124,6 +127,9 @@ function App() {
             <Route path="/development" element={<Development/>} />
             <Route path="/webinaire" element={<SeminarHome/>} />
             <Route path="/formations" element={<Formation/>} />
+            <Route path="/price" element={<Price/>} />
+            <Route path="/bourse" element={<Bourse/>} />
+            <Route path="/userprofile" element={<UserProfile/>} />
             <Route path="/formations-details/:formationId" element={<FormationsCard/>} />
             <Route path="/inscription-formation/:formationId" element={<ReservationFormation />} />
           </Routes>

@@ -1,36 +1,38 @@
 import React from "react";
-import "../styles/Release.css";
+import "../styles/Release.css"; // On réutilise les mêmes styles
 import logo from "../assets/logo.png";
 
-const pdfFiles = [
+const bourseFiles = [
   {
     id: 1,
-    title: "Web Binaire de Novembre 2025",
-    date: "20/11/2025",
+    title: "Bourse de Mobilité Internationale AEGC",
+    date: "08/10/2025",
     description:
-      "De la donnée à la décision: Néttoyage, Instruments, Estimations et Prévisions en Micro et Macroéconomie - Applications en Santé de Banque",
-    filename: "Communiqué_AEGC_Novembre_2025 (1).pdf",
+      "Programme de soutien financier permettant aux chercheurs de se déplacer pour des missions scientifiques à l'étranger.",
+    filename: "bourse_mobilite_internationale_AEGC.pdf",
     thumbnail: logo,
   },
   {
     id: 2,
-    title: "Présentation des Bourses de Mobilité AEGC",
-    date: "08/10/2025",
-    description: "Encourager la recherche, renforcer les liens universitaires",
-    filename: "Bourse_AEGC_International.pdf",
+    title: "Bourse Jeune Chercheur AEGC",
+    date: "18/04/2025",
+    description:
+      "Financement destiné aux jeunes chercheurs pour leurs travaux et séminaires académiques.",
+    filename: "bourse_jeune_chercheur_AEGC.pdf",
     thumbnail: logo,
   },
   {
     id: 3,
-    title: "Web Binaire de Decembre 2025",
-    date: "20/11/2025",
-    description: "La place de la femme dans le d´eveloppement scientifique en Afrique : réalités,parcours et perspectives",
-    filename: "Communiqué_AEGC_30_Décembre_2025 (1) (1).pdf",
+    title: "Bourse Excellence Scientifique",
+    date: "12/02/2025",
+    description:
+      "Une bourse attribuée aux membres ayant réalisé des travaux exceptionnels en économie ou gestion.",
+    filename: "bourse_excellence_scientifique_AEGC.pdf",
     thumbnail: logo,
   },
 ];
 
-function Release() {
+export const Bourse = () => {
   const handleDownload = (filename) => {
     const fileUrl = `/pdf/${filename}`;
     const link = document.createElement("a");
@@ -48,13 +50,13 @@ function Release() {
 
   return (
     <div className="release-container">
-      <h1 className="release-title">Communiqués officiels</h1>
+      <h1 className="release-title">Les Bourses AEGC</h1>
       <p className="release-subtitle">
-        Retrouvez ici tous les communiqués officiels de l'association
+        Découvrez les différentes opportunités de financement offertes par l'association
       </p>
 
       <div className="release-list">
-        {pdfFiles.map((item) => (
+        {bourseFiles.map((item) => (
           <div key={item.id} className="release-card">
             <div className="release-thumbnail">
               <img src={item.thumbnail} alt={`Miniature ${item.title}`} />
@@ -63,7 +65,7 @@ function Release() {
 
             <div className="release-content">
               <h2>{item.title}</h2>
-              <p className="release-date">Publié le: {item.date}</p>
+              <p className="release-date">Publié le : {item.date}</p>
               <p className="release-description">{item.description}</p>
 
               <div className="release-actions">
@@ -86,6 +88,4 @@ function Release() {
       </div>
     </div>
   );
-}
-
-export default Release;
+};
