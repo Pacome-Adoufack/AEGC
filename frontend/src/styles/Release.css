@@ -203,13 +203,15 @@
     }
   }
   
-  @media (max-width: 480px) {
-    .release-actions {
-      flex-direction: column;
-      gap: 0.8rem;
+  @media (max-width: 456px) {
+    .release-container{
+      width: 90%;
     }
-    
-    .view-button, .download-button {
-      width: 100%;
+    .release-container h1{
+      font-size: 1.5rem;
+    }
+    .release-list{
+     margin-left: 0px;
+     margin-top: -30px;
     }
   }

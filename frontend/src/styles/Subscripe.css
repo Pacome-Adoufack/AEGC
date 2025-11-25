@@ -61,18 +61,11 @@
   }
    */
   /* Responsive */
-  @media (max-width: 600px) {
+  @media (max-width: 456px) {
     .subscribe-container {
-      padding: 20px;
-      margin: 20px;
+     width: 90%;
     }
   
-    .subscribe-description {
-      font-size: 16px;
-    }
   
-    .subscribe-button {
-      font-size: 15px;
-    }
   }
   

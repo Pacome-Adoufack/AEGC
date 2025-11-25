@@ -183,7 +183,7 @@ const Seminar = () => {
                         </p>
                       </div>
                       <div className="activity-info">
-                        <p className="moderator">
+                        <div className="moderator">
                           <strong>Modérateur :</strong> {""}
                           <Link
                             className="doctor-link"
@@ -194,7 +194,7 @@ const Seminar = () => {
                           <p className="subtitle">
                             {activity.subtitleModerator}
                           </p>
-                        </p>
+                        </div>
                         <div className="participant-card">
                           {activity.participants &&
                           activity.participants.length > 0 ? (

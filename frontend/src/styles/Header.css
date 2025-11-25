@@ -443,7 +443,7 @@ body {
     z-index: 3000;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 456px) {
   .header_nav.open {
     width: 60% !important;  /* viewport width = tout l’écran */
     margin-top: 0 !important; /* supprime le grand espace en haut */
