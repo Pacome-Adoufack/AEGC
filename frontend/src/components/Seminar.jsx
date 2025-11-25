@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Seminar.css";
-import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../components/Url";
 import logo1 from "../assets/logo1.png";
@@ -9,127 +9,132 @@ const Seminar = () => {
   const [activities, setActivities] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [message, setMessage] = useState("");
+  const [now, setNow] = useState(new Date()); // timer global
 
   useEffect(() => {
-    console.log("Reservations mises à jour :", reservations);
-  }, [reservations]);
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
 
-  // Charger les activités
+    return () => clearInterval(interval);
+  }, []);
+
+  const getCountdown = (targetDate) => {
+    const diff = new Date(targetDate) - now;
+
+    if (diff <= 0) return "Terminé";
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    return `${days}j ${hours}h ${minutes}m ${seconds}s`;
+  };
+
+  // Charger activités
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/activities`);
-        if (!response.ok)
-          throw new Error("Erreur lors du chargement des activités");
         const data = await response.json();
         setActivities(data);
-        console.log("Activités chargées :", data);
       } catch (error) {
-        console.error(error);
         setMessage("Impossible de charger les activités.");
       }
     };
     fetchActivities();
   }, []);
 
-  // Charger les réservations utilisateur
+  // Charger réservations
   useEffect(() => {
     const fetchReservations = async () => {
       try {
         const token =
           localStorage.getItem("token") || sessionStorage.getItem("token");
-
-        console.log("Token utilisé :", token); // ← debug important
-
         if (!token) return;
 
         const response = await fetch(`${API_BASE_URL}/reservation`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok)
-          throw new Error("Erreur lors du chargement des réservations");
-
         const data = await response.json();
-        console.log("Réservations chargées :", data);
         setReservations(data);
       } catch (error) {
-        console.error("Erreur attrapée :", error);
         setMessage("Impossible de charger vos réservations.");
       }
     };
-
     fetchReservations();
   }, []);
 
-  // Annuler une réservation
   const handleDeleteReservation = async (Id) => {
-    console.log("Deleting ID:", Id);
     if (!window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?"))
       return;
 
     try {
       const response = await fetch(`${API_BASE_URL}/reservation/${Id}`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Erreur lors de l'annulation.");
-      }
 
       setReservations((prev) =>
         prev.filter((r) => r._id.toString() !== Id.toString())
       );
-      console.log("Réservation annulée avec succès :", Id);
     } catch (error) {
-      console.error(error);
-      setMessage(`Erreur : ${error.message}`);
+      setMessage("Erreur lors de l'annulation.");
+    }
+  };
+  const scrollGallery = (direction) => {
+    const container = document.getElementById("scroll-gallery");
+    const scrollAmount = 300;
+
+    if (container) {
+      container.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
     }
   };
 
   return (
-   <>
-      {/* <nav className="newspaper-nav">
-        <ul>
-          <li>
-            <Link to="/seminaires">AEGC Séminaires</Link>
-          </li>
-          <li>
-            <Link to="/web binaire">AEGC Web Binaire</Link>
-          </li>
-          <li>
-            <Link to="/conference">AEGC Conférences</Link>
-          </li>
-          <li>
-            <Link to="/images">AEGC Photos</Link>
-          </li>
-        </ul>
-      </nav> */}
-
+    <>
       <div className="meeting-container">
         <div className="meeting-content">
           <h1>Nos Prochains Séminaires</h1>
           {message && <p className="message">{message}</p>}
-
           <div className="scroll-controls">
-            {/* <button
+            <button
               className="arrow-button left"
               onClick={() => scrollGallery("left")}
             >
               <FaArrowLeft />
-            </button> */}
+            </button>
 
-            <div className="activity-scroll-container" id="scroll-gallery">
+            <div id="scroll-gallery" className="activity-scroll-container">
               {activities.map((activity) => {
-                const seminarDate = new Date(activity.date); // activité.date doit être au format YYYY-MM-DD ou similaire
-                const now = new Date();
+                const seminarDate = new Date(activity.date);
+                const oneWeekAfter = new Date(
+                  seminarDate.getTime() + 7 * 24 * 60 * 60 * 1000
+                );
+
                 const isPast = seminarDate < now;
+
+                // Masquer après 7 jours
+                if (now > oneWeekAfter)
+                  return (
+                    <p
+                      style={{
+                        color: "red",
+                        fontWeight: "bold",
+                        fontSize: "20px",
+                        textAlign: "center",
+                        marginTop: "20px",
+                      }}
+                    >
+                      Aucun Webinaire pour l’instant
+                    </p>
+                  );
+
                 const reservation = reservations.find((r) => {
-                  if (!r.activity) return false;
                   const rId =
                     typeof r.activity === "object"
                       ? r.activity._id
@@ -139,12 +144,25 @@ const Seminar = () => {
 
                 return (
                   <div key={activity._id} className="activity-card">
-                    <img src={logo1} alt={logo1} className="logo1" />
+                    <div className="countdown-container">
+                      {/* Compte à rebours avant début */}
+                      <p className="countdown">
+                        ⏳ Début dans :{" "}
+                        <span>{getCountdown(activity.date)}</span>
+                      </p>
+
+                      <img src={logo1} alt="Logo séminaire" className="logo1" />
+
+                      {/* Compte à rebours avant disparition */}
+                      <p className="countdown-small">
+                        Disparaît dans :{" "}
+                        <span>{getCountdown(oneWeekAfter)}</span>
+                      </p>
+                    </div>
+
                     <div className="activity-card-content">
-                      <div className="first-card">
-                        <h2>{activity.name}</h2>
-                        <p>{activity.description}</p>
-                      </div>
+                      <h2>{activity.name}</h2>
+                      <p>{activity.description}</p>
 
                       <div className="activity-meta">
                         <p className="activity-date">
@@ -152,25 +170,21 @@ const Seminar = () => {
                           <span>{activity.date}</span>
                         </p>
 
-                        {/* Trait vertical */}
                         <div className="divider"></div>
 
                         <p className="activity-timezone">
-                          🕑 Heure de Paris : <span>{activity.timeParis}</span>
+                          🕑 Heure de Paris : {activity.timeParis}
                         </p>
 
-                        {/* Trait vertical */}
                         <div className="divider"></div>
 
                         <p className="activity-timezone">
-                          🕑 Heure de Yaoundé :{" "}
-                          <span>{activity.timeYaounde}</span>
+                          🕑 Heure de Yaoundé : {activity.timeYaounde}
                         </p>
                       </div>
-
                       <div className="activity-info">
-                        <p>
-                          <strong>Modérateur :</strong>{" "} <br />
+                        <p className="moderator">
+                          <strong>Modérateur :</strong> {""}
                           <Link
                             className="doctor-link"
                             to={`/speaker/${activity.presenterId}`}
@@ -182,36 +196,31 @@ const Seminar = () => {
                           </p>
                         </p>
                         <div className="participant-card">
-                        {activity.participants &&
-                        activity.participants.length > 0 ? (
-                          activity.participants.map((p, index) => (
-                            <div key={index}>
-                              <p>
-                                <strong>Intervenant :</strong>{" "}
-                                <Link
-                                  className="doctor-link"
-                                  to={`/speaker/${activity.presenterId}`}
-                                >
-                                  {p.name}
-                                </Link>
-                              </p>
-                              <p className="subtitle">{p.subtitle}</p>
-                            </div>
-                          ))
-                        ) : (
-                          <p>Aucun intervenant pour ce séminaire.</p>
-                        )}
-                      </div>
+                          {activity.participants &&
+                          activity.participants.length > 0 ? (
+                            activity.participants.map((p, index) => (
+                              <div key={index}>
+                                <p>
+                                  <strong>Intervenant :</strong>{" "}
+                                  <Link
+                                    className="doctor-link"
+                                    to={`/speaker/${activity.presenterId}`}
+                                  >
+                                    {p.name}
+                                  </Link>
+                                </p>
+                                <p className="subtitle">{p.subtitle}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <p>Aucun intervenant pour ce séminaire.</p>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="boutton-section">
                       <div className="card-actions">
-                        {/* Si le séminaire est déjà passé, montrer le bouton Questionnaire */}
                         {isPast ? (
-                          <Link
-                            to={`/questionnaire`}
-                            className="reserve-button"
-                          >
+                          <Link to="/questionnaire" className="reserve-button">
                             Questionnaire
                           </Link>
                         ) : reservation ? (
@@ -233,22 +242,20 @@ const Seminar = () => {
                         )}
                       </div>
                     </div>
-                    </div>
                   </div>
                 );
               })}
             </div>
-
-            {/* <button
+            <button
               className="arrow-button right"
               onClick={() => scrollGallery("right")}
             >
               <FaArrowRight />
-            </button> */}
+            </button>
           </div>
         </div>
       </div>
-      </>
+    </>
   );
 };
 

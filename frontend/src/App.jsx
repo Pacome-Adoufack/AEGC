@@ -53,6 +53,9 @@ import FormationsCard  from "./components/FormationsCard.jsx";
 import { Bourse } from "./components/Bourse.jsx";
 import Price from "./components/Price.jsx";
 import UserProfile from "./components/UserProfile.jsx";
+import InfoPersonelle from "./components/InfoPersonelle.jsx";
+import MesFormationsReservees from "./components/MesFormationsReservees.jsx";
+import MesActivitesReservees from "./components/MesActivitesReservees.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -132,6 +135,9 @@ function App() {
             <Route path="/userprofile" element={<UserProfile/>} />
             <Route path="/formations-details/:formationId" element={<FormationsCard/>} />
             <Route path="/inscription-formation/:formationId" element={<ReservationFormation />} />
+            <Route path="/informations personnelles" element={<InfoPersonelle/>} />
+            <Route path="/appercu des formations" element={<MesFormationsReservees/>} />
+            <Route path="/appercu des webinaires" element={<MesActivitesReservees/>} />
           </Routes>
         </div>
       </Router>

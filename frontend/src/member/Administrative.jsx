@@ -10,7 +10,7 @@ const Administrative = () => {
           Responsable des affaires administrative et diplomatique de l'AEGC
         </h1>
         <img
-          src={administrativeImage}
+          src="https:/v3_side_photo/764/side-president-association.png"
           alt="Président de l'association"
           className="relation-image"
         />

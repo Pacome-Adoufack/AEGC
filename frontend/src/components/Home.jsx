@@ -20,6 +20,7 @@ import SeminarHome from "./SeminarHome";
 import Release from "./Release";
 import Images from "./Images";
 import firstImage from "../assets/firstImage.png";
+import Seminar from "./Seminar";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -84,7 +85,7 @@ const Home = () => {
                   ✕
                 </button>
                 <video ref={videoRef} width="800" controls>
-                  {/* <source src={video} type="video/mp4" /> */}
+                  <source src={video} type="video/mp4" />
                   Votre navigateur ne supporte pas la lecture de vidéos.
                 </video>
               </div>
@@ -92,7 +93,7 @@ const Home = () => {
           )}
         </div>
       <section className="first-section">
-        <SeminarHome />
+        <Seminar />
       </section>
       <section className="second-section">
         <Release />

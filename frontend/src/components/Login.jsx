@@ -50,6 +50,8 @@ export default function Login({ setIsLoggedIn }) {
       .then((dataRes) => {
         setMessage("Connexion réussie !");
         setIsLoggedIn(true);
+        localStorage.setItem("user", JSON.stringify(dataRes.user));
+
 
         // Stocker les infos dans localStorage ou sessionStorage
         if (rememberMe) {

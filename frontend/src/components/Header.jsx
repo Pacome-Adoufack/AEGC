@@ -4,12 +4,12 @@ import "../styles/Header.css";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 
-
 import logo from "../assets/logo.png";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const storedUser = JSON.parse(localStorage.getItem("user"));
 
   const toggleDropdown = (name) => {
     if (openDropdown === name) {
@@ -66,13 +66,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   </Link>
                 </li>
               </>
-            ) : (
-              <li>
-                <button onClick={handleLogout} className="logout-button">
-                  Déconnexion
-                </button>
-              </li>
-            )}
+            ) : null}
           </ul>
         </nav>
 
@@ -225,6 +219,55 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 </Link>
               </div>
             </li>
+            {isLoggedIn && (
+              <li className="dropdown">
+                <button className="dropdown-button">
+                  <HiUser size={30} />
+                  <span className="user">{storedUser?.firstName}</span>
+                </button>
+                <div className="dropdown-menu">
+                  <Link
+                    to="/informations personnelles"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Informations personnelles
+                  </Link>
+                  <Link
+                    to="/status de facturation"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Status de facturation
+                  </Link>
+                  <Link
+                    to="/appercu des Webinaires"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Appercu des Webinaires
+                  </Link>
+                  <Link
+                    to="/appercu des formations"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Appercu des Formations
+                  </Link>
+                  <Link
+                    to="/reference des communications"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Référence des Communications
+                  </Link>
+                  <Link
+                    to="/forgotpassword"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Mot de passe oublié
+                  </Link>
+                  <button onClick={handleLogout} className="logout-button">
+                    Déconnexion
+                  </button>
+                </div>
+              </li>
+            )}
             {/* <li>
               <Link
                 to="/userprofile"

@@ -17,10 +17,12 @@ import authMiddleware from "./middlewares/authMiddleware.js";
 import Image from "./models/Picture.js";
 import Formation from "./models/Formations.js";
 import ReservationFormation from "./models/ReservationFormation.js";
+import ReservationActivity from "./models/ReservationActivity.js";
 import multer from "multer";
 import upload from "./middlewares/upload.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import { log } from "console";
 
 const app = express();
 app.use(cors());
@@ -63,6 +65,7 @@ app.post("/register", async (req, res) => {
     telefonNummer,
     country,
     city,
+    university,
     password,
   } = req.body;
 
@@ -74,6 +77,7 @@ app.post("/register", async (req, res) => {
     !telefonNummer ||
     !country ||
     !city ||
+    !university ||
     !password
   ) {
     return res.status(400).json({ error: "Invalid registration" });
@@ -89,6 +93,7 @@ app.post("/register", async (req, res) => {
       telefonNummer,
       country,
       city,
+      university,
       password: hashedPassword,
     });
 
@@ -120,7 +125,20 @@ app.post("/login", async (req, res) => {
     const payload = { id: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
 
-    res.json({ user: user, token: token });
+    res.json({
+      token,
+      user: {
+        name: user.name,
+        firstName: user.firstName,
+        email: user.email,
+        country: user.country,
+        city: user.city,
+        telefonNummer: user.telefonNummer,
+        gender:user.gender,
+        university:user.university
+      }
+    });
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -168,6 +186,19 @@ app.post("/api/activities", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+app.get("/api/reservation-activity", authMiddleware, async (req, res) => {
+  try {
+    // Trouver les réservations de l'utilisateur et remplir uniquement certains champs de l'activité
+    const reservations = await Reservation.find({ user: req.user.id })
+      .populate("activity", "name date timeParis timeYaounde"); // Seules ces infos sont nécessaires
+
+    res.json(reservations);
+  } catch (err) {
+    console.error("Erreur récupération réservations :", err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+});
+
 
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;

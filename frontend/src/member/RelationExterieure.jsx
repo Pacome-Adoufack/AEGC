@@ -40,7 +40,7 @@ const RelationExterieure = () => {
         </p>
 
         <div className="relation-download">
-          <a href="/pdf/CV_tebou_Marius.pdf" download className="relation-button">
+          <a href="/pdf/CV_tebou Marius.pdf" download className="relation-button">
             📄 Télécharger le CV du{" "}
             <strong>Chargé des relations extérieures de l'AEGC</strong>
           </a>

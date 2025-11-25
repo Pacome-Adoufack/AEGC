@@ -48,6 +48,9 @@ body {
   color: #36bb6d;
   outline: none;
 }
+.user{
+  color: #33ff44;
+}
 
 /* Navigation principale */
 .header_nav {
@@ -181,7 +184,7 @@ body {
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
+  left: -120px;
   background-color: #1e1e2f;
   min-width: 220px;
   border-radius: 6px;
@@ -296,7 +299,6 @@ body {
 /* Bouton de déconnexion */
 .logout-button {
   background-color: transparent;
-  border: 2px solid #36bb6d;
   padding: 8px 18px;
   border-radius: 6px;
   color: #e0e0e0;

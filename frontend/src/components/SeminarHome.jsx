@@ -39,7 +39,7 @@ const SeminarHome = () => {
           localStorage.getItem("token") || sessionStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch(`${API_BASE_URL}/reservation`, {
+        const response = await fetch(`${API_BASE_URL}/api/reservation-activity`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

@@ -11,12 +11,11 @@
 }
 
 .activity-card {
-  max-width: 900px;
+  max-width: 800px;
   background: white;
   border-radius: 10px;
   flex-shrink: 0;
   overflow: hidden;
-  margin-right: 40px;
 }
 .activity-card:hover {
   transform: translateY(-8px);
