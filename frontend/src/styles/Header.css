@@ -445,13 +445,32 @@ body {
 }
 @media (max-width: 456px) {
   .header_nav.open {
-    width: 60% !important;  /* viewport width = tout l’écran */
-    margin-top: 0 !important; /* supprime le grand espace en haut */
-    position: fixed; /* optionnel si tu veux que le menu couvre le haut */
-    right: 30px;
-    top: 15%;
+    width: 60% !important;      /* prend tout l’écran */
+    top: 2% !important;           /* commence en haut */
+    right: 10% !important;         /* aligné à droite */
+    margin: 0 !important;
+    position: fixed;             /* reste fixé */
     z-index: 2000;
+    max-height: none !important; /* plus de limite */
+    overflow: auto !important;   /* scroll si contenu dépasse */
+    padding: 10px 0;
+    background-color: #0084ff;
+  }
+
+  .dropdown-menu {
+    position: relative !important;
+    width: 60% !important;
+    max-height: none !important; /* plus de limite de hauteur */
+    overflow-y: auto;            /* scroll vertical si nécessaire */
+    left: 0 !important;          /* aligné à gauche du menu */
+    background-color: #1e1e2f !important;
+    z-index: 3000;
+  }
+
+  .dropdown-button {
+    width: 100% !important;
   }
 }
+
 
 
