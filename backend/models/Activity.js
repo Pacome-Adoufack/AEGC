@@ -7,8 +7,12 @@ const activitySchema = new mongoose.Schema({
     timeParis: { type: String, required: true, trim: true },
     timeYaounde: { type: String, required: true, trim: true },
     location: { type: String, trim: true },
-    moderator: { type: String, trim: true },
-    subtitleModerator: { type: String, trim: true },
+    moderators: [
+      {
+        name: { type: String, trim: true },
+        subtitle: { type: String, trim: true },
+      },
+    ],
   
     // Nouveau : tableau d'intervenants
     participants: [

@@ -162,8 +162,7 @@ app.post("/api/activities", async (req, res) => {
       timeParis,
       timeYaounde,
       location,
-      moderator,
-      subtitleModerator,
+      moderators,
       participants,
     } = req.body;
 
@@ -175,8 +174,7 @@ app.post("/api/activities", async (req, res) => {
       timeParis,
       timeYaounde,
       location,
-      moderator,
-      subtitleModerator,
+      moderators,
       participants
     });
 

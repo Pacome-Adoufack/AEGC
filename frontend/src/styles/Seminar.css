@@ -62,7 +62,7 @@ span {
 }
 
 .activity-card {
-  max-width: 800px;
+  max-width: 45%;
   background: white;
   border-radius: 10px;
   flex-shrink: 0;
@@ -83,6 +83,8 @@ span {
   padding: 1.8rem;
   position: relative;
   padding-right: 100px;
+  width: 90%;
+  margin: 0 auto;
 }
 .first-card {
   border: 5px solid #36bb6d;
@@ -263,7 +265,16 @@ span {
   margin-right: 0.8rem;
   font-size: 1.1rem;
 }
-
+.moderator{
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+.participant-card{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
 .doctor-link {
   color: #007bff;
   text-decoration: none;
@@ -370,23 +381,43 @@ span {
 
 /* Responsive Design */
 @media (max-width: 1048px) {
-  .meeting-container {
+  .activity-scroll-container {
+    display: flex;
+    flex-direction: column;
+  }
+.activity-card{
     width: 100%;
+    height: 95%;
+    margin-right: 50px;
+    margin-bottom: 0px;
   }
-  .activity-card-content {
-    width: 300px;
+  .arrow-button{
+    display: none;
   }
-  .card-actions {
-    margin-left: -40px;
+  .countdown-container{
+    width: 90%;
+  }
+  .activity-meta{
     width: 50%;
+    margin: 0 auto;
   }
-  .question-container {
-    margin-left: -90px;
+  .activity-meta p{
+    font-size: 16px;
   }
-  .question-button {
-    width: 50%;
+  .activity-info {
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 15px auto; /* centre horizontalement */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
+  
+  
 }
+
 @media (max-width: 768px) {
   .activity-scroll-container {
     display: grid;
@@ -443,7 +474,7 @@ span {
 @media (max-width: 456px) {
   .activity-card{
     width: 90%;
-    height: 90%;
+    height: 95%;
     margin-right: 50px;
     margin-bottom: 0px;
   }

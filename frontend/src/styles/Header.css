@@ -319,7 +319,7 @@ body {
 
 /* Responsive Tablet */
 @media (max-width: 1048px) {
-  .header {
+  /* .header {
     height: 100px;
   }
   .logo{
@@ -348,14 +348,34 @@ body {
     width: auto;
   }
 
-  .hamburger-icon {
+  /* .hamburger-icon {
     display: block;
-  }
+  } */ */
+   .logo-container{
+    margin-left: -40px;
+   }
+.header_nav{
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.nav_list{
+  gap: 2px;
+}
+.nav_list a,
+.nav_list select,
+.dropdown-button,
+.dropdown-menu a {
+  font-size: 14px !important; /* réduction ici */
+}
+.user{
+  font-size: 14px !important;
+}
 }
 
 /* Responsive Mobile */
 @media (max-width: 770px) {
-  .hamburger{
+  .hamburger-icon{
     display: block;
   }
   .header {

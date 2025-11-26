@@ -222,7 +222,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
             {isLoggedIn && (
               <li className="dropdown">
                 <button className="dropdown-button">
-                  <HiUser size={30} />
+                  <HiUser size={20} />
                   <span className="user">{storedUser?.firstName}</span>
                 </button>
                 <div className="dropdown-menu">

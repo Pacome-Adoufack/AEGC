@@ -1,7 +1,7 @@
 /* formation.css */
 
 .formations-container {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   padding: 40px 20px;
   background-color: #f9f9f9;
@@ -27,11 +27,25 @@
   .formations-grid {
     grid-template-columns: repeat(2, 1fr); /* 2 colonnes */
   }
+  .boutton-section {
+    width: 100%;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 600px) {
   .formations-grid {
     grid-template-columns: 1fr; /* 1 colonne */
+  }
+  .boutton-section {
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 456px) {
+ .boutton-section {
+    width: 100%;
+    margin: 0 auto;
   }
 }
 

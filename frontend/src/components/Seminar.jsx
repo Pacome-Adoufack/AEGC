@@ -183,7 +183,7 @@ const Seminar = () => {
                         </p>
                       </div>
                       <div className="activity-info">
-                        <div className="moderator">
+                        {/* <div className="moderator">
                           <strong>Modérateur :</strong> {""}
                           <Link
                             className="doctor-link"
@@ -194,6 +194,27 @@ const Seminar = () => {
                           <p className="subtitle">
                             {activity.subtitleModerator}
                           </p>
+                        </div> */}
+                        <div className="moderator">
+                          {activity.moderators &&
+                          activity.moderators.length > 0 ? (
+                            activity.moderators.map((m, index) => (
+                              <div key={index}>
+                                <p>
+                                  <strong>Modérateur :</strong>{" "}
+                                  <Link
+                                    className="doctor-link"
+                                    to={`/speaker/${activity.presenterId}`}
+                                  >
+                                    {m.name}
+                                  </Link>
+                                </p>
+                                <p className="subtitle">{m.subtitle}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <p>Aucun modérateur pour ce webinaire.</p>
+                          )}
                         </div>
                         <div className="participant-card">
                           {activity.participants &&
@@ -213,7 +234,7 @@ const Seminar = () => {
                               </div>
                             ))
                           ) : (
-                            <p>Aucun intervenant pour ce séminaire.</p>
+                            <p>Aucun intervenant pour ce webinaire.</p>
                           )}
                         </div>
                       </div>
