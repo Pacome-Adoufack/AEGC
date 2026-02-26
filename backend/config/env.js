@@ -17,9 +17,7 @@ export const config = {
   port: process.env.PORT || 3000,
 };
 
-// Log pour debug (à retirer en production)
+// Vérification silencieuse des variables
 if (!config.stripeSecretKey || config.stripeSecretKey === "sk_test_dummy") {
   console.warn("⚠️ STRIPE_SECRET_KEY non définie ou invalide");
-} else {
-  console.log("✅ Variables d'environnement chargées");
 }

@@ -265,11 +265,9 @@ router.post(
       }
 
       if (!phone || !paymentChannel) {
-        return res
-          .status(400)
-          .json({
-            message: "Numéro de téléphone et canal de paiement requis.",
-          });
+        return res.status(400).json({
+          message: "Numéro de téléphone et canal de paiement requis.",
+        });
       }
 
       if (!["orange_money", "mtn_momo"].includes(paymentChannel)) {
@@ -347,14 +345,6 @@ router.post(
         }
 
         notchpayData = await notchpayResponse.json();
-
-        if (process.env.NODE_ENV !== "production") {
-          console.log("📱 Réponse initialisation Notch Pay:", {
-            ok: notchpayResponse.ok,
-            status: notchpayResponse.status,
-            reference: notchpayData.transaction?.reference,
-          });
-        }
       } catch (fetchError) {
         console.error(
           "❌ Erreur lors de la requête Notch Pay:",
@@ -364,7 +354,6 @@ router.post(
       }
 
       if (!notchpayData.transaction) {
-        console.error("❌ Échec initialisation:", notchpayData);
         throw new Error(
           notchpayData.message || "Échec de l'initialisation du paiement",
         );
@@ -373,13 +362,6 @@ router.post(
       // Sauvegarder la référence Notch Pay
       membership.notchpayReference = notchpayData.transaction.reference;
       await membership.save();
-
-      if (process.env.NODE_ENV !== "production") {
-        console.log("✅ Paiement initialisé:", {
-          reference: notchpayData.transaction.reference,
-          membershipId: membership._id,
-        });
-      }
 
       res.json({
         success: true,
@@ -437,14 +419,6 @@ router.post("/verify-notchpay", verifyRateLimiter, async (req, res) => {
       }
 
       verifyData = await verifyResponse.json();
-
-      if (process.env.NODE_ENV !== "production") {
-        console.log("🔍 Réponse Notch Pay:", {
-          ok: verifyResponse.ok,
-          status: verifyResponse.status,
-          transactionStatus: verifyData.transaction?.status,
-        });
-      }
     } catch (fetchError) {
       console.error("❌ Erreur requête vérification:", fetchError.message);
       return res.status(500).json({
@@ -454,12 +428,6 @@ router.post("/verify-notchpay", verifyRateLimiter, async (req, res) => {
 
     // Vérifier que le paiement est bien réussi
     if (verifyData.transaction.status !== "complete") {
-      if (process.env.NODE_ENV !== "production") {
-        console.log(
-          "⏳ Paiement pas encore complet:",
-          verifyData.transaction.status,
-        );
-      }
       return res.status(400).json({
         message: "Paiement non confirmé",
         status: verifyData.transaction.status,
@@ -468,9 +436,6 @@ router.post("/verify-notchpay", verifyRateLimiter, async (req, res) => {
 
     // Récupérer le membership via merchant_reference (notre ID)
     const membershipId = verifyData.transaction.merchant_reference;
-    if (process.env.NODE_ENV !== "production") {
-      console.log("🔎 Recherche membership:", membershipId);
-    }
     const membership = await Membership.findById(membershipId);
 
     if (!membership) {
@@ -480,9 +445,6 @@ router.post("/verify-notchpay", verifyRateLimiter, async (req, res) => {
 
     // Si déjà activé, retourner simplement les infos
     if (membership.paymentStatus === "paid") {
-      if (process.env.NODE_ENV !== "production") {
-        console.log("✅ Membership déjà activé");
-      }
       return res.json({
         success: true,
         message: "Membership déjà activé",
@@ -492,9 +454,6 @@ router.post("/verify-notchpay", verifyRateLimiter, async (req, res) => {
     }
 
     // Activer le membership
-    if (process.env.NODE_ENV !== "production") {
-      console.log("✅ Activation du membership...");
-    }
     membership.paymentStatus = "paid";
     membership.startDate = new Date();
     membership.calculateEndDate();
@@ -507,9 +466,6 @@ router.post("/verify-notchpay", verifyRateLimiter, async (req, res) => {
       currentMembership: membershipId,
     });
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log("🎉 Membership activé avec succès!");
-    }
     res.json({
       success: true,
       message: "Membership activé avec succès!",
@@ -571,8 +527,6 @@ router.post("/notchpay-webhook", express.json(), async (req, res) => {
         membershipStatus: "active",
         currentMembership: reference,
       });
-
-      console.log(`✅ Webhook: Membership activé pour ${reference}`);
     }
 
     res.json({ received: true });
