@@ -1,0 +1,221 @@
+/* Container général */
+.info-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+}
+
+/* Titres */
+.info-container h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.info-container h4 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Formulaire */
+.info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Labels */
+.info-form label {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: -5px;
+  font-weight: 500;
+}
+
+/* Champs */
+.info-form input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: 0.3s ease;
+  font-size: 15px;
+}
+
+/* Focus style */
+.info-form input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+  outline: none;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .info-container {
+    padding: 15px;
+  }
+
+  .info-form input {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+/* Section Membership */
+.membership-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.membership-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.membership-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.membership-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.badge-icon {
+  font-size: 1.2rem;
+}
+
+.badge-text {
+  font-size: 0.95rem;
+}
+
+/* Membership Info Card (Actif) */
+.membership-info-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid #28a745;
+}
+
+.membership-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.membership-info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Membership Expired Card */
+.membership-expired-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  border-left: 4px solid #dc3545;
+}
+
+.expired-message {
+  color: #dc3545;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.renew-button {
+  padding: 10px 24px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.renew-button:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Membership None Card */
+.membership-none-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  border-left: 4px solid #6c757d;
+}
+
+.none-message {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.subscribe-button {
+  padding: 10px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.subscribe-button:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+@media (max-width: 480px) {
+  .membership-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .membership-badge {
+    align-self: flex-start;
+  }
+
+  .membership-info-row {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+}

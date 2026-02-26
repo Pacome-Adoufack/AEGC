@@ -1,0 +1,132 @@
+.review-layout {
+    display: flex;
+    padding: 2rem;
+    background: #f3f4f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+  }
+  
+  .review-card {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    position: relative;
+  }
+  
+  .review-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* .review-image {
+    width: 200px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #cbd5e1;
+  } */
+
+  .review-header img{
+    width: 200px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .review-title-section {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: relative;
+  }
+  
+  .review-title {
+    font-size: 1.8rem;
+    color: #1e293b;
+    position: absolute;
+    top: -40px;
+    left: -100px;
+  }
+  
+  .review-select {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+    color: #334155;
+    background-color: #f9fafb;
+    position: absolute;
+    right: 200px;
+  }
+  
+  
+  .paragraph-volume {
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 1rem;
+    position: absolute;
+    top: 100px;
+    left: 300px;
+  }
+  
+  
+  .review-actions {
+    margin: 1rem 0;
+  }
+  
+  .review-search-input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background-color: #f8fafc;
+  }
+  
+  .article-titel {
+    font-size: 1.3rem;
+    color: #0f172a;
+    margin-top: 2rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.4rem;
+  }
+  
+  .article-card {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f1f5f9;
+    border-radius: 0.75rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .article-card:hover {
+    background-color: #e2e8f0;
+  }
+  
+  .article-link {
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: bold;
+    transition: color 0.2s ease;
+  }
+  
+  .article-link:hover {
+    color: #1d4ed8;
+  }
+  
+  .author {
+    font-size: 0.9rem;
+    color: #475569;
+    margin-top: 0.3rem;
+  }
+  

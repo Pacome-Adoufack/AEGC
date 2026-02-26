@@ -1,0 +1,129 @@
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .faq-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .faq-header h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .faq-header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+  }
+  
+  .faq-form {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .question-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .question-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #34495e;
+  }
+  
+  .question-input {
+    margin-top: 0.5rem;
+  }
+  
+  select, textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    color: black;
+  }
+  
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .radio-group input[type="radio"] {
+    margin: 0;
+  }
+  
+  .form-actions {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .form-actions button {
+    padding: 0.8rem 1.5rem;
+    background-color: #259B2E;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .form-actions button:hover {
+    background-color: #218838;
+  }
+  
+  .alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  @media (max-width: 768px) {
+    .faq-container {
+      padding: 1rem;
+    }
+    
+    .faq-form {
+      padding: 1rem;
+    }
+    
+    .question-card {
+      padding: 1rem;
+    }
+  }

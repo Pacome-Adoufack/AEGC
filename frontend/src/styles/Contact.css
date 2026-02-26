@@ -1,0 +1,156 @@
+/* Contact.css */
+
+.contact-container {
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -150px;
+  }
+  
+  .contact-form {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 12px 24px rgba(7, 65, 79, 0.2);
+    padding: 3rem 2.5rem;
+    max-width: 600px;
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .contact-form:hover {
+    box-shadow: 0 20px 40px rgba(7, 65, 79, 0.3);
+  }
+  
+  .contact-title {
+    font-weight: 900;
+    margin-bottom: 2rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 2rem;
+    color: black;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+    color: black;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: 1.8px solid #b2dfdb;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 500;
+    box-sizing: border-box;
+    font-family: inherit;
+    resize: vertical;
+  }
+  
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color: #00796b;
+    box-shadow: 0 0 8px 2px #00796b55;
+    outline: none;
+  }
+  
+  .form-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20fill%3D'%2300796b'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%20width%3D'24'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M7%2010l5%205%205-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    cursor: pointer;
+    padding-right: 2.5rem;
+  }
+  
+  .form-textarea {
+    min-height: 120px;
+  }
+  
+  .submit-button {
+    width: 100%;
+    background-color:#259B2E;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding: 1rem;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: inherit;
+  }
+  .message-text {
+    margin-top: 2.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .github-links {
+    margin-top: 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .github-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .github-link:hover {
+    transform: scale(1.1);
+  }
+  
+  .github-icon {
+    font-size: 3rem;
+  }
+  
+  .github-name {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  /* Responsive */
+  
+  @media (max-width: 640px) {
+    .contact-form {
+      padding: 2rem 1.5rem;
+    }
+  
+    .contact-title {
+      font-size: 1.8rem;
+    }
+  
+    .github-icon {
+      font-size: 2.5rem;
+    }
+  }
+  

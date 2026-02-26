@@ -1,0 +1,135 @@
+/* Container principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+  margin-bottom: -30px;
+}
+
+/* Formulaire */
+.login-form {
+  background-color: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  position: relative;
+}
+
+/* Titre */
+.login-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Labels */
+.login-form label {
+  font-weight: 500;
+  color: #444;
+}
+
+/* Champs de saisie */
+.login-form input {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+/* .login-form input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+} */
+
+/* Bouton de connexion */
+.login-button {
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #259B2E;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* .login-button:hover {
+  background-color: #0056b3;
+} */
+
+/* Messages */
+.login-message {
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.login-message.success {
+  background-color: #259B2E;
+  color: white;
+}
+
+.login-message.error {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Lien mot de passe oublié */
+.forgot-password {
+  margin-left: auto;
+  margin-top: 15px;
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s ease;
+  text-decoration: underline;
+}
+
+.forgot-password:hover {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper input {
+  width: 87%;
+  padding-right: 2.5rem; /* espace pour le bouton */
+}
+
+.show-password-btn {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #666;
+  cursor: pointer;
+}
+
+.show-password-btn:hover {
+  color: #007bff;
+}
+

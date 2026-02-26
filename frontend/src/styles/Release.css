@@ -1,0 +1,217 @@
+/* Release.css */
+
+.release-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: #333;
+  }
+  
+  .release-title {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .release-subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    text-align: center;
+    margin-bottom: 3rem;
+    font-weight: 400;
+  }
+  
+  .release-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  
+  .release-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .release-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+  
+  .release-thumbnail {
+    position: relative;
+    height: 250px;
+    background-color: #0084ff;
+    overflow: hidden;
+  }
+  
+  .release-thumbnail img {
+    width: 90%;
+    height: 80%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    margin: 20px;
+    margin-top: 70px;
+  }
+  
+  .release-card:hover .release-thumbnail img {
+    transform: scale(1.05);
+  }
+  
+  .pdf-label {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .release-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .release-content h2 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  
+  .release-date {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .release-date::before {
+    content: "📅";
+    margin-right: 0.5rem;
+  }
+  
+  .release-description {
+    color: #34495e;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    flex-grow: 1;
+  }
+  
+  .release-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+  }
+  
+  .view-button, .download-button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+  
+  .view-button {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .view-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+  
+  .download-button {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    border: 1px solid #dfe6e9;
+  }
+  
+  .download-button:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+  }
+  
+  /* Icônes pour les boutons */
+  .view-button::before {
+    content: "👁️";
+    margin-right: 0.5rem;
+  }
+  
+  .download-button::before {
+    content: "⬇️";
+    margin-right: 0.5rem;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .release-list {
+      grid-template-columns: repeat(2, 1fr);
+      width: 95%;
+      margin: 0 auto;
+    }
+  }
+  @media (max-width: 768px) {
+    .release-container {
+      padding: 1.5rem;
+    }
+    
+    .release-title {
+      font-size: 2rem;
+    }
+    
+    .release-subtitle {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .release-list {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    
+    .release-thumbnail {
+      height: 300px;
+    }
+    .release-thumbnail img {
+      width: 80%;
+      height: 80%;
+    }
+  }
+  
+  @media (max-width: 456px) {
+    .release-container{
+      width: 90%;
+    }
+    .release-container h1{
+      font-size: 1.5rem;
+    }
+    .release-list{
+     margin-left: 0px;
+     margin-top: -30px;
+    }
+  }

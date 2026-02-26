@@ -1,0 +1,175 @@
+.organigramme-container {
+    font-family: 'Arial', sans-serif;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #fff;
+  }
+  
+  .org-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #2c3e50;
+  }
+  
+  .org-header h1 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 5px 0;
+    text-transform: uppercase;
+    color: #2c3e50;
+  }
+  
+  .org-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .org-level {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 50px;
+    position: relative;
+  }
+  
+  .org-level:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30px; /* longueur du trait vertical */
+    background-color: #7f8c8d;
+    z-index: 0;
+  }
+  .org-level::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #7f8c8d;
+    z-index: 0;
+  }
+  .org-node {
+    background-color: #f8f9fa;
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .org-node::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px;
+    background-color: #7f8c8d;
+    z-index: 0;
+  }
+  .org-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color:#0084ff;
+    border-bottom: 1px solid #bdc3c7;
+    padding-bottom: 5px;
+  }
+  
+  .org-name {
+    font-size: 14px;
+    margin: 5px 0;
+    color: #34495e;
+  }
+  
+  .org-details {
+    font-size: 12px;
+    color: #7f8c8d;
+    font-style: italic;
+  }
+  .org-titel{
+    color: #259B2E;
+  }
+  
+  /* Styles spécifiques pour les postes importants */
+  .president {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .president .org-title,
+  .president .org-name,
+  .president .org-details {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .vice-president {
+    background-color: #2980b9;
+    color: white;
+  }
+  
+  .vice-president .org-title,
+  .vice-president .org-name,
+  .vice-president .org-details {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .secretary {
+    background-color: #2980b9;
+    color: white;
+  }
+  
+  .secretary .org-title,
+  .secretary .org-name,
+  .secretary .org-details {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .communication {
+    background-color: #e2c37e;
+    color: white;
+  }
+  
+  .communication .org-title,
+  .communication .org-name {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .link{
+    text-decoration: none;
+  }
+  
+  @media (max-width: 768px) {
+    .org-level {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .org-level::after {
+      display: none;
+    }
+    
+    .org-node::before {
+      display: none;
+    }
+    
+    .org-node {
+      width: 80%;
+    }
+  }

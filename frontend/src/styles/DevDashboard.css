@@ -1,0 +1,799 @@
+.dev-dashboard {
+    min-height: 100vh;
+    background: #f5f7fa;
+    padding: 2rem;
+}
+
+.dev-header {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #2c3e50;
+}
+
+.dev-header h1 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.dev-header p {
+    margin: 0.5rem 0 0 0;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.dev-message {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+.dev-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.dev-tabs button {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #495057;
+    transition: all 0.2s;
+}
+
+.dev-tabs button:hover {
+    color: #2c3e50;
+    background: #f8f9fa;
+}
+
+.dev-tabs button.active {
+    color: #2c3e50;
+    border-bottom-color: #2c3e50;
+    background: transparent;
+}
+
+.dev-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dev-content h2 {
+    color: #000000;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.dev-content p {
+    color: #000000;
+    font-weight: 500;
+}
+
+/* STATS GRID */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    color: #2c3e50;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #2c3e50;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+}
+
+/* Tooltip avec élément visible */
+.tooltip-text {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 15px;
+    background: #2c3e50;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    width: max-content;
+    max-width: 300px;
+    white-space: normal;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Flèche du tooltip */
+.tooltip-text::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-bottom-color: #2c3e50;
+}
+
+.stat-card:hover .tooltip-text {
+    opacity: 1;
+    visibility: visible;
+    margin-top: 20px;
+}
+
+.stat-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: #2c3e50;
+}
+
+.stat-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #212529;
+}
+
+.stat-recent {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+/* USERS SECTION */
+.users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.users-header h2 {
+    color: #000000;
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.btn-create {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-create:hover {
+    background: #1a252f;
+}
+
+.create-user-form {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid #e9ecef;
+}
+
+.create-user-form h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.form-grid input,
+.form-grid select {
+    padding: 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+    outline: none;
+    border-color: #2c3e50;
+}
+
+.btn-submit {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.btn-submit:hover {
+    background: #1a252f;
+}
+
+.users-table {
+    overflow-x: auto;
+}
+
+.users-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th {
+    background: #f8f9fa;
+    color: #2c3e50;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.users-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f3f5;
+    color: #000000;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.users-table tr:hover {
+    background: #f8f9fa;
+}
+
+.role-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.role-user {
+    background: #e7f3ff;
+    color: #0066cc;
+    border-color: #0066cc;
+}
+
+.role-admin {
+    background: #fff4e6;
+    color: #cc7a00;
+    border-color: #cc7a00;
+}
+
+.role-dev {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    border-color: #7b1fa2;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+/* TOOLS SECTION */
+.tools-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.tools-section h2 {
+    color: #000000;
+    font-weight: 700;
+    margin-top: 0;
+    font-size: 1.5rem;
+}
+
+.tool-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #2c3e50;
+    border: 1px solid #e9ecef;
+}
+
+.tool-card h3 {
+    margin-top: 0;
+    color: #000000;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.tool-card p {
+    color: #000000;
+    font-weight: 500;
+}
+
+.btn-migrate {
+    background: #fd7e14;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-migrate:hover {
+    background: #e8590c;
+}
+
+/* MEMBERSHIPS SECTION */
+.memberships-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.membership-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.membership-active .stat-number {
+    color: #28a745;
+}
+
+.membership-expired .stat-number {
+    color: #dc3545;
+}
+
+.membership-pending .stat-number {
+    color: #ffc107;
+}
+
+.membership-total .stat-number {
+    color: #007bff;
+}
+
+.revenue-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.revenue-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.revenue-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.revenue-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 4px solid #28a745;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.revenue-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.revenue-amount {
+    color: #28a745;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.payment-methods {
+    color: #666;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.membership-actions {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.btn-activate {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-activate:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-cleanup {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-left: 1rem;
+}
+
+.btn-cleanup:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.memberships-table {
+    margin-top: 2rem;
+    overflow-x: auto;
+}
+
+.memberships-table h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.memberships-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.memberships-table th {
+    background: #f8f9fa;
+    color: #2c3e50;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 0.9rem;
+}
+
+.memberships-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f3f5;
+    color: #212529;
+    font-weight: 500;
+}
+
+.memberships-table tr:hover {
+    background: #f8f9fa;
+}
+
+.badge-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-status.paid {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-status.expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-status.cancelled {
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-form label {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: -0.5rem;
+}
+
+.modal-form input,
+.modal-form select,
+.modal-form textarea {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.modal-form input:focus,
+.modal-form select:focus,
+.modal-form textarea:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-confirm {
+    flex: 1;
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-confirm:hover {
+    background: #218838;
+}
+
+.btn-cancel {
+    flex: 1;
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+}
+
+/* SEARCH BAR ET PAGINATION */
+.users-search-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+}
+
+.users-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.users-count {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.btn-pagination {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #2c3e50;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-pagination:hover:not(:disabled) {
+    background: #2c3e50;
+    color: white;
+    border-color: #2c3e50;
+}
+
+.btn-pagination:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    padding: 0.5rem 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0 0.5rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .dev-dashboard {
+        padding: 1rem;
+    }
+
+    .dev-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .users-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .users-search-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box {
+        min-width: 100%;
+    }
+
+    .pagination-controls {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .btn-pagination {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+}

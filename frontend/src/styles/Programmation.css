@@ -1,0 +1,90 @@
+.review-layout {
+    display: flex;
+    /* flex-direction: column;
+    align-items: center; */
+    padding: 2rem;
+    background: #f9f9f9;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .review-container {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 2rem;
+  }
+  
+  .review-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .review-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .review-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .review-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #ccc;
+  }
+  
+  .review-title-section {
+    flex: 1;
+  }
+  
+  .review-title {
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin: 0;
+  }
+  
+  .review-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.2rem;
+    color: #0f172a;
+  }
+  
+  .review-card p {
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .review-card h4 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: #1d4ed8;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.3rem;
+  }
+  
+  .review-card a {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.2rem;
+    background-color: #2563eb;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .review-card a:hover {
+    background-color: #1d4ed8;
+  }
+  

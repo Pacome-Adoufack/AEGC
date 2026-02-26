@@ -1,0 +1,75 @@
+  version: '3.8'
+  services:
+    aegc-front:
+      build: 
+        context: ./frontend
+        dockerfile: Dockerfile
+      container_name: aegc-front-${APP_VERSION}
+      image: aegc-front:${APP_VERSION}
+      #pull_policy: never
+      env_file:
+        - ./.env
+      ports:
+        - "${PORT_FRONT}:80"
+      restart: always
+      environment:
+        - VIRTUAL_HOST=aegc-web.com
+        - LETSENCRYPT_HOST=aegc-web.com
+        - LETSENCRYPT_EMAIL=cressonmbeng@gmail.com
+      networks:
+        - web
+    
+    aegc-back:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile
+      container_name: aegc-back-${APP_VERSION}
+      image: aegc-back:${APP_VERSION}
+      #pull_policy: never
+      env_file:
+        - ./.env
+      ports:
+      - ${PORT_BACK}:3000
+      restart: always
+      environment:
+        - VIRTUAL_HOST=back.aegc-web.com
+        - LETSENCRYPT_HOST=back.aegc-web.com
+        - LETSENCRYPT_EMAIL=cressonmbeng@gmail.com
+      networks:
+        - web
+
+    # === Reverse Proxy ===
+    nginx-proxy:
+      image: jwilder/nginx-proxy:latest
+      container_name: nginx-proxy
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - /home/user00adm/proxy/vhost.d:/etc/nginx/vhost.d
+        - /home/user00adm/proxy/html:/usr/share/nginx/html
+        - /home/user00adm/proxy/certs:/etc/nginx/certs:ro
+        - /var/run/docker.sock:/tmp/docker.sock:ro
+      networks:
+        - web
+
+    # === Let's Encrypt Companion ===
+    acme-companion:
+      image: nginxproxy/acme-companion
+      container_name: acme-companion
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - /home/user00adm/proxy/certs:/etc/nginx/certs
+        - /home/user00adm/proxy/vhost.d:/etc/nginx/vhost.d
+        - /home/user00adm/proxy/html:/usr/share/nginx/html
+      depends_on:
+        - nginx-proxy
+      environment:
+        - NGINX_PROXY_CONTAINER=nginx-proxy
+        - DEFAULT_EMAIL=cressonmbeng@gmail.com
+      networks:
+        - web
+      
+  networks:
+    web:
+      external: false

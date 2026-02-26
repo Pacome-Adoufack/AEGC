@@ -1,0 +1,38 @@
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+/* Prend tout l'écran */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    overflow-x: hidden;
+  }
+  
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Main prend tout l’espace restant */
+  .main-content {
+    flex: 1;
+  }
+  .app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .review-container {
+    flex: 1;
+  }
+  
+  footer {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    text-align: center;
+  }
+  

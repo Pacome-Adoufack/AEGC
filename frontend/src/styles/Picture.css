@@ -1,0 +1,139 @@
+.gallery-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.gallery-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  color: #333;
+  position: relative;
+}
+
+.year-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.year-filter {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #f1f1f1;
+  color: #333;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.year-filter:hover {
+  background: #ddd;
+}
+
+.year-filter.active {
+  background: linear-gradient(to right, #3498db, #2ecc71);
+  color: white;
+}
+.show-more-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.show-more-button {
+  padding: 10px 20px;
+  background-color: #259B2E;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.masonry-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.gallery-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  aspect-ratio: 1 / 1;
+}
+.gallery-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: #259b2f96; /* vert transparent */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.gallery-item:hover::before {
+  opacity: 1;
+}
+
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+  position: relative;
+  z-index: 0;
+}
+
+
+.gallery-item:hover .gallery-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: white;
+  padding: 1rem;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.image-overlay.visible {
+  transform: translateY(0);
+}
+
+.image-overlay h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.image-overlay p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+
+@media (max-width: 768px) {
+  .masonry-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .gallery-title {
+    font-size: 2rem;
+  }
+}

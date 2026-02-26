@@ -1,0 +1,431 @@
+/* .meeting-content{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+} */
+.meeting-content h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: rem;
+  color: #2c3e50;
+}
+
+.activity-card {
+  max-width: 800px;
+  background: white;
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.activity-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.activity-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+}
+
+.activity-card-content {
+  padding: 1.8rem;
+  position: relative;
+}
+.first-card {
+  border: 5px solid #36bb6d;
+  border-radius: 10px;
+}
+
+.activity-card h2 {
+  font-size: 2.5rem;
+  margin: 0 0 1.2rem 0;
+  color: #1a1a1a;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.8rem;
+  padding: 15px;
+}
+
+/* .activity-card h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #36bb6d, #007bff);
+  border-radius: 3px;
+} */
+
+.activity-info {
+  background-color: #f9f9f9; /* couleur de fond douce */
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.activity-info p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.activity-info strong {
+  color: #1f2937; /* gris foncé pour le label */
+}
+
+.doctor-link {
+  color: #2563eb; /* bleu professionnel */
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.doctor-link:hover {
+  color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.participant-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: #f0f4f8;
+  padding: 40px 15px;
+  border-radius: 8px;
+}
+
+.activity-card p strong {
+  color: #333;
+  font-weight: 600;
+}
+/* .activity-scroll-container{
+  display: flex;
+  flex-direction: row;
+} */
+
+.activity-meta {
+  display: flex;
+  align-items: center;
+  margin-left: 100px;
+  gap: 20px;
+  font-size: 15px;
+  color: #333;
+  margin-top: 20px;
+  padding: 12px 18px;
+  border-radius: 10px;
+}
+.activity-meta span {
+  color: #2563eb;
+}
+
+.activity-meta p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.icon {
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.divider {
+  width: 1px;
+  height: 25px;
+  background-color: #ccc;
+}
+.activity-info .subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.activity-date,
+.activity-location {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #555;
+}
+.scroll-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.activity-scroll-container {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 1rem;
+  width: 80%;
+  overflow-x: hidden;
+}
+
+.arrow-button {
+  background-color: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #333;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0 1rem;
+  transition: color 0.3s;
+}
+
+.arrow-button:hover {
+  color: #007bff;
+}
+
+.arrow-button.left {
+  margin-right: 0.5rem;
+}
+
+.arrow-button.right {
+  margin-left: 0.5rem;
+}
+
+.icon {
+  color: #36bb6d;
+  margin-right: 0.8rem;
+  font-size: 1.1rem;
+}
+
+.doctor-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-block;
+  position: relative;
+}
+
+.doctor-link:hover {
+  color: #0056b3;
+}
+
+.doctor-link::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  transition: width 0.3s ease;
+}
+
+.doctor-link:hover::after {
+  width: 100%;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.reserve-button {
+  background: linear-gradient(135deg, #36bb6d, #2e9e5f);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(54, 187, 109, 0.3);
+  text-align: center;
+  flex-grow: 1;
+  max-width: 150px;
+  margin-left: 350px;
+}
+
+.reserve-button:hover {
+  background: linear-gradient(135deg, #2e9e5f, #36bb6d);
+  box-shadow: 0 6px 16px rgba(54, 187, 109, 0.4);
+  transform: translateY(-2px);
+}
+
+.delete-button {
+  color: #ff4d4f;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-right: 1rem;
+  margin-left: 400px;
+}
+.delete-button:hover {
+  background-color: rgba(255, 77, 79, 0.1);
+  color: #ff1a1d;
+}
+.question-container {
+  position: relative;
+}
+.question-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  position: absolute;
+  margin-left: 10px;
+  margin-top: -43px;
+}
+
+/* Responsive Design */
+@media (max-width: 1048px) {
+  .activity-card {
+    max-width: 100% !important;
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .first-card {
+    width: 180% !important;
+    margin: 0 auto;
+  }
+
+  .activity-meta {
+    flex-direction: row;
+    margin-left: 20px; /* Réduit la marge sur mobile */
+    width: calc(100% - 40px); /* Ajuste en conséquence */
+    flex-wrap: wrap; /* Permet le retour à la ligne si nécessaire */
+  }
+
+  .activity-info {
+    width: 150% !important;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center; /* centre tous les enfants horizontalement */
+    text-align: center; /* centre le texte */
+    margin-left: 50px;
+  }
+
+  .activity-info .moderator {
+    margin: 0; /* plus besoin de margin auto */
+  }
+
+  .participant-card {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr); /* ✅ 2 colonnes */
+    gap: 15px;
+    text-align: center;
+  }
+  .boutton-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -200px;
+  }
+  .activity-info p {
+    font-size: 16px !important;
+  }
+}
+@media (max-width: 768px) {
+  .first-card {
+    margin-bottom: 20px;
+  }
+  .activity-info p {
+    font-size: 16px !important;
+  }
+  .activity-meta{
+    margin-left: 50px !important;
+  }
+  .activity-meta p{
+    font-size: 16px !important;
+  }
+  .boutton-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -30px;
+  }
+}
+@media (max-width: 540px) {
+  .logo1 {
+    width: 50% !important;
+    margin-left: -200px;
+    margin-bottom: -50px;
+    margin-top: -40px;
+  }
+  .activity-card {
+    max-width: 150% !important;
+    width: 150%;
+    margin-right: 0;
+  }
+.first-card{
+    width: 130% !important;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+  .first-card h2 {
+    font-size: 20px !important; /* cible le h2 */
+  }
+
+  .first-card p {
+    font-size: 20px !important; /* cible le p */
+  }
+  .activity-info{
+    margin-left: -50px;
+  }
+  .participant-card {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    text-align: center;
+  }
+  .boutton-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -100px;
+  }
+}
+@media (max-width: 400px){
+  .meeting-content h1 {
+    font-size: 1.5rem !important;
+  }
+  .logo1 {
+    width: 50% !important;
+    height: 100px !important;
+    margin-left: -350px;
+    margin-top: -10px;
+    margin-bottom: -10px;
+  }
+  .first-card{
+    width: 110% !important;
+    margin-left: -20px;
+    margin-bottom: 20px;
+  }
+  .activity-card {
+    max-width: 200% !important;
+    width: 200%;
+    margin-right: 0;
+  }
+  .activity-meta{
+    margin-left: 10px !important;
+  }
+  .activity-info{
+    display: grid !important;
+    margin-left: -80px;
+  }
+}
