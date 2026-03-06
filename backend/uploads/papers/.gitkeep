@@ -1,0 +1,2 @@
+# Ce fichier permet de tracker le dossier uploads/papers dans git
+# Les PDF uploadés ne seront pas versionnés (voir .gitignore)

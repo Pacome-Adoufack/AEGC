@@ -1,0 +1,318 @@
+/* ============================================
+   WORKING PAPERS — Variables & Base
+   ============================================ */
+
+:root {
+    --wp-primary: #0084ff;
+    --wp-primary-dark: #0068cc;
+    --wp-primary-light: #e6f3ff;
+    --wp-accent: #003366;
+
+    --wp-text-dark: #1a202c;
+    --wp-text: #4a5568;
+    --wp-text-light: #718096;
+
+    --wp-border: #e2e8f0;
+    --wp-bg: #f4f6f9;
+    --wp-bg-card: #ffffff;
+    --wp-bg-secondary: #f8fafc;
+
+    --wp-success: #059669;
+    --wp-success-bg: #d1fae5;
+    --wp-error: #dc2626;
+    --wp-error-bg: #fee2e2;
+    --wp-warning: #92400e;
+    --wp-warning-bg: #fef3c7;
+
+    --wp-radius: 8px;
+    --wp-radius-lg: 12px;
+    --wp-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+    --wp-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --wp-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.18);
+
+    /* Alias rétrocompatibilité (anciens composants) */
+    --wp-color-primary: var(--wp-primary);
+    --wp-color-primary-dark: var(--wp-primary-dark);
+    --wp-color-text-dark: var(--wp-text-dark);
+    --wp-color-text: var(--wp-text);
+    --wp-color-text-light: var(--wp-text-light);
+    --wp-color-border: var(--wp-border);
+    --wp-color-bg: var(--wp-bg);
+    --wp-color-bg-secondary: var(--wp-bg-secondary);
+    --wp-color-success: var(--wp-success);
+    --wp-color-success-bg: var(--wp-success-bg);
+    --wp-color-error: var(--wp-error);
+    --wp-color-error-bg: var(--wp-error-bg);
+    --wp-color-warning: var(--wp-warning);
+    --wp-color-warning-bg: var(--wp-warning-bg);
+}
+
+/* ---- Containers ---- */
+.working-papers-container,
+.wp-detail-container,
+.submission-form-container,
+.my-submissions-container,
+.admin-wp-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--wp-bg);
+    box-sizing: border-box;
+}
+
+/* ---- Hero Banner ---- */
+.wp-hero {
+    background: linear-gradient(135deg, #001f4d 0%, #003a8c 55%, #0059cc 100%);
+    padding: 4rem 4rem 3rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.wp-hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -8%;
+    width: 560px;
+    height: 560px;
+    background: radial-gradient(circle, rgba(0, 132, 255, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.wp-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.wp-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.35rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+}
+
+.wp-hero h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: white;
+}
+
+.wp-hero p {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 1.05rem;
+    margin: 0;
+    max-width: 580px;
+    line-height: 1.65;
+}
+
+/* ---- Barre de tabs ---- */
+.wp-tabs-bar {
+    background: white;
+    border-bottom: 1px solid var(--wp-border);
+    display: flex;
+    gap: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.wp-tabs-inner {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 4rem;
+    display: flex;
+    gap: 0;
+}
+
+.wp-tab {
+    padding: 1rem 1.75rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--wp-text-light);
+    transition: color 0.2s, background-color 0.2s;
+    position: relative;
+    bottom: -1px;
+    white-space: nowrap;
+}
+
+.wp-tab:hover {
+    color: var(--wp-text-dark);
+    background-color: #f9fafb;
+}
+
+.wp-tab.active {
+    color: var(--wp-primary);
+    border-bottom-color: var(--wp-primary);
+    font-weight: 600;
+}
+
+/* ---- Zone de contenu ---- */
+.wp-tab-content-area {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem 4rem 4rem;
+    box-sizing: border-box;
+    color: #1a202c;
+    /* Override body color:#e0e0e0 */
+}
+
+/* ---- Feedback states ---- */
+.loading {
+    text-align: center;
+    padding: 5rem 2rem;
+    font-size: 1rem;
+    color: var(--wp-text-light);
+}
+
+.error,
+.error-message {
+    background-color: var(--wp-color-error-bg);
+    color: var(--wp-color-error);
+    padding: 1.25rem 2rem;
+    border-radius: var(--wp-radius);
+    border-left: 3px solid var(--wp-color-error);
+    margin: 2rem 0;
+    max-width: 900px;
+}
+
+.success-message {
+    background-color: #f0fdf9;
+    color: #0d9488;
+    padding: 2.5rem;
+    border-radius: var(--wp-radius);
+    border-left: 3px solid #0d9488;
+    text-align: center;
+    margin: 3rem auto;
+    max-width: 700px;
+}
+
+/* ---- Header legacy (pages standalone) ---- */
+.wp-header {
+    margin-bottom: 2.5rem;
+}
+
+.wp-header h1 {
+    font-size: 1.75rem;
+    color: var(--wp-text-dark);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+
+.wp-header p {
+    color: var(--wp-text-light);
+    font-size: 0.95rem;
+}
+
+/* ---- Compat ancien système de tabs ---- */
+.wp-main-tabs {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--wp-border);
+}
+
+.wp-main-tab {
+    padding: 0.75rem 0;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--wp-text-light);
+    transition: all 0.2s;
+    position: relative;
+    bottom: -1px;
+}
+
+.wp-main-tab:hover {
+    color: var(--wp-text-dark);
+}
+
+.wp-main-tab.active {
+    color: var(--wp-primary);
+    border-bottom-color: var(--wp-primary);
+    font-weight: 600;
+}
+
+.wp-main-content {
+    width: 100%;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+    .wp-hero {
+        padding: 3rem 2.5rem 2.5rem;
+    }
+
+    .wp-hero h1 {
+        font-size: 1.9rem;
+    }
+
+    .wp-tabs-inner {
+        padding: 0 2.5rem;
+    }
+
+    .wp-tab-content-area {
+        padding: 2rem 2.5rem 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .wp-hero {
+        padding: 2.5rem 1.5rem 2rem;
+    }
+
+    .wp-hero h1 {
+        font-size: 1.6rem;
+    }
+
+    .wp-tabs-bar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .wp-tabs-inner {
+        padding: 0 1.5rem;
+    }
+
+    .wp-tab {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.85rem;
+    }
+
+    .wp-tab-content-area {
+        padding: 1.5rem 1.5rem 2.5rem;
+    }
+
+    .working-papers-container,
+    .wp-detail-container,
+    .submission-form-container,
+    .my-submissions-container,
+    .admin-wp-container {
+        padding: 0;
+    }
+
+    .wp-main-tab {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../hooks/useToast.js';
 import { API_BASE_URL } from '../components/Url';
 import { getAuthToken, getAuthHeaders } from '../utils/auth';
 import '../styles/MembershipPayment.css';
 
 const MembershipPayment = () => {
+    const toast = useToast();
     const [currency, setCurrency] = useState('EUR');
     const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' ou 'mobile_money'
     const [mobileChannel, setMobileChannel] = useState('orange_money'); // 'orange_money' ou 'mtn_momo'
@@ -102,7 +104,7 @@ const MembershipPayment = () => {
                 if (data.authorizationUrl) {
                     window.location.href = data.authorizationUrl;
                 } else {
-                    alert(data.message || 'Paiement initialisé. Suivez les instructions sur votre téléphone.');
+                    toast.info(data.message || 'Paiement initialisé. Suivez les instructions sur votre téléphone.');
                     // Vérifier le statut après quelques secondes
                     setTimeout(() => verifyMobilePayment(data.reference), 5000);
                 }

@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import "../styles/Footer.css";
 import logo from "../assets/logo.png";
 import { FaFacebook, FaLinkedin, FaTwitter, FaWhatsapp } from "react-icons/fa";
@@ -6,98 +6,105 @@ import { FaFacebook, FaLinkedin, FaTwitter, FaWhatsapp } from "react-icons/fa";
 function Footer() {
   return (
     <footer className="footer">
-      <div className="footer-top">
-        <section>
-          <img src={logo} alt="logo" />
-          <a href="/contact">Nous contacter</a>
-        </section>
-        <section>
-          <h2>AEGC</h2>
-          <ul>
-            <li>
-              <a href="/home">Accueil</a>
-            </li>
-            <li>
-              <a href="/journal view">Journaux</a>
-            </li>
-            <li>
-              <a href="/activity">Activités</a>
-            </li>
-            <li>
-              <a href="/committees">Comités</a>
-            </li>
-            <li>
-              <a href="/about">À propos</a>
-            </li>
-            <li>
-              <a href="/research">Recherche</a>
-            </li>
-          </ul>
-        </section>
-        <section>
-          <h2>Liens utiles</h2>
-          <ul>
-            <li>
-              <a href="/communiqué">Nos communiqué</a>
-            </li>
-            <li>
-              <a href="/questionnaire">Questionnaire</a>
-            </li>
-            <li>
-              <a href="/register">Créer un compte</a>
-            </li>
-            <li>
-              <a href="/login">Se connecter</a>
-            </li>
-            <li>
-              <a href="/forgotpassword">Mot de passe oublié</a>
-            </li>
-            <li>
-              <a href="/passwort-reset/:token">Réinitialiser le mot de passe</a>
-            </li>
-          </ul>
-        </section>
-        <section>
-          <h2>Suivez-nous</h2>
-          <ul className="social-links">
-            <li>
+      <div className="footer-top-bar" />
+
+      <div className="footer-body">
+        {/* Colonne 1 : marque */}
+        <div className="footer-brand">
+          <img src={logo} alt="Logo AEGC" className="footer-logo" />
+          <div className="footer-brand-text">
+            <p className="footer-tagline">
+              Association des Economistes et Gestionnaires du Cameroun — promouvoir
+              la recherche, l'innovation et le developpement economique.
+            </p>
+            <a href="/contact" className="footer-contact-link">
+              Nous contacter
+            </a>
+          </div>
+        </div>
+
+        {/* Colonnes 2-4 : liens */}
+        <div className="footer-cols-grid">
+          <div className="footer-col">
+            <span className="footer-col-title">Navigation</span>
+            <ul>
+              <li><a href="/home">Accueil</a></li>
+              <li><a href="/working-papers">Journaux</a></li>
+              <li><a href="/seminaire">Activites</a></li>
+              <li><a href="/development">Comites</a></li>
+              <li><a href="/formations">Formations</a></li>
+              <li><a href="/about">A propos</a></li>
+            </ul>
+          </div>
+
+          {/* Colonne 3 : liens utiles */}
+          <div className="footer-col">
+            <span className="footer-col-title">Liens utiles</span>
+            <ul>
+              <li><a href="/register">Creer un compte</a></li>
+              <li><a href="/login">Se connecter</a></li>
+              <li><a href="/forgotpassword">Mot de passe oublie</a></li>
+              <li><a href="/my-submissions">Mes soumissions</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </div>
+
+          {/* Colonne 4 : reseaux sociaux */}
+          <div className="footer-col">
+            <span className="footer-col-title">Suivez-nous</span>
+            <div className="footer-social-list">
               <a
                 href="https://whatsapp.com/channel/0029VaiK9Uh9MF98zYaAId36"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="footer-social-item"
               >
-                <FaWhatsapp size={30} color="#25D366" />
+                <span className="footer-social-icon whatsapp">
+                  <FaWhatsapp size={18} color="white" />
+                </span>
+                WhatsApp
               </a>
-            </li>
-            <li>
               <a
                 href="https://www.linkedin.com/company/association-des-economistes-et-gestionnaires-du-cameroun/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="footer-social-item"
               >
-                <FaLinkedin size={30} color="#0A66C2" />{" "}
+                <span className="footer-social-icon linkedin">
+                  <FaLinkedin size={18} color="white" />
+                </span>
+                LinkedIn
               </a>
-            </li>
-            <li>
-              <a href="" target="_blank" rel="noopener noreferrer">
-                <FaFacebook size={30} color="#1877F2" />{" "}
+              <a href="#" className="footer-social-item">
+                <span className="footer-social-icon facebook">
+                  <FaFacebook size={18} color="white" />
+                </span>
+                Facebook
               </a>
-            </li>
-            <li>
-              <a href="" target="_blank" rel="noopener noreferrer">
-                <FaTwitter size={30} color="#1DA1F2" />{" "}
+              <a href="#" className="footer-social-item">
+                <span className="footer-social-icon twitter">
+                  <FaTwitter size={18} color="white" />
+                </span>
+                Twitter / X
               </a>
-            </li>
-          </ul>
-        </section>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <hr className="footer-separator" />
 
       <div className="footer-bottom">
-        <p className="footer_copy">
-          &copy; {new Date().getFullYear()} AEGC. Tous droits réservés.
+        <p className="footer-copy">
+          &copy; {new Date().getFullYear()} AEGC. Tous droits reserves.
         </p>
+        <div className="footer-bottom-links">
+          <a href="/about">Mentions legales</a>
+          <a href="/ethique">Ethique</a>
+          <a href="/contact">Contact</a>
+        </div>
+        <p className="footer-credit">Made with <span className="footer-heart">&#9829;</span> by Landry</p>
       </div>
     </footer>
   );

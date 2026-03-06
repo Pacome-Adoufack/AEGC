@@ -1,0 +1,172 @@
+/* ============================================
+   WORKING PAPERS — Historique public
+   ============================================ */
+
+.history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* ---- Titre d'année ---- */
+.year-section {
+    position: relative;
+}
+
+.year-title {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--wp-text-dark);
+    margin-bottom: 1.25rem;
+    padding: 0.625rem 1.25rem;
+    background: linear-gradient(90deg, var(--wp-primary-light) 0%, transparent 100%);
+    border-left: 3px solid var(--wp-primary);
+    border-radius: 0 var(--wp-radius) var(--wp-radius) 0;
+    letter-spacing: 0.02em;
+}
+
+/* ---- Grille de cards ---- */
+.history-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.history-card {
+    background: white;
+    border: 1px solid var(--wp-border);
+    border-radius: var(--wp-radius-lg);
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow: var(--wp-shadow-sm);
+    color: #1a202c;
+    /* Override body color:#e0e0e0 */
+}
+
+.history-card:hover {
+    box-shadow: var(--wp-shadow-md);
+    transform: translateY(-2px);
+}
+
+.history-card-header h3 {
+    font-size: 1rem;
+    color: var(--wp-text-dark);
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.wp-theme {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--wp-primary);
+    background-color: var(--wp-primary-light);
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    letter-spacing: 0.01em;
+}
+
+.history-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.authors-list {
+    font-size: 0.875rem;
+    color: var(--wp-text);
+}
+
+.authors-list strong {
+    color: var(--wp-text-dark);
+    font-weight: 600;
+}
+
+.authors-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.3rem 0 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+}
+
+.authors-list li {
+    font-size: 0.85rem;
+    color: var(--wp-text);
+}
+
+.abstract-preview {
+    font-size: 0.85rem;
+    color: var(--wp-text);
+    line-height: 1.6;
+}
+
+.abstract-preview strong {
+    display: block;
+    color: var(--wp-text-dark);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.keyword-tag {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    padding: 0.2rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+.history-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.meta-date {
+    font-size: 0.78rem;
+    color: var(--wp-text-light);
+}
+
+.no-submissions {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--wp-text-light);
+}
+
+.history-footer {
+    margin-top: 3rem;
+    padding: 1.5rem 2rem;
+    background: var(--wp-bg-secondary);
+    border-radius: var(--wp-radius);
+    border: 1px solid var(--wp-border);
+    font-size: 0.85rem;
+    color: var(--wp-text-light);
+    text-align: center;
+    line-height: 1.8;
+}
+
+.history-footer a {
+    color: var(--wp-primary);
+}
+
+@media (max-width: 768px) {
+    .history-card {
+        padding: 1.25rem;
+    }
+}

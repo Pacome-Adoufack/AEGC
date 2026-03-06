@@ -1,0 +1,241 @@
+/* ============================================
+   WORKING PAPERS — Détail d'un appel
+   ============================================ */
+
+.wp-detail-container {
+    background-color: #f4f6f9;
+    min-height: 100vh;
+    padding: 2.5rem 4rem 5rem;
+    box-sizing: border-box;
+}
+
+.wp-detail-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    color: #1a202c;
+}
+
+/* ---- Navigation retour ---- */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: #0084ff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+}
+
+.btn-back:hover {
+    color: #0068cc;
+}
+
+/* ---- En-tête ---- */
+.wp-detail-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.wp-detail-header h1 {
+    font-size: 1.7rem;
+    color: #1a202c;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+    flex: 1;
+}
+
+/* ---- Bloc méta ---- */
+.wp-detail-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0;
+    margin: 2rem 0;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.25rem 1.5rem;
+    border-right: 1px solid #e2e8f0;
+}
+
+.meta-item:last-child {
+    border-right: none;
+}
+
+.meta-item .icon {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.meta-item div h3,
+.meta-label {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin: 0 0 0.2rem 0;
+}
+
+.meta-item div p,
+.meta-value {
+    font-size: 0.95rem;
+    color: #1a202c;
+    font-weight: 600;
+    margin: 0;
+}
+
+.meta-item strong {
+    display: block;
+    font-size: 0.7rem;
+    color: #9ca3af;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.2rem;
+}
+
+/* ---- Corps ---- */
+.wp-detail-content {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 2rem 2.25rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.wp-detail-content h2 {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 1.25rem 0;
+}
+
+.wp-description-full {
+    line-height: 1.75;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+/* ---- Notice deadline passée ---- */
+.deadline-passed-notice {
+    background-color: #fef3c7;
+    color: #92400e;
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    margin: 1.5rem 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: 1px solid #fde68a;
+}
+
+.deadline-passed-notice p {
+    margin: 0.25rem 0;
+}
+
+/* ---- CTA soumission ---- */
+.wp-submit-cta {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 2rem 2.25rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.wp-submit-cta h3 {
+    font-size: 1.05rem;
+    color: #1a202c;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.wp-submit-cta p {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+}
+
+.wp-submit-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.wp-submit-checklist li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    color: #4a5568;
+}
+
+.wp-submit-checklist li::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #0084ff;
+    flex-shrink: 0;
+}
+
+.wp-detail-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .wp-detail-container {
+        padding: 2rem 2.5rem 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .wp-detail-container {
+        padding: 1.5rem 1.5rem 3rem;
+    }
+
+    .wp-detail-header {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .wp-detail-meta {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .meta-item {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .meta-item:last-child {
+        border-bottom: none;
+    }
+}

@@ -1,141 +1,130 @@
-body {
+﻿body {
   margin: 0;
   padding: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f7fa;
-  color: #e0e0e0;
+  color: #1a202c;
 }
 
-/* Header principal */
+/* ===== Header ===== */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #0084ff;
-  padding: 20px 40px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  color: #e0e0e0;
+  padding: 0 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
-  z-index: 99999;
-  height: 80px;
-  transition: padding 0.3s ease;
+  z-index: 9999;
+  height: 84px;
+}
+
+/* ===== Logo ===== */
+.logo-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: #e0e0e0;
-  width: 250px;
-  height: 250px;
-  margin-top: 50px;
-  object-fit: contain;
+  height: 160px;
+  width: auto;
+  display: block;
+  margin-top: 10px;
 }
 
-/* Icône hamburger */
-.hamburger-icon {
+/* ===== Backdrop mobile (cache sur desktop) ===== */
+.nav-backdrop {
   display: none;
-  font-size: 28px;
-  color: #e0e0e0;
+}
+
+/* ===== Hamburger (cache sur desktop) ===== */
+.hamburger {
+  display: none;
+}
+
+.hamburger-icon {
+  font-size: 26px;
+  color: white;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.2s;
 }
 
-.hamburger-icon:hover,
-.hamburger-icon:focus {
+.hamburger-icon:hover {
   color: #36bb6d;
-  outline: none;
 }
 
-.user {
-  color: #33ff44;
-}
-
-/* Navigation principale */
+/* ===== Navigation principale ===== */
 .header_nav {
   display: flex;
-  gap: 60px;
   align-items: center;
-  transition: max-height 0.35s ease-out, padding 0.35s ease;
+  gap: 40px;
 }
 
-.header_nav.open {
-  display: flex;
-  flex-direction: column;
-  background-color: #1e1e2f;
-  width: 100%;
-  padding: 20px 0;
-  max-height: 500px;
-  margin-top: 20px;
-  overflow: hidden;
-}
-
+/* ===== Listes ===== */
 .nav_list {
   display: flex;
-  gap: 25px;
+  align-items: center;
+  gap: 2px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+/* ===== Liens, boutons ===== */
 .nav_list a,
-.nav_list select {
-  color: #e0e0e0;
+.dropdown-button,
+.logout-button {
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 17px;
   padding: 8px 14px;
   border-radius: 6px;
   background: none;
   border: none;
-  appearance: none;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
 }
 
 .nav_list a:hover,
-.nav_list a.active,
-.nav_list select:hover,
-.nav_list select:focus {
-  color: #fff;
+.dropdown-button:hover,
+.dropdown-button:focus,
+.logout-button:hover,
+.logout-button:focus {
   background-color: #36bb6d;
-  box-shadow: 0 4px 8px rgba(54, 187, 109, 0.4);
+  color: white;
   outline: none;
+  box-shadow: 0 3px 8px rgba(54, 187, 109, 0.35);
 }
 
-/* Animation pour les éléments non-dropdown */
+/* ===== Soulignement anime pour les liens simples ===== */
 .not-Dropdown {
   position: relative;
-  overflow: hidden;
 }
 
 .not-Dropdown a {
-  display: block;
   position: relative;
-  transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* .not-Dropdown a:hover, */
-/* .not-Dropdown a:focus {
-  transform: translateY(4px); /* Déplacement vers le bas */
-}
-
-*/
-
-/* Version alternative avec pseudo-élément pour un effet plus sophistiqué */
 .not-Dropdown a::after {
   content: "";
   position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
+  bottom: 3px;
+  left: 12px;
+  right: 12px;
   height: 2px;
   background-color: #36bb6d;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease;
+  border-radius: 2px;
 }
 
 .not-Dropdown a:hover::after,
@@ -144,70 +133,48 @@ body {
   transform-origin: left;
 }
 
-/* Dropdown unifié avec le style de la navigation */
+/* ===== Dropdowns ===== */
 .dropdown {
   position: relative;
   display: inline-block;
 }
 
-.dropdown-button {
-  background: none;
-  border: none;
-  color: #e0e0e0;
-  font-weight: 600;
-  font-size: 20px;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.dropdown-button:hover,
-.dropdown-button:focus {
-  color: #fff;
-  background-color: #36bb6d;
-  outline: none;
-  box-shadow: 0 4px 8px rgba(54, 187, 109, 0.4);
-}
-
 .dropdown-button::after {
-  content: "▼";
-  font-size: 0.6em;
-  margin-left: 4px;
+  content: "▾";
+  font-size: 0.85em;
+  margin-left: 1px;
   transition: transform 0.2s ease;
 }
 
-.dropdown:hover .dropdown-button::after {
+.dropdown:hover .dropdown-button::after,
+.dropdown:focus-within .dropdown-button::after {
   transform: rotate(180deg);
 }
 
 .dropdown-menu {
   display: none;
   position: absolute;
-  top: 100%;
-  left: -120px;
-  background-color: #1e1e2f;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
   min-width: 220px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  z-index: 100;
-  padding: 8px 0;
-  margin-top: 8px;
-  animation: fadeIn 0.2s ease-out;
+  padding: 6px;
+  z-index: 1000;
+  animation: dropFadeIn 0.18s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes dropFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateX(-50%) translateY(-6px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
 }
 
@@ -216,314 +183,237 @@ body {
   display: block;
 }
 
-.dropdown-menu a {
+.dropdown-menu a,
+.dropdown-menu button {
   display: block;
-  padding: 12px 18px;
-  color: #e0e0e0;
+  width: 100%;
+  padding: 9px 14px;
+  color: #1a202c;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 18px;
-  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s;
+  box-sizing: border-box;
 }
 
 .dropdown-menu a:hover,
-.dropdown-menu a:focus {
-  background-color: #36bb6d;
-  color: #fff;
-  padding-left: 22px;
+.dropdown-menu button:hover {
+  background-color: #f0f7ff;
+  color: #0084ff;
 }
 
-/* @media (min-width: 1048px) {
-  .dropdown{
-    font-size: medium;
-  }
-  .hamburger-icon {
-    display: none;
+/* ===== Logout (dans dropdown) ===== */
+.logout-button {
+  color: #ef4444 !important;
+  font-size: 14px !important;
+  padding: 9px 14px !important;
+  border-radius: 6px !important;
+  width: 100% !important;
+  text-align: left !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+
+.logout-button:hover,
+.logout-button:focus {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+  box-shadow: none !important;
+}
+
+/* ===== Nom utilisateur ===== */
+.user {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ===== Tablette (max 1048px) ===== */
+@media (max-width: 1048px) {
+  .header {
+    padding: 0 24px;
   }
 
   .header_nav {
-    display: flex !important;
-    flex-direction: row;
-    justify-content: flex-end;
-    position: static;
-    width: auto;
-    background: none;
-    box-shadow: none;
-    padding: 0;
+    gap: 16px;
   }
 
   .nav_list {
-    display: flex;
-    gap: 1.5rem;
+    gap: 0;
   }
 
-  .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #0084ff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  .nav_list a,
+  .dropdown-button {
+    font-size: 14px;
+    padding: 7px 10px;
+  }
+
+  .dropdown-menu a,
+  .dropdown-menu button {
+    font-size: 13px;
+  }
+}
+
+/* ===== Mobile (max 770px) ===== */
+@media (max-width: 770px) {
+
+  /* Backdrop */
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 8999;
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  .header {
+    padding: 0 20px;
+    height: 84px;
+  }
+
+  /* Affiche le burger */
+  .hamburger {
+    display: flex;
+    align-items: center;
+    z-index: 9001;
+  }
+
+  /* Panneau lateral qui glisse depuis la droite */
+  .header_nav {
+    position: fixed;
+    top: 84px;
+    right: 0;
+    bottom: 0;
+    width: min(300px, 82vw);
+    background-color: #0069d9;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 16px 0 40px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.28s ease;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.22);
+    z-index: 9000;
+  }
+
+  .header_nav.open {
+    transform: translateX(0);
+  }
+
+  .nav_account {
+    padding: 0 14px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    margin-bottom: 8px;
+  }
+
+  .nav_list {
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 10px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0;
+  }
+
+  .nav_list li {
+    width: 100%;
+  }
+
+  .nav_list a,
+  .dropdown-button {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 15px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    width: 100%;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    box-shadow: none;
+  }
+
+  .nav_list a:hover,
+  .dropdown-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    box-shadow: none;
+  }
+
+  .not-Dropdown a::after {
     display: none;
   }
 
-  .dropdown:hover .dropdown-menu {
-    display: block;
-  }
-} */
-
-
-/* @media (max-width: 768px) {
-  .header{
-    height: 200px;
-  }
   .dropdown {
     width: 100%;
   }
 
   .dropdown-button {
-    width: 100%;
     justify-content: space-between;
-    font-size: 18px;
-    padding: 12px 0;
-    text-align: left;
+  }
+
+  .dropdown-button::after {
+    content: "›";
+    font-size: 1.2em;
+    margin-left: auto;
+    transition: transform 0.2s;
+  }
+
+  .dropdown:hover .dropdown-button::after,
+  .dropdown:focus-within .dropdown-button::after {
+    transform: rotate(90deg);
   }
 
   .dropdown-menu {
-    position: static;
-    width: 100%;
-    box-shadow: none;
-    margin-top: 0;
-    border-radius: 0;
-    animation: none;
+    position: static !important;
+    transform: none !important;
+    animation: none !important;
+    background: rgba(0, 0, 0, 0.18) !important;
+    border-radius: 8px;
+    box-shadow: none !important;
+    margin: 4px 0 4px 10px;
+    padding: 4px;
+    min-width: unset;
+    width: auto !important;
+    left: unset !important;
   }
 
-  .dropdown-menu a {
-    padding-left: 30px;
-  } */
-
-/* Bouton de déconnexion */
-.logout-button {
-  background-color: transparent;
-  padding: 8px 18px;
-  border-radius: 6px;
-  color: #e0e0e0;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-  white-space: nowrap;
-}
-
-.logout-button:hover,
-.logout-button:focus {
-  background-color: #36bb6d;
-  color: white;
-  box-shadow: 0 4px 12px rgba(54, 187, 109, 0.7);
-  outline: none;
-}
-
-/* Responsive Tablet */
-@media (max-width: 1048px) {
-
-  /* .header {
-    height: 100px;
+  .dropdown-menu a,
+  .dropdown-menu button {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 14px;
+    padding: 9px 12px;
+    border-radius: 6px;
   }
-  .logo{
-    width: 250px;
-    height: 250px;
-    margin-left: -30px;
-  }
-  .hamburger {
-    display: none;
-  }
-  .header_nav {
-    flex-direction: column;
-    width: 100%;
-    gap: 20px;
-  }
-  .nav_list a,
-  .nav_list select,
-  .nav_list .dropdown-button {
-    font-size: 13px;
-    padding: 5px 5px;
+
+  .dropdown-menu a:hover,
+  .dropdown-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
   }
 
   .logout-button {
-    font-size: 15px;
-    padding: 8px 12px;
-    width: auto;
+    color: #fca5a5 !important;
+    font-size: 15px !important;
+    padding: 11px 12px !important;
+    width: 100% !important;
+    border-radius: 8px !important;
+    text-align: left !important;
+    box-shadow: none !important;
   }
 
-  /* .hamburger-icon {
-    display: block;
-  } */
-  */ .logo-container {
-    margin-left: -40px;
-  }
-
-  .header_nav {
-    flex-direction: column;
-    gap: 14px;
-    width: 100%;
-  }
-
-  .nav_list {
-    gap: 2px;
-  }
-
-  .nav_list a,
-  .nav_list select,
-  .dropdown-button,
-  .dropdown-menu a {
-    font-size: 14px !important;
-    /* réduction ici */
+  .logout-button:hover {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+    color: white !important;
+    box-shadow: none !important;
   }
 
   .user {
     font-size: 14px !important;
-  }
-}
-
-/* Responsive Mobile */
-@media (max-width: 770px) {
-  .hamburger-icon {
-    display: block;
-  }
-
-  .header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    height: 100px;
-  }
-
-  .header_nav {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    max-height: none;
-    /* permet d’afficher tout le contenu */
-    overflow: visible;
-    /* laisse le menu déroulant dépasser si nécessaire */
-    padding: 0;
-    margin-top: 100px;
-    max-height: 0;
-    transition: max-height 0.35s ease, padding 0.35s ease;
-  }
-
-  .header_nav.open {
-    width: 50% !important;
-    /* viewport width = tout l’écran */
-    margin-top: 0 !important;
-    /* supprime le grand espace en haut */
-    background-color: #0084ff;
-    position: fixed;
-    /* optionnel si tu veux que le menu couvre le haut */
-    right: 0;
-    top: 15%;
-    z-index: 2000;
-    max-height: none !important;
-    /* supprime la limite de hauteur */
-    overflow: visible !important;
-    /* permet au contenu de s’afficher */
-  }
-
-  .nav_account .nav_list {
-    margin-bottom: 20px;
-  }
-
-  .nav_list {
-    flex-direction: column;
-    gap: 10px;
-    padding: 0 20px;
-    width: 100%;
-    margin-bottom: -40px;
-  }
-
-  .nav_list a,
-  .nav_list select,
-  .nav_list .dropdown,
-  .nav_list .dropdown-button {
-    display: block;
-    font-size: 18px;
-    padding: 12px 0;
-    width: 100%;
-    text-align: left;
-    color: #e0e0e0;
-    background: none;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-  }
-
-  .nav_list a:hover,
-  .nav_list .dropdown-button:hover {
-    background-color: #36bb6d;
-    color: #fff;
-  }
-
-
-  .logout-button {
-    font-size: 16px;
-    padding: 12px 0;
-    width: 100%;
-    text-align: center;
-  }
-
-  .dropdown-menu.open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-
-  .dropdown-menu {
-    position: relative !important;
-    width: 100% !important;
-    max-height: 300px;
-    /* ou 400px selon la longueur */
-    overflow-y: auto;
-    /* active le scroll vertical */
-    background-color: #1e1e2f !important;
-    /* garde ton fond noir */
-    z-index: 3000;
-  }
-}
-
-@media (max-width: 456px) {
-  .header_nav.open {
-    width: 60% !important;
-    /* prend tout l’écran */
-    top: 2% !important;
-    /* commence en haut */
-    right: 10% !important;
-    /* aligné à droite */
-    margin: 0 !important;
-    position: fixed;
-    /* reste fixé */
-    z-index: 2000;
-    max-height: none !important;
-    /* plus de limite */
-    overflow: auto !important;
-    /* scroll si contenu dépasse */
-    padding: 10px 0;
-    background-color: #0084ff;
-  }
-
-  .dropdown-menu {
-    position: relative !important;
-    width: 60% !important;
-    max-height: none !important;
-    /* plus de limite de hauteur */
-    overflow-y: auto;
-    /* scroll vertical si nécessaire */
-    left: 0 !important;
-    /* aligné à gauche du menu */
-    background-color: #1e1e2f !important;
-    z-index: 3000;
-  }
-
-  .dropdown-button {
-    width: 100% !important;
   }
 }

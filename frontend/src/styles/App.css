@@ -1,6 +1,6 @@
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
-/* Prend tout l'écran */
+/* Prend tout l'�cran */
 html, body {
     height: 100%;
     margin: 0;
@@ -16,7 +16,7 @@ html, body {
     min-height: 100vh;
   }
   
-  /* Main prend tout l’espace restant */
+  /* Main prend tout l'espace restant */
   .main-content {
     flex: 1;
   }
@@ -35,4 +35,3 @@ html, body {
     padding: 1rem;
     text-align: center;
   }
-  

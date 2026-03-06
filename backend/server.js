@@ -11,6 +11,7 @@ import formationRoutes from "./routes/formation.routes.js";
 import reservationRoutes from "./routes/reservation.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
+import workingPaperRoutes from "./routes/workingPaper.routes.js";
 
 const app = express();
 app.use(cors());
@@ -63,6 +64,9 @@ app.use("/reservation", reservationRoutes);
 
 // Routes Membership (cotisations annuelles) - /api/membership/*
 app.use("/api/membership", membershipRoutes);
+
+// Routes Working Papers (soumissions académiques) - /api/*
+app.use("/api", workingPaperRoutes);
 
 // Routes Admin (FAQ, Images, Contacts, Subscribe) - /*
 app.use("/", adminRoutes);
