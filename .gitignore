@@ -29,3 +29,6 @@ Thumbs.db
 # Images uploads
 backend/images/*
 !backend/images/.gitkeep
+
+# Sensitive local docs
+docs/DEV_CREDENTIALS.md

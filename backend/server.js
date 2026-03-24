@@ -14,6 +14,8 @@ import membershipRoutes from "./routes/membership.routes.js";
 import workingPaperRoutes from "./routes/workingPaper.routes.js";
 
 const app = express();
+const isProduction = process.env.NODE_ENV === "production";
+
 app.use(cors());
 app.use(express.json());
 
@@ -51,7 +53,9 @@ connectDB();
 app.use("/", authRoutes);
 
 // Routes DEV (gestion users, stats globales) - /dev/*
-app.use("/dev", devRoutes);
+if (!isProduction) {
+  app.use("/dev", devRoutes);
+}
 
 // Routes Activities (CRUD) - /api/activities/*
 app.use("/api/activities", activityRoutes);
@@ -76,7 +80,7 @@ app.use("/", adminRoutes);
 // ============================================
 
 app.get("/", (req, res) => {
-  res.json({
+  const payload = {
     message: "🚀 AEGC API Server - Système de rôles activé",
     version: "2.0.0",
     endpoints: {
@@ -85,13 +89,6 @@ app.get("/", (req, res) => {
         login: "POST /login",
         forgotPassword: "POST /forgot-password",
         resetPassword: "POST /reset-password/:token",
-      },
-      dev: {
-        users: "GET /dev/users (DEV only)",
-        createUser: "POST /dev/create-user (DEV only)",
-        changeRole: "PATCH /dev/users/:userId/role (DEV only)",
-        migrateUsers: "POST /dev/migrate-users (DEV only)",
-        stats: "GET /dev/stats (DEV only)",
       },
       activities: {
         list: "GET /api/activities",
@@ -145,12 +142,19 @@ app.get("/", (req, res) => {
       admin: "ADMIN - Gestion du contenu",
       dev: "DEV - Gestion complète + users",
     },
-    devAccount: {
-      email: "dev@gmail.com",
-      password: "dev*2026)",
-      note: "Exécutez 'npm run init-dev' pour créer le compte DEV",
-    },
-  });
+  };
+
+  if (!isProduction) {
+    payload.endpoints.dev = {
+      users: "GET /dev/users (DEV only)",
+      createUser: "POST /dev/create-user (DEV only)",
+      changeRole: "PATCH /dev/users/:userId/role (DEV only)",
+      migrateUsers: "POST /dev/migrate-users (DEV only)",
+      stats: "GET /dev/stats (DEV only)",
+    };
+  }
+
+  res.json(payload);
 });
 
 // ============================================
@@ -160,5 +164,7 @@ app.get("/", (req, res) => {
 app.listen(3000, "0.0.0.0", () => {
   console.log("🚀 Serveur démarré sur http://0.0.0.0:3000");
   console.log("📚 Documentation API disponible sur http://0.0.0.0:3000");
-  console.log("👤 Compte DEV : dev@gmail.com / dev*2026)");
+  if (!isProduction) {
+    console.log("🛠️ Mode développement actif");
+  }
 });

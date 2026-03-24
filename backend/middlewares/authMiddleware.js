@@ -1,24 +1,18 @@
 import jwt from "jsonwebtoken";
 
 function authMiddleware(req, res, next) {
+  const isProduction = process.env.NODE_ENV === "production";
   const authHeader = req.headers.authorization;
   const queryToken =
-    typeof req.query?.token === "string" ? req.query.token : null;
-
-  console.log("DEBUG Auth - Header Authorization présent:", !!authHeader);
-  console.log("DEBUG Auth - URL:", req.method, req.originalUrl);
+    !isProduction && typeof req.query?.token === "string"
+      ? req.query.token
+      : null;
 
   const tokenFromHeader = authHeader ? authHeader.split(" ")[1] : null;
   const token = tokenFromHeader || queryToken;
 
-  console.log(
-    "DEBUG Auth - Token extrait:",
-    token ? `${token.substring(0, 20)}...` : "VIDE",
-  );
-
   if (!token) {
-    console.log("DEBUG Auth - Token vide après extraction");
-    return res.status(401).json({ error: "Token missing" });
+    return res.status(401).json({ error: "Token manquant" });
   }
 
   try {
@@ -33,12 +27,12 @@ function authMiddleware(req, res, next) {
       ...decoded,
     };
 
-    console.log("Utilisateur authentifié :", req.user);
-
     next();
   } catch (err) {
-    console.error("Erreur de vérification du token :", err.message);
-    res.status(403).json({ error: "SVP veillez vous inscrire" });
+    if (!isProduction) {
+      console.error("Erreur de vérification du token :", err.message);
+    }
+    res.status(403).json({ error: "Accès refusé" });
   }
 }
 
