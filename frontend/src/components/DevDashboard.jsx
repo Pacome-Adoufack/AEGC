@@ -249,6 +249,7 @@ export default function DevDashboard() {
                                     <span>🟢 Users: {stats.users.byRole.user}</span>
                                     <span>🔵 Admins: {stats.users.byRole.admin}</span>
                                     <span>🔴 Devs: {stats.users.byRole.dev}</span>
+                                    <span>🟣 Dispatchers: {stats.users.byRole.dispatcher || 0}</span>
                                 </div>
                                 <div className="stat-recent">
                                     <small>📅 Derniers 7 jours: {stats.users.recent.last7days}</small>
@@ -369,6 +370,7 @@ export default function DevDashboard() {
                                     <select name="role" required>
                                         <option value="user">👤 User</option>
                                         <option value="admin">👨‍💼 Admin</option>
+                                        <option value="dispatcher">🧭 Dispatcher</option>
                                         <option value="dev">👨‍💻 Dev</option>
                                     </select>
                                 </div>
@@ -401,6 +403,7 @@ export default function DevDashboard() {
                                                 >
                                                     <option value="user">User</option>
                                                     <option value="admin">Admin</option>
+                                                    <option value="dispatcher">Dispatcher</option>
                                                     <option value="dev">Dev</option>
                                                 </select>
                                             </td>

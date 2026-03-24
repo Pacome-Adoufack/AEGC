@@ -66,6 +66,7 @@ import WorkingPaperDetail from "./components/WorkingPaperDetail.jsx";
 import SubmissionForm from "./components/SubmissionForm.jsx";
 import MySubmissions from "./components/MySubmissions.jsx";
 import AdminWorkingPapers from "./components/AdminWorkingPapers.jsx";
+import SubmissionResubmit from "./components/SubmissionResubmit.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -157,7 +158,9 @@ function App() {
               <Route path="/working-papers/:id" element={<WorkingPaperDetail />} />
               <Route path="/working-papers/:id/submit" element={<SubmissionForm />} />
               <Route path="/my-submissions" element={<MySubmissions />} />
+              <Route path="/my-submissions/:id/resubmit" element={<SubmissionResubmit />} />
               <Route path="/admin/working-papers" element={<AdminWorkingPapers />} />
+              <Route path="/dispatcher/working-papers" element={<AdminWorkingPapers />} />
             </Routes>
           </div>
         </Router>

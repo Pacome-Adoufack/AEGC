@@ -12,6 +12,11 @@
 - **Email** : `dev@gmail.com`
 - **Mot de passe** : `password123*`
 
+### Dispatcher
+
+- **Email** : `dispatcher.test@test.com`
+- **Mot de passe** : `Test123*`
+
 ### User Normal (Existant)
 
 - **Email** : `landrytido@yahoo.com`

@@ -62,6 +62,7 @@ router.get("/users", async (req, res) => {
         }),
         admin: await User.countDocuments({ role: "admin" }),
         dev: await User.countDocuments({ role: "dev" }),
+        dispatcher: await User.countDocuments({ role: "dispatcher" }),
       },
     };
 
@@ -123,7 +124,7 @@ router.post("/create-user", async (req, res) => {
   }
 
   // Valider le rôle
-  const validRoles = ["user", "admin", "dev"];
+  const validRoles = ["user", "admin", "dev", "dispatcher"];
   const userRole = role && validRoles.includes(role) ? role : "user";
 
   try {
@@ -161,7 +162,7 @@ router.patch("/users/:userId/role", async (req, res) => {
   const { userId } = req.params;
   const { role } = req.body;
 
-  const validRoles = ["user", "admin", "dev"];
+  const validRoles = ["user", "admin", "dev", "dispatcher"];
   if (!role || !validRoles.includes(role)) {
     return res.status(400).json({
       error: "Rôle invalide",
@@ -247,6 +248,7 @@ router.get("/stats", async (req, res) => {
         user: allUsers.filter((u) => (u.role || "user") === "user").length,
         admin: allUsers.filter((u) => u.role === "admin").length,
         dev: allUsers.filter((u) => u.role === "dev").length,
+        dispatcher: allUsers.filter((u) => u.role === "dispatcher").length,
       },
       withoutRole: allUsers.filter((u) => !u.role).length,
       recent: {

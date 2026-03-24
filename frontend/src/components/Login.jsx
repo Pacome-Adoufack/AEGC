@@ -60,6 +60,8 @@ export default function Login({ setIsLoggedIn }) {
           redirectPath = '/dev-dashboard';
         } else if (userRole === 'admin') {
           redirectPath = '/admin-dashboard';
+        } else if (userRole === 'dispatcher') {
+          redirectPath = '/dispatcher/working-papers';
         }
 
         // Stocker les infos dans localStorage ou sessionStorage

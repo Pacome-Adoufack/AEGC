@@ -89,20 +89,26 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
           <nav className="nav_main">
             <ul className="nav_list">
               {/* Menu pour DEV et ADMIN - Dashboard simplifié */}
-              {(userRole === 'dev' || userRole === 'admin') ? (
+              {(userRole === 'dev' || userRole === 'admin' || userRole === 'dispatcher') ? (
                 <>
                   <li className="not-Dropdown">
                     <Link
-                      to={userRole === 'dev' ? '/dev-dashboard' : '/admin-dashboard'}
+                      to={
+                        userRole === 'dev'
+                          ? '/dev-dashboard'
+                          : userRole === 'dispatcher'
+                            ? '/dispatcher/working-papers'
+                            : '/admin-dashboard'
+                      }
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Dashboard {userRole === 'dev' ? 'Développeur' : 'Administrateur'}
+                      Dashboard {userRole === 'dev' ? 'Développeur' : userRole === 'dispatcher' ? 'Dispatcher' : 'Administrateur'}
                     </Link>
                   </li>
-                  {userRole === 'admin' && (
+                  {(userRole === 'admin' || userRole === 'dispatcher') && (
                     <li className="not-Dropdown">
                       <Link
-                        to="/admin/working-papers"
+                        to={userRole === 'dispatcher' ? '/dispatcher/working-papers' : '/admin/working-papers'}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Working Papers

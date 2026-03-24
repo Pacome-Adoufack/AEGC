@@ -85,19 +85,23 @@
     height: 4px;
 }
 
-.sub-card-accent.accent-reçue {
+.sub-card-accent.accent-soumise {
     background: #0084ff;
 }
 
-.sub-card-accent.accent-en_attente {
+.sub-card-accent.accent-en_revision {
     background: #f59e0b;
 }
 
-.sub-card-accent.accent-traitée {
+.sub-card-accent.accent-revision_requise {
     background: #8b5cf6;
 }
 
-.sub-card-accent.accent-terminée {
+.sub-card-accent.accent-rejetee {
+    background: #ef4444;
+}
+
+.sub-card-accent.accent-acceptee {
     background: #10b981;
 }
 
@@ -135,22 +139,27 @@
     flex-shrink: 0;
 }
 
-.sub-status.status-reçue {
+.sub-status.status-soumise {
     background: #dbeafe;
     color: #1d4ed8;
 }
 
-.sub-status.status-en_attente {
+.sub-status.status-en_revision {
     background: #fef3c7;
     color: #92400e;
 }
 
-.sub-status.status-traitée {
+.sub-status.status-revision_requise {
     background: #ede9fe;
     color: #6d28d9;
 }
 
-.sub-status.status-terminée {
+.sub-status.status-rejetee {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.sub-status.status-acceptee {
     background: #d1fae5;
     color: #065f46;
 }

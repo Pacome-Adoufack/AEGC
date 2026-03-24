@@ -7,6 +7,9 @@ import "../styles/wp-base.css";
 import "../styles/wp-submission.css";
 import "../styles/wp-components.css";
 
+const PDF_MAX_SIZE_MB = Number(import.meta.env.VITE_PDF_MAX_SIZE_MB) || 10;
+const PDF_MAX_SIZE_BYTES = PDF_MAX_SIZE_MB * 1024 * 1024;
+
 function SubmissionForm() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -99,8 +102,8 @@ function SubmissionForm() {
                 setError("Seuls les fichiers PDF sont acceptés");
                 return;
             }
-            if (file.size > 10 * 1024 * 1024) {
-                setError("Le fichier ne doit pas dépasser 10 MB");
+            if (file.size > PDF_MAX_SIZE_BYTES) {
+                setError(`Le fichier ne doit pas dépasser ${PDF_MAX_SIZE_MB} MB`);
                 return;
             }
             setPdfFile(file);
@@ -433,7 +436,7 @@ function SubmissionForm() {
                                 />
                                 <span className="pdf-drop-icon">📎</span>
                                 <p className="pdf-drop-label">Glissez votre PDF ici ou cliquez pour sélectionner</p>
-                                <p className="pdf-drop-hint">Format PDF uniquement — maximum 10 MB</p>
+                                <p className="pdf-drop-hint">Format PDF uniquement — maximum {PDF_MAX_SIZE_MB} MB</p>
                             </div>
                             {pdfFile && (
                                 <div className="file-info">

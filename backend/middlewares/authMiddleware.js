@@ -2,16 +2,14 @@ import jwt from "jsonwebtoken";
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
+  const queryToken =
+    typeof req.query?.token === "string" ? req.query.token : null;
 
   console.log("DEBUG Auth - Header Authorization présent:", !!authHeader);
   console.log("DEBUG Auth - URL:", req.method, req.originalUrl);
 
-  if (!authHeader) {
-    console.log("DEBUG Auth - Header manquant");
-    return res.status(401).json({ error: "Authorization header missing" });
-  }
-
-  const token = authHeader.split(" ")[1];
+  const tokenFromHeader = authHeader ? authHeader.split(" ")[1] : null;
+  const token = tokenFromHeader || queryToken;
 
   console.log(
     "DEBUG Auth - Token extrait:",

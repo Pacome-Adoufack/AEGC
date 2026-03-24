@@ -5,6 +5,8 @@ import "../styles/wp-base.css";
 import "../styles/wp-detail.css";
 import "../styles/wp-components.css";
 
+const PDF_MAX_SIZE_MB = Number(import.meta.env.VITE_PDF_MAX_SIZE_MB) || 10;
+
 function WorkingPaperDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -97,7 +99,7 @@ function WorkingPaperDetail() {
                         <h3>Soumettre votre travail</h3>
                         <p>Assurez-vous d’avoir préparé les éléments suivants avant de commencer :</p>
                         <ul className="wp-submit-checklist">
-                            <li>Votre fichier en format PDF (max 10 MB)</li>
+                            <li>Votre fichier en format PDF (max {PDF_MAX_SIZE_MB} MB)</li>
                             <li>Titre, résumé et mots-clés de l’article</li>
                             <li>Informations des co-auteurs si applicable</li>
                             <li>Codes JEL correspondant à votre domaine</li>

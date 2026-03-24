@@ -6,7 +6,7 @@ import "../styles/wp-history.css";
 import "../styles/wp-components.css";
 
 function WorkingPapersHistory({ embedded = false }) {
-    const [submissions, setSubmissions] = useState([]);
+    const [publications, setPublications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [groupedByYear, setGroupedByYear] = useState({});
     const navigate = useNavigate();
@@ -21,15 +21,16 @@ function WorkingPapersHistory({ embedded = false }) {
                 `${API_BASE_URL}/api/working-papers/history/public`
             );
             const data = await response.json();
-            setSubmissions(data);
+            setPublications(data);
 
             // Grouper par année
-            const grouped = data.reduce((acc, sub) => {
-                const year = new Date(sub.createdAt).getFullYear();
+            const grouped = data.reduce((acc, publication) => {
+                const referenceDate = publication.publishedAt || publication.createdAt;
+                const year = new Date(referenceDate).getFullYear();
                 if (!acc[year]) {
                     acc[year] = [];
                 }
-                acc[year].push(sub);
+                acc[year].push(publication);
                 return acc;
             }, {});
 
@@ -59,8 +60,8 @@ function WorkingPapersHistory({ embedded = false }) {
         <div className={embedded ? "" : "working-papers-container"}>
             {!embedded && (
                 <header className="wp-header">
-                    <h1>📖 Historique des Working Papers AEGC</h1>
-                    <p>Travaux académiques validés et publiés par nos membres</p>
+                    <h1>📖 Historique des publications AEGC</h1>
+                    <p>Numéros éditoriaux de synthèse préparés et publiés par l&apos;administration.</p>
                 </header>
             )}
 
@@ -70,9 +71,9 @@ function WorkingPapersHistory({ embedded = false }) {
                 </button>
             )}
 
-            {submissions.length === 0 ? (
+            {publications.length === 0 ? (
                 <div className="no-submissions">
-                    <p>Aucun travail publié pour le moment.</p>
+                    <p>Aucune publication de synthèse pour le moment.</p>
                 </div>
             ) : (
                 <div className="history-container">
@@ -81,50 +82,56 @@ function WorkingPapersHistory({ embedded = false }) {
                             <h2 className="year-title">{year}</h2>
 
                             <div className="history-grid">
-                                {groupedByYear[year].map((submission) => (
-                                    <div key={submission._id} className="history-card">
+                                {groupedByYear[year].map((publication) => (
+                                    <div key={publication._id} className="history-card">
                                         <div className="history-card-header">
-                                            <h3>{submission.articleTitle}</h3>
-                                            <p className="wp-theme">{submission.workingPaper?.title}</p>
+                                            <h3>{publication.title}</h3>
+                                            <p className="wp-theme">Publication éditoriale</p>
                                         </div>
 
                                         <div className="history-card-body">
-                                            <div className="authors-list">
-                                                <strong>Auteur(s) :</strong>
-                                                <ul>
-                                                    {submission.authors.map((author, i) => (
-                                                        <li key={i}>
-                                                            {author.name}
-                                                            {author.affiliation && ` (${author.affiliation})`}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
+                                            {(publication.stats?.acceptedCount !== undefined || publication.stats?.rejectedCount !== undefined) && (
+                                                <div className="keywords" style={{ marginBottom: "0.75rem" }}>
+                                                    {publication.stats?.acceptedCount !== undefined && (
+                                                        <span className="keyword-tag">
+                                                            Acceptes: {publication.stats.acceptedCount}
+                                                        </span>
+                                                    )}
+                                                    {publication.stats?.rejectedCount !== undefined && (
+                                                        <span className="keyword-tag">
+                                                            Rejetes: {publication.stats.rejectedCount}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )}
 
-                                            {submission.abstract && (
+                                            {publication.summary && (
                                                 <div className="abstract-preview">
                                                     <strong>Résumé :</strong>
                                                     <p>
-                                                        {submission.abstract.length > 300
-                                                            ? `${submission.abstract.substring(0, 300)}...`
-                                                            : submission.abstract}
+                                                        {publication.summary.length > 300
+                                                            ? `${publication.summary.substring(0, 300)}...`
+                                                            : publication.summary}
                                                     </p>
                                                 </div>
                                             )}
 
-                                            {submission.keywords && submission.keywords.length > 0 && (
-                                                <div className="keywords">
-                                                    {submission.keywords.slice(0, 5).map((keyword, i) => (
-                                                        <span key={i} className="keyword-tag">
-                                                            {keyword}
-                                                        </span>
-                                                    ))}
+                                            {publication.downloadUrl && (
+                                                <div style={{ marginTop: "0.75rem" }}>
+                                                    <a
+                                                        className="btn btn-primary btn-small"
+                                                        href={`${API_BASE_URL}${publication.downloadUrl}`}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                    >
+                                                        Ouvrir le PDF publié
+                                                    </a>
                                                 </div>
                                             )}
 
                                             <div className="history-meta">
                                                 <span className="meta-date">
-                                                    Publié le {formatDate(submission.createdAt)}
+                                                    Publié le {formatDate(publication.publishedAt || publication.createdAt)}
                                                 </span>
                                             </div>
                                         </div>
@@ -138,11 +145,10 @@ function WorkingPapersHistory({ embedded = false }) {
 
             <div className="history-footer">
                 <p>
-                    Les PDF des travaux sont disponibles uniquement pour les auteurs et
-                    l'administration AEGC.
+                    Cet espace présente les documents de synthèse officiels publiés par l&apos;administration AEGC.
                 </p>
                 <p>
-                    Pour plus d'informations sur un travail spécifique, contactez-nous à{" "}
+                    Pour plus d&apos;informations, contactez-nous à{" "}
                     <a href="mailto:contact@aegc.org">contact@aegc.org</a>
                 </p>
             </div>

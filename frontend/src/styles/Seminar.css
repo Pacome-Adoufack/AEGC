@@ -4,6 +4,7 @@
   font-size: 2rem;
   color: #2c3e50;
 }
+
 .meeting-container {
   display: flex;
   flex-direction: column;
@@ -12,6 +13,7 @@
   width: 100%;
   margin: 0 auto;
 }
+
 /* .activity-scroll-container{
     display: flex;
     flex-direction: column;
@@ -48,13 +50,15 @@
 }
 
 .logo1 {
-  width: 100px;  
+  width: 100px;
   height: 100px;
   margin-left: 20px;
   object-fit: contain;
 }
 
-span {
+.countdown span,
+.countdown-small span,
+.activity-date span {
   font-size: 18px;
   font-weight: 600;
   color: #ff3c66;
@@ -68,6 +72,7 @@ span {
   flex-shrink: 0;
   overflow: hidden;
 }
+
 .activity-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
@@ -86,6 +91,7 @@ span {
   width: 90%;
   margin: 0 auto;
 }
+
 .first-card {
   border: 5px solid #36bb6d;
   border-radius: 10px;
@@ -101,6 +107,7 @@ span {
   padding-bottom: 0.8rem;
   padding: 15px;
 }
+
 .activity-card p {
   text-align: center;
   font-size: 18px;
@@ -119,7 +126,8 @@ span {
   } */
 
 .activity-info {
-  background-color: #f9f9f9; /* couleur de fond douce */
+  background-color: #f9f9f9;
+  /* couleur de fond douce */
   padding: 20px;
   border-radius: 12px;
   margin-top: 15px;
@@ -136,11 +144,13 @@ span {
 }
 
 .activity-info strong {
-  color: #1f2937; /* gris foncé pour le label */
+  color: #1f2937;
+  /* gris foncé pour le label */
 }
 
 .doctor-link {
-  color: #2563eb; /* bleu professionnel */
+  color: #2563eb;
+  /* bleu professionnel */
   text-decoration: none;
   transition: color 0.3s ease, transform 0.2s ease;
 }
@@ -185,6 +195,7 @@ span {
   padding: 12px 18px;
   border-radius: 10px;
 }
+
 .activity-meta span {
   color: #2563eb;
 }
@@ -206,6 +217,7 @@ span {
   height: 25px;
   background-color: #ccc;
 }
+
 .activity-info .subtitle {
   font-size: 14px;
   color: #666;
@@ -219,6 +231,7 @@ span {
   font-size: 0.95rem;
   color: #555;
 }
+
 .scroll-controls {
   position: relative;
   display: flex;
@@ -265,16 +278,19 @@ span {
   margin-right: 0.8rem;
   font-size: 1.1rem;
 }
-.moderator{
+
+.moderator {
   display: flex;
   justify-content: space-around;
   gap: 20px;
 }
-.participant-card{
+
+.participant-card {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
 }
+
 .doctor-link {
   color: #007bff;
   text-decoration: none;
@@ -304,22 +320,31 @@ span {
 }
 
 .card-actions {
-  display: flex;             /* active le flexbox */
-  justify-content: center;   /* centre horizontalement */
-  align-items: center;       /* centre verticalement */
-  gap: 1rem;                 /* espace entre boutons si plusieurs */
-  width: 50%;               /* prend toute la largeur de la carte */
-  margin-top: 1.5rem;        /* espace au-dessus */
+  display: flex;
+  /* active le flexbox */
+  justify-content: center;
+  /* centre horizontalement */
+  align-items: center;
+  /* centre verticalement */
+  gap: 1rem;
+  /* espace entre boutons si plusieurs */
+  width: 50%;
+  /* prend toute la largeur de la carte */
+  margin-top: 1.5rem;
+  /* espace au-dessus */
 }
 
 .reserve-button,
 .delete-button,
 .question-button {
-  max-width: 150px;          /* taille max du bouton */
-  flex-shrink: 0;            /* empêche de rétrécir */
+  max-width: 150px;
+  /* taille max du bouton */
+  flex-shrink: 0;
+  /* empêche de rétrécir */
   text-align: center;
 }
-.activity-meta{
+
+.activity-meta {
   width: 100%;
   margin-left: 0;
 }
@@ -360,9 +385,11 @@ span {
   background-color: rgba(255, 77, 79, 0.1);
   color: #ff1a1d;
 }
+
 .question-container {
   position: relative;
 }
+
 .question-button {
   background-color: #007bff;
   color: white;
@@ -385,37 +412,44 @@ span {
     display: flex;
     flex-direction: column;
   }
-.activity-card{
+
+  .activity-card {
     width: 100%;
     height: 95%;
     margin-right: 50px;
     margin-bottom: 0px;
   }
-  .arrow-button{
+
+  .arrow-button {
     display: none;
   }
-  .countdown-container{
+
+  .countdown-container {
     width: 90%;
   }
-  .activity-meta{
+
+  .activity-meta {
     width: 50%;
     margin: 0 auto;
   }
-  .activity-meta p{
+
+  .activity-meta p {
     font-size: 16px;
   }
+
   .activity-info {
     width: 90%;
     max-width: 600px;
     padding: 20px;
     border-radius: 12px;
-    margin: 15px auto; /* centre horizontalement */
+    margin: 15px auto;
+    /* centre horizontalement */
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
-  
-  
+
+
 }
 
 @media (max-width: 768px) {
@@ -423,6 +457,7 @@ span {
     display: grid;
     grid-template-columns: 1fr;
   }
+
   .activity-card-content {
     position: relative;
   }
@@ -430,13 +465,16 @@ span {
   .activity-card {
     margin: 0 auto;
   }
+
   .activity-meta {
     margin-top: -10px;
   }
+
   .activity-location {
     position: absolute;
     bottom: 65px;
   }
+
   .presenter {
     position: absolute;
     bottom: 40px;
@@ -453,60 +491,71 @@ span {
     width: 50%;
     margin-left: -7px;
   }
+
   .question-button {
     width: 30%;
     margin-left: 80px;
   }
+
   .reserve-button,
   .delete-button {
     width: 100%;
     max-width: none;
   }
+
   .arrow-button {
     display: none;
   }
+
   .boutton-section {
     width: 80%;
     margin-right: 100px;
     margin-bottom: 10px;
   }
 }
+
 @media (max-width: 456px) {
-  .activity-card{
+  .activity-card {
     width: 90%;
     height: 95%;
     margin-right: 50px;
     margin-bottom: 0px;
   }
+
   .meeting-content h1 {
     font-size: 1.5rem;
   }
- .countdown-container{
+
+  .countdown-container {
     flex-direction: column;
     align-items: flex-start;
     margin-right: 50px;
     height: 15%;
     width: 90%;
- }
+  }
 
-.activity-card-content h2 {
-  font-size: 1.2rem;
-  padding-right: 50px;
-  width: 100%;
-  margin-top: -40px;
-}
-.activity-meta {
-  margin-left: 0px !important; 
-}
-.activity-info p{
-  font-size: 14px !important;
-}
-.activity-info{
-  width: 100% !important;
-  margin: 0 auto;
-}
-.card-actions{
-  width: 30%;
-  margin-left: -60px !important;
-}
+  .activity-card-content h2 {
+    font-size: 1.2rem;
+    padding-right: 50px;
+    width: 100%;
+    margin-top: -40px;
+  }
+
+  .activity-meta {
+    margin-left: 0px !important;
+  }
+
+  .activity-info p {
+    font-size: 14px !important;
+  }
+
+  .activity-info {
+    width: 100% !important;
+    margin: 0 auto;
+  }
+
+  .card-actions {
+    width: 30%;
+    margin-left: -60px !important;
+  }
 }

@@ -6,6 +6,15 @@ import "../styles/wp-base.css";
 import "../styles/wp-user.css";
 import "../styles/wp-components.css";
 
+const LEGACY_STATUS_TO_NEW = {
+    "reçue": "soumise",
+    en_attente: "en_revision",
+    "traitée": "revision_requise",
+    "terminée": "acceptee",
+};
+
+const normalizeStatus = (status) => LEGACY_STATUS_TO_NEW[status] || status;
+
 function MySubmissions() {
     const [submissions, setSubmissions] = useState([]);
     const [unreadComments, setUnreadComments] = useState(0);
@@ -49,7 +58,12 @@ function MySubmissions() {
             }
 
             const data = await response.json();
-            setSubmissions(data.submissions);
+            const normalizedSubmissions = (data.submissions || []).map((submission) => ({
+                ...submission,
+                status: normalizeStatus(submission.status),
+            }));
+
+            setSubmissions(normalizedSubmissions);
             setUnreadComments(data.unreadComments);
         } catch (error) {
             console.error("Erreur:", error);
@@ -71,7 +85,10 @@ function MySubmissions() {
             );
 
             const data = await response.json();
-            setSelectedSubmission(data);
+            setSelectedSubmission({
+                ...data,
+                status: normalizeStatus(data.status),
+            });
 
             // Marquer les commentaires comme lus
             await fetch(
@@ -99,30 +116,74 @@ function MySubmissions() {
         );
     };
 
+    const downloadVersionPDF = (submissionId, versionNumber) => {
+        const token = getAuthToken();
+        window.open(
+            `${API_BASE_URL}/api/submissions/${submissionId}/versions/${versionNumber}/download?token=${token}`,
+            "_blank"
+        );
+    };
+
     const getStatusClass = (status) => {
+        const normalizedStatus = normalizeStatus(status);
         const map = {
-            reçue: "status-reçue",
-            en_attente: "status-en_attente",
-            traitée: "status-traitée",
-            terminée: "status-terminée",
+            soumise: "status-soumise",
+            en_revision: "status-en_revision",
+            revision_requise: "status-revision_requise",
+            rejetee: "status-rejetee",
+            acceptee: "status-acceptee",
         };
-        return map[status] || "";
+        return map[normalizedStatus] || "";
     };
 
     const getStatusLabel = (status) => {
+        const normalizedStatus = normalizeStatus(status);
         const labels = {
-            reçue: "Reçue",
-            en_attente: "En attente",
-            traitée: "Traitée",
-            terminée: "Terminée",
+            soumise: "Soumise",
+            en_revision: "En révision",
+            revision_requise: "À modifier",
+            rejetee: "Rejetée",
+            acceptee: "Acceptée",
         };
-        return labels[status] || status;
+        return labels[normalizedStatus] || status;
     };
 
-    const getAccentClass = (status) => `accent-${status}`;
+    const getAccentClass = (status) => `accent-${normalizeStatus(status)}`;
+
+    const getLatestReviewRequest = (submission) => {
+        if (!submission?.reviewRequests || submission.reviewRequests.length === 0) {
+            return null;
+        }
+
+        const sortedRequests = [...submission.reviewRequests].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+        );
+
+        const openRequest = sortedRequests.find((request) => request.status === "open");
+        return openRequest || sortedRequests[0];
+    };
+
+    const getSortedVersions = (submission) => {
+        if (!submission?.versions) {
+            return [];
+        }
+
+        return [...submission.versions].sort(
+            (a, b) => (b.versionNumber || 1) - (a.versionNumber || 1),
+        );
+    };
 
     const formatDate = (date) => {
-        return new Date(date).toLocaleDateString("fr-FR", {
+        if (!date) {
+            return "-";
+        }
+
+        const parsed = new Date(date);
+        if (Number.isNaN(parsed.getTime())) {
+            return "-";
+        }
+
+        return parsed.toLocaleDateString("fr-FR", {
             day: "numeric",
             month: "long",
             year: "numeric",
@@ -201,6 +262,14 @@ function MySubmissions() {
                                             >
                                                 Télécharger PDF
                                             </button>
+                                            {normalizeStatus(submission.status) === "revision_requise" && (
+                                                <button
+                                                    className="btn btn-primary btn-small"
+                                                    onClick={() => navigate(`/my-submissions/${submission._id}/resubmit`)}
+                                                >
+                                                    Corriger et resoumettre
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -270,6 +339,50 @@ function MySubmissions() {
                                 <h3>Résumé</h3>
                                 <p>{selectedSubmission.abstract}</p>
                             </div>
+
+                            {getLatestReviewRequest(selectedSubmission) && (
+                                <div className="sub-modal-section">
+                                    <h3>Dernière appréciation de l&apos;administration</h3>
+                                    <p><strong>Résumé :</strong> {getLatestReviewRequest(selectedSubmission).summary}</p>
+                                    {getLatestReviewRequest(selectedSubmission).items?.length > 0 && (
+                                        <ul>
+                                            {getLatestReviewRequest(selectedSubmission).items.map((item, index) => (
+                                                <li key={`${index}-${item}`}>{item}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {normalizeStatus(selectedSubmission.status) === "revision_requise" && (
+                                        <button
+                                            className="btn btn-primary btn-small"
+                                            onClick={() => navigate(`/my-submissions/${selectedSubmission._id}/resubmit`)}
+                                        >
+                                            Corriger et resoumettre
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
+                            {getSortedVersions(selectedSubmission).length > 0 && (
+                                <div className="sub-modal-section">
+                                    <h3>Historique des versions</h3>
+                                    {getSortedVersions(selectedSubmission).map((version) => (
+                                        <div key={version._id || version.versionNumber} className="admin-comment-item">
+                                            <p className="comment-date">
+                                                Version {version.versionNumber} · {formatDate(version.submittedAt || version.pdfFile?.uploadDate || selectedSubmission.createdAt)}
+                                            </p>
+                                            {version.responseNote && (
+                                                <p className="comment-text"><strong>Réponse auteur :</strong> {version.responseNote}</p>
+                                            )}
+                                            <button
+                                                className="btn btn-secondary btn-small"
+                                                onClick={() => downloadVersionPDF(selectedSubmission._id, version.versionNumber)}
+                                            >
+                                                Télécharger cette version
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
 
                             {selectedSubmission.adminComments.length > 0 && (
                                 <div className="sub-modal-section">

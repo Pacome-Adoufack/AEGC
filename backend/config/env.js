@@ -15,6 +15,7 @@ export const config = {
   notchpayPrivateKey: process.env.NOTCHPAY_PRIVATE_KEY,
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:5173",
   port: process.env.PORT || 3000,
+  pdfMaxSizeMb: Number(process.env.PDF_MAX_SIZE_MB) || 10,
 };
 
 // Vérification silencieuse des variables
