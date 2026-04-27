@@ -1,10 +1,11 @@
 import { useState } from "react";
 import WorkingPapersList from "./WorkingPapersList";
 import WorkingPapersHistory from "./WorkingPapersHistory";
+import WorkingPapersCommittee from "./WorkingPapersCommittee";
 import "../styles/wp-base.css";
 
 function WorkingPapersMain() {
-    const [activeTab, setActiveTab] = useState("papers"); // papers | history
+    const [activeTab, setActiveTab] = useState("papers"); // papers | history | committee
 
     return (
         <div className="working-papers-container">
@@ -35,6 +36,12 @@ function WorkingPapersMain() {
                     >
                         Historique des publications
                     </button>
+                    <button
+                        className={`wp-tab ${activeTab === "committee" ? "active" : ""}`}
+                        onClick={() => setActiveTab("committee")}
+                    >
+                        Comité scientifique
+                    </button>
                 </div>
             </div>
 
@@ -42,8 +49,10 @@ function WorkingPapersMain() {
             <div className="wp-tab-content-area">
                 {activeTab === "papers" ? (
                     <WorkingPapersList embedded={true} />
-                ) : (
+                ) : activeTab === "history" ? (
                     <WorkingPapersHistory embedded={true} />
+                ) : (
+                    <WorkingPapersCommittee />
                 )}
             </div>
         </div>

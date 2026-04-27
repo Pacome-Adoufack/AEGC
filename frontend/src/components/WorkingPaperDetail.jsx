@@ -79,6 +79,14 @@ function WorkingPaperDetail() {
                             {wp.status === "ouvert" ? "Ouvert" : "Clôturé"}
                         </p>
                     </div>
+                    <div className="meta-item">
+                        <strong>Codes JEL</strong>
+                        <p>
+                            {Array.isArray(wp.jelCodes) && wp.jelCodes.length > 0
+                                ? wp.jelCodes.join(", ")
+                                : "Non definis"}
+                        </p>
+                    </div>
                 </div>
 
                 <div className="wp-detail-content">
@@ -102,7 +110,7 @@ function WorkingPaperDetail() {
                             <li>Votre fichier en format PDF (max {PDF_MAX_SIZE_MB} MB)</li>
                             <li>Titre, résumé et mots-clés de l’article</li>
                             <li>Informations des co-auteurs si applicable</li>
-                            <li>Codes JEL correspondant à votre domaine</li>
+                            <li>Les codes JEL sont définis par le créateur de l’appel</li>
                         </ul>
                         <button
                             className="btn btn-primary"

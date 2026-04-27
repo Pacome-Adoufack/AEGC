@@ -12,6 +12,7 @@ import reservationRoutes from "./routes/reservation.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
 import workingPaperRoutes from "./routes/workingPaper.routes.js";
+import committeeRoutes from "./routes/committee.routes.js";
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -71,6 +72,9 @@ app.use("/api/membership", membershipRoutes);
 
 // Routes Working Papers (soumissions académiques) - /api/*
 app.use("/api", workingPaperRoutes);
+
+// Routes Comité scientifique - /api/*
+app.use("/api", committeeRoutes);
 
 // Routes Admin (FAQ, Images, Contacts, Subscribe) - /*
 app.use("/", adminRoutes);

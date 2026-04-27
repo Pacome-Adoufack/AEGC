@@ -17,7 +17,7 @@ function JournalsView() {
               />
               <div>
                 <h3>
-                    <a href="/review">AEGC Review</a>
+                  <a href="/review">AEGC Review</a>
                 </h3>
                 <p>
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
@@ -33,7 +33,7 @@ function JournalsView() {
               />
               <div>
                 <h3>
-                    <a href="">AEGC Papers and Processig</a>
+                  <a href="">AEGC Economic Review</a>
                 </h3>
                 <p>
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
@@ -49,7 +49,7 @@ function JournalsView() {
               />
               <div>
                 <h3>
-                    <a href="">AEGC Economic Review</a>
+                  <a href="">Management Review</a>
                 </h3>
                 <p>
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
@@ -65,7 +65,7 @@ function JournalsView() {
               />
               <div>
                 <h3>
-                    <a href="">Management Review</a>
+                  <a href="">Reserch</a>
                 </h3>
                 <p>
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
@@ -81,23 +81,7 @@ function JournalsView() {
               />
               <div>
                 <h3>
-                    <a href="">Reserch</a>
-                </h3>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Explicabo reprehenderit necessitatibus repudiandae magnam
-                  unde. Provident?
-                </p>
-              </div>
-            </div>
-            <div>
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfWERCc5vyeR7GnmY3C6Wi3uqjmYLdmNe9Cg&s"
-                alt="Journal 1"
-              />
-              <div>
-                <h3>
-                    <a href="">AEGC Metadata</a>
+                  <a href="">AEGC Metadata</a>
                 </h3>
                 <p>
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.

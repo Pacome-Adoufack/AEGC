@@ -33,7 +33,21 @@ const SUBMISSION_STATUS_ORDER = [
     "acceptee",
 ];
 
+const JEL_OPTIONS = [
+    { code: "E52", label: "Politique monetaire" },
+    { code: "F31", label: "Taux de change" },
+    { code: "O11", label: "Developpement economique" },
+    { code: "C23", label: "Donnees de panel" },
+    { code: "G12", label: "Prix des actifs" },
+    { code: "H30", label: "Fiscalite et depenses publiques" },
+    { code: "I32", label: "Mesure de la pauvrete" },
+    { code: "J24", label: "Capital humain" },
+];
+
+const JEL_CODE_REGEX = /^[A-Z][0-9]{2}$/;
+
 const normalizeStatus = (status) => LEGACY_STATUS_TO_NEW[status] || status;
+const normalizeJelCode = (code) => String(code || "").trim().toUpperCase();
 
 function AdminWorkingPapers() {
     const toast = useToast();
@@ -57,6 +71,7 @@ function AdminWorkingPapers() {
         title: "",
         description: "",
         deadline: "",
+        jelCodes: [],
     });
 
     const [editWP, setEditWP] = useState({
@@ -65,7 +80,13 @@ function AdminWorkingPapers() {
         description: "",
         deadline: "",
         status: "ouvert",
+        jelCodes: [],
     });
+
+    const [newWpJelSelect, setNewWpJelSelect] = useState("");
+    const [newWpJelCustom, setNewWpJelCustom] = useState("");
+    const [editWpJelSelect, setEditWpJelSelect] = useState("");
+    const [editWpJelCustom, setEditWpJelCustom] = useState("");
 
     const [newComment, setNewComment] = useState("");
     const [revisionSummary, setRevisionSummary] = useState("");
@@ -211,7 +232,9 @@ function AdminWorkingPapers() {
 
             if (response.ok) {
                 setShowCreateWP(false);
-                setNewWP({ title: "", description: "", deadline: "" });
+                setNewWP({ title: "", description: "", deadline: "", jelCodes: [] });
+                setNewWpJelSelect("");
+                setNewWpJelCustom("");
                 fetchData();
                 toast.success("Appel cree avec succes !");
             } else {
@@ -230,8 +253,74 @@ function AdminWorkingPapers() {
             description: wp.description,
             deadline: wp.deadline.split("T")[0],
             status: wp.status,
+            jelCodes: Array.isArray(wp.jelCodes) ? wp.jelCodes : [],
         });
+        setEditWpJelSelect("");
+        setEditWpJelCustom("");
         setShowEditWP(true);
+    };
+
+    const addJelCode = (target, rawCode, isCustom = false) => {
+        const normalized = normalizeJelCode(rawCode);
+
+        if (!normalized) {
+            return;
+        }
+
+        if (isCustom && !JEL_CODE_REGEX.test(normalized)) {
+            toast.error("Format JEL invalide. Utilisez une lettre suivie de 2 chiffres (ex: E52)");
+            return;
+        }
+
+        if (target === "create") {
+            if (newWP.jelCodes.includes(normalized)) {
+                return;
+            }
+
+            setNewWP((prev) => ({
+                ...prev,
+                jelCodes: [...prev.jelCodes, normalized],
+            }));
+
+            if (isCustom) {
+                setNewWpJelCustom("");
+            } else {
+                setNewWpJelSelect("");
+            }
+            return;
+        }
+
+        if (editWP.jelCodes.includes(normalized)) {
+            return;
+        }
+
+        setEditWP((prev) => ({
+            ...prev,
+            jelCodes: [...prev.jelCodes, normalized],
+        }));
+
+        if (isCustom) {
+            setEditWpJelCustom("");
+        } else {
+            setEditWpJelSelect("");
+        }
+    };
+
+    const removeJelCode = (target, codeToRemove) => {
+        const normalized = normalizeJelCode(codeToRemove);
+
+        if (target === "create") {
+            setNewWP((prev) => ({
+                ...prev,
+                jelCodes: prev.jelCodes.filter((code) => code !== normalized),
+            }));
+            return;
+        }
+
+        setEditWP((prev) => ({
+            ...prev,
+            jelCodes: prev.jelCodes.filter((code) => code !== normalized),
+        }));
     };
 
     const updateWorkingPaper = async (e) => {
@@ -257,15 +346,21 @@ function AdminWorkingPapers() {
                         description: editWP.description,
                         deadline: editWP.deadline,
                         status: editWP.status,
+                        jelCodes: editWP.jelCodes,
                     }),
                 }
             );
 
             if (response.ok) {
                 setShowEditWP(false);
-                setEditWP({ id: "", title: "", description: "", deadline: "", status: "ouvert" });
+                setEditWP({ id: "", title: "", description: "", deadline: "", status: "ouvert", jelCodes: [] });
+                setEditWpJelSelect("");
+                setEditWpJelCustom("");
                 fetchData();
                 toast.success("Appel mis a jour avec succes !");
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.error || "Erreur lors de la mise a jour");
             }
         } catch (error) {
             console.error("Erreur:", error);
@@ -1091,6 +1186,60 @@ function AdminWorkingPapers() {
                                             required
                                         />
                                     </div>
+                                    <div className="form-group">
+                                        <label>Codes JEL (definis par le createur)</label>
+                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                                            <select
+                                                value={newWpJelSelect}
+                                                onChange={(e) => setNewWpJelSelect(e.target.value)}
+                                            >
+                                                <option value="">Selectionner un code JEL</option>
+                                                {JEL_OPTIONS.map((option) => (
+                                                    <option key={option.code} value={option.code}>
+                                                        {option.code} - {option.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary btn-small"
+                                                onClick={() => addJelCode("create", newWpJelSelect)}
+                                            >
+                                                Ajouter
+                                            </button>
+                                        </div>
+                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                                            <input
+                                                type="text"
+                                                value={newWpJelCustom}
+                                                onChange={(e) => setNewWpJelCustom(e.target.value)}
+                                                placeholder="Autre code (ex: D83)"
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary btn-small"
+                                                onClick={() => addJelCode("create", newWpJelCustom, true)}
+                                            >
+                                                Ajouter autre
+                                            </button>
+                                        </div>
+                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                                            {newWP.jelCodes.map((code) => (
+                                                <span key={code} className="meta-chip" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                                                    {code}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeJelCode("create", code)}
+                                                        style={{ border: "none", background: "transparent", cursor: "pointer" }}
+                                                        aria-label={`Retirer ${code}`}
+                                                    >
+                                                        x
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <small>Ces codes seront appliques automatiquement aux soumissions de cet appel.</small>
+                                    </div>
                                     <div className="form-actions">
                                         <button type="button" className="btn btn-secondary" onClick={() => setShowCreateWP(false)}>Annuler</button>
                                         <button type="submit" className="btn btn-primary">Creer l&apos;appel</button>
@@ -1147,6 +1296,59 @@ function AdminWorkingPapers() {
                                             <option value="ouvert">Ouvert</option>
                                             <option value={"cl\u00f4tur\u00e9"}>Cloture</option>
                                         </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Codes JEL (modifiables uniquement par le createur)</label>
+                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                                            <select
+                                                value={editWpJelSelect}
+                                                onChange={(e) => setEditWpJelSelect(e.target.value)}
+                                            >
+                                                <option value="">Selectionner un code JEL</option>
+                                                {JEL_OPTIONS.map((option) => (
+                                                    <option key={option.code} value={option.code}>
+                                                        {option.code} - {option.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary btn-small"
+                                                onClick={() => addJelCode("edit", editWpJelSelect)}
+                                            >
+                                                Ajouter
+                                            </button>
+                                        </div>
+                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                                            <input
+                                                type="text"
+                                                value={editWpJelCustom}
+                                                onChange={(e) => setEditWpJelCustom(e.target.value)}
+                                                placeholder="Autre code (ex: D83)"
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary btn-small"
+                                                onClick={() => addJelCode("edit", editWpJelCustom, true)}
+                                            >
+                                                Ajouter autre
+                                            </button>
+                                        </div>
+                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                                            {editWP.jelCodes.map((code) => (
+                                                <span key={code} className="meta-chip" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                                                    {code}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeJelCode("edit", code)}
+                                                        style={{ border: "none", background: "transparent", cursor: "pointer" }}
+                                                        aria-label={`Retirer ${code}`}
+                                                    >
+                                                        x
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                     <div className="form-actions">
                                         <button type="button" className="btn btn-secondary" onClick={() => setShowEditWP(false)}>Annuler</button>
