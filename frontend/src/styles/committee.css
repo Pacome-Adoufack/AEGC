@@ -1,0 +1,375 @@
+.committee-header {
+    border-left: 4px solid #0f766e;
+    padding-left: 0.75rem;
+}
+
+.committee-intro {
+    margin: 0 0 0.6rem;
+    color: #334155;
+    font-size: 1rem;
+    line-height: 1.75;
+    max-width: 1050px;
+}
+
+.committee-section .working-papers-container {
+    min-height: auto;
+    background: transparent;
+    padding-top: 0 !important;
+}
+
+.committee-section .committee-header {
+    border-left: 0;
+    padding-left: 0;
+}
+
+.committee-header .committee-add-button {
+    margin-top: 0.85rem;
+}
+
+.committee-toolbar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.committee-toolbar-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.committee-toolbar-item label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.committee-toolbar-item input,
+.committee-toolbar-item select {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.93rem;
+    background: #fff;
+}
+
+.committee-toolbar-search {
+    grid-column: span 2;
+}
+
+.committee-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.committee-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 0.9rem;
+}
+
+.committee-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: none;
+    padding: 1rem;
+}
+
+.committee-card-clickable {
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.committee-card-clickable:hover {
+    transform: translateY(-2px);
+    border-color: #99f6e4;
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+
+.committee-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+}
+
+.committee-name {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.05rem;
+    line-height: 1.3;
+}
+
+.committee-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.45rem;
+}
+
+.committee-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #e2e8f0;
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+}
+
+.committee-tag-title {
+    background: #ccfbf1;
+    color: #115e59;
+}
+
+.committee-card-body {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.committee-meta-item strong {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #475569;
+}
+
+.committee-meta-item p {
+    margin: 0.2rem 0 0;
+    color: #0f172a;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.committee-meta-item a {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.committee-card-actions {
+    margin-top: 0.85rem;
+    display: flex;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+}
+
+.committee-detail-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 2000;
+}
+
+.committee-detail-panel {
+    width: min(760px, 100%);
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+    padding: 1.25rem;
+}
+
+.committee-form-modal {
+    width: min(980px, 100%);
+}
+
+.committee-delete-panel {
+    width: min(540px, 100%);
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+    padding: 1.25rem;
+}
+
+.committee-delete-message {
+    margin: 0 0 1rem;
+    color: #0f172a;
+    line-height: 1.5;
+}
+
+.committee-delete-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.committee-delete-cancel,
+.committee-delete-confirm {
+    min-width: 120px;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.committee-delete-cancel {
+    background: #e5e7eb !important;
+    color: #374151 !important;
+}
+
+.committee-delete-cancel:hover {
+    background: #d1d5db !important;
+}
+
+.committee-delete-confirm {
+    background: #dc2626 !important;
+    color: #fff !important;
+}
+
+.committee-delete-confirm:hover:not(:disabled) {
+    background: #b91c1c !important;
+}
+
+.committee-delete-confirm:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.committee-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.committee-detail-kicker {
+    margin: 0 0 0.2rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0f766e;
+    font-weight: 700;
+}
+
+.committee-detail-header h2 {
+    margin: 0;
+    color: #0f172a;
+}
+
+.committee-detail-close {
+    border: none;
+    background: #e2e8f0;
+    color: #0f172a;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.committee-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.85rem;
+}
+
+.committee-detail-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.85rem;
+    background: #f8fafc;
+}
+
+.committee-detail-item strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #475569;
+}
+
+.committee-detail-item p {
+    margin: 0;
+    color: #0f172a;
+    word-break: break-word;
+}
+
+.committee-form {
+    margin-top: 1rem;
+}
+
+.committee-form-inline {
+    margin-top: 0;
+}
+
+.committee-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.committee-form-cancel,
+.committee-form-submit {
+    min-width: 120px;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.committee-form-cancel {
+    background: #e5e7eb !important;
+    color: #374151 !important;
+}
+
+.committee-form-cancel:hover {
+    background: #d1d5db !important;
+}
+
+.committee-form-submit {
+    background: #0f766e !important;
+    color: #fff !important;
+}
+
+.committee-form-submit:hover:not(:disabled) {
+    background: #115e59 !important;
+}
+
+.committee-form-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.committee-add-button {
+    background: #0f766e !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+.committee-add-button:hover {
+    background: #115e59 !important;
+}
+
+@media (max-width: 760px) {
+    .committee-toolbar-search {
+        grid-column: span 1;
+    }
+
+    .committee-header .committee-add-button {
+        width: 100%;
+    }
+}

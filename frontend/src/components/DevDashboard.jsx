@@ -487,7 +487,7 @@ export default function DevDashboard() {
 
                 {/* COMMITTEE TAB */}
                 {activeTab === "committee" && (
-                    <div className="tools-section">
+                    <div className="tools-section committee-section">
                         <h2>Gestion du Comité Scientifique</h2>
                         <WorkingPapersCommittee />
                     </div>

@@ -17,6 +17,16 @@ const committeeMemberSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    email: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    profileLink: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     displayOrder: {
       type: Number,
       default: 0,

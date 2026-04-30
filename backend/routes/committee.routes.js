@@ -14,12 +14,32 @@ const parseDisplayOrder = (value) => {
   return Number.isNaN(parsed) ? 0 : parsed;
 };
 
+const committeeSort = (memberA, memberB) => {
+  const orderA = Number(memberA.displayOrder || 0);
+  const orderB = Number(memberB.displayOrder || 0);
+
+  if (orderA === 0 && orderB !== 0) return 1;
+  if (orderA !== 0 && orderB === 0) return -1;
+
+  if (orderA !== orderB) {
+    return orderA - orderB;
+  }
+
+  return String(memberA.fullName || "").localeCompare(
+    String(memberB.fullName || ""),
+    "fr",
+    {
+      sensitivity: "base",
+    },
+  );
+};
+
 // Liste publique des membres actifs du comité scientifique
 router.get("/committee-members", async (req, res) => {
   try {
-    const members = await CommitteeMember.find({ isActive: true })
-      .sort({ displayOrder: 1, fullName: 1 })
-      .lean();
+    const members = await CommitteeMember.find({ isActive: true }).lean();
+
+    members.sort(committeeSort);
 
     res.json(members);
   } catch (error) {
@@ -34,9 +54,9 @@ router.get(
   requireRole(["dev", "admin"]),
   async (req, res) => {
     try {
-      const members = await CommitteeMember.find()
-        .sort({ displayOrder: 1, fullName: 1 })
-        .lean();
+      const members = await CommitteeMember.find().lean();
+
+      members.sort(committeeSort);
 
       res.json(members);
     } catch (error) {
@@ -52,8 +72,15 @@ router.post(
   requireRole(["dev", "admin"]),
   async (req, res) => {
     try {
-      const { fullName, roleTitle, affiliation, displayOrder, isActive } =
-        req.body;
+      const {
+        fullName,
+        roleTitle,
+        affiliation,
+        email,
+        profileLink,
+        displayOrder,
+        isActive,
+      } = req.body;
 
       if (!fullName || !fullName.trim()) {
         return res.status(400).json({ error: "Le nom complet est requis" });
@@ -63,6 +90,8 @@ router.post(
         fullName: fullName.trim(),
         roleTitle: roleTitle || "",
         affiliation: affiliation || "",
+        email: email || "",
+        profileLink: profileLink || "",
         displayOrder: parseDisplayOrder(displayOrder),
         isActive: isActive !== false,
       });
@@ -81,8 +110,15 @@ router.put(
   requireRole(["dev", "admin"]),
   async (req, res) => {
     try {
-      const { fullName, roleTitle, affiliation, displayOrder, isActive } =
-        req.body;
+      const {
+        fullName,
+        roleTitle,
+        affiliation,
+        email,
+        profileLink,
+        displayOrder,
+        isActive,
+      } = req.body;
 
       if (!fullName || !fullName.trim()) {
         return res.status(400).json({ error: "Le nom complet est requis" });
@@ -94,6 +130,8 @@ router.put(
           fullName: fullName.trim(),
           roleTitle: roleTitle || "",
           affiliation: affiliation || "",
+          email: email || "",
+          profileLink: profileLink || "",
           displayOrder: parseDisplayOrder(displayOrder),
           isActive: isActive !== false,
         },
