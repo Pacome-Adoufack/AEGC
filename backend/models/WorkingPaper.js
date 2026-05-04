@@ -20,6 +20,13 @@ const workingPaperSchema = new mongoose.Schema(
       enum: ["ouvert", "clôturé"],
       default: "ouvert",
     },
+    jelCodes: [
+      {
+        type: String,
+        trim: true,
+        uppercase: true,
+      },
+    ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

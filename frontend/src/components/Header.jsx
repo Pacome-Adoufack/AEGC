@@ -108,7 +108,11 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   {(userRole === 'admin' || userRole === 'dispatcher') && (
                     <li className="not-Dropdown">
                       <Link
-                        to={userRole === 'dispatcher' ? '/dispatcher/working-papers' : '/admin/working-papers'}
+                        to={
+                          userRole === 'dispatcher'
+                            ? '/dispatcher/working-papers'
+                            : '/admin/working-papers'
+                        }
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Working Papers
@@ -152,9 +156,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                         AEGC Review
                       </Link>
-                      <Link to="/working-papers" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Papers and Processing
-                      </Link>
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
                         AEGC Economic Review
                       </Link>
@@ -171,6 +172,12 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                         AEGC Metadata
                       </Link>
                     </div>
+                  </li>
+
+                  <li className="not-Dropdown">
+                    <Link to="/working-papers" onClick={() => setIsMenuOpen(false)}>
+                      Working Papers
+                    </Link>
                   </li>
 
                   <li className="dropdown">
@@ -200,11 +207,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                     </div>
                   </li>
 
-                  <li className="not-Dropdown">
-                    <Link to="/development" onClick={() => setIsMenuOpen(false)}>
-                      Comités
-                    </Link>
-                  </li>
                   <li className="not-Dropdown">
                     <Link to="/formations" onClick={() => setIsMenuOpen(false)}>
                       Formations

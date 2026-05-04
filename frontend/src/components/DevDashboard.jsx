@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "./Url";
 import ConfirmDialog from "./common/ConfirmDialog";
+import WorkingPapersCommittee from "./WorkingPapersCommittee";
 import "../styles/DevDashboard.css";
 
 export default function DevDashboard() {
@@ -232,6 +233,12 @@ export default function DevDashboard() {
                     onClick={() => setActiveTab("memberships")}
                 >
                     💳 Cotisations
+                </button>
+                <button
+                    className={activeTab === "committee" ? "active" : ""}
+                    onClick={() => setActiveTab("committee")}
+                >
+                    👥 Comité
                 </button>
             </div>
 
@@ -475,6 +482,14 @@ export default function DevDashboard() {
                             <p>Base de données: MongoDB</p>
                             <p>API: {API_BASE_URL}</p>
                         </div>
+                    </div>
+                )}
+
+                {/* COMMITTEE TAB */}
+                {activeTab === "committee" && (
+                    <div className="tools-section committee-section">
+                        <h2>Gestion du Comité Scientifique</h2>
+                        <WorkingPapersCommittee />
                     </div>
                 )}
 

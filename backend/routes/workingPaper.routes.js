@@ -35,24 +35,82 @@ const STATUS_FILTER_MAP = {
   acceptee: ["acceptee", "terminée"],
 };
 
+const JEL_CODE_REGEX = /^[A-Z][0-9]{2}$/;
+
+const parseJelCodesInput = (value) => {
+  if (!value) {
+    return [];
+  }
+
+  const arrayValue = Array.isArray(value)
+    ? value
+    : String(value)
+        .split(",")
+        .map((item) => item.trim());
+
+  const normalized = arrayValue
+    .map((item) =>
+      String(item || "")
+        .trim()
+        .toUpperCase(),
+    )
+    .filter(Boolean);
+
+  const uniqueCodes = [...new Set(normalized)];
+  const invalidCode = uniqueCodes.find((code) => !JEL_CODE_REGEX.test(code));
+
+  if (invalidCode) {
+    const error = new Error(`Code JEL invalide: ${invalidCode}`);
+    error.status = 400;
+    throw error;
+  }
+
+  return uniqueCodes;
+};
+
 const normalizeSubmissionStatus = (status) =>
   LEGACY_TO_NEW_SUBMISSION_STATUS[status] || status;
 
 const isActiveDispatcherAssignment = (submission) =>
   submission?.assignedDispatcher && !submission?.dispatcherSessionClosedAt;
 
+const toIdString = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (value._id) {
+    return value._id.toString();
+  }
+
+  if (typeof value.toHexString === "function") {
+    return value.toHexString();
+  }
+
+  if (typeof value.toString === "function") {
+    const id = value.toString();
+    if (id && id !== "[object Object]") {
+      return id;
+    }
+  }
+
+  return null;
+};
+
 const canAccessSubmissionAsDispatcher = (submission, user) => {
   if (!submission || !user || user.role !== "dispatcher") {
     return false;
   }
 
-  const assignedDispatcherId =
-    submission.assignedDispatcher?.toString?.() ||
-    submission.assignedDispatcher?._id?.toString?.();
+  const assignedDispatcherId = toIdString(submission.assignedDispatcher);
+  const userId = toIdString(user._id || user.id);
 
   return (
-    isActiveDispatcherAssignment(submission) &&
-    assignedDispatcherId === user._id.toString()
+    isActiveDispatcherAssignment(submission) && assignedDispatcherId === userId
   );
 };
 
@@ -69,7 +127,10 @@ const canReadSubmission = (submission, user) => {
     return true;
   }
 
-  return submission.submittedBy.toString() === user._id.toString();
+  const submittedById = toIdString(submission.submittedBy);
+  const userId = toIdString(user._id || user.id);
+
+  return submittedById === userId;
 };
 
 const normalizeSubmission = (submission) => {
@@ -248,7 +309,6 @@ router.post(
         workingPaperId,
         articleTitle,
         keywords,
-        jelCodes,
         authors,
         abstract,
         publication,
@@ -288,15 +348,10 @@ router.post(
         parsedAuthors = JSON.parse(authors);
       }
 
-      // Parser keywords et jelCodes
+      // Parser keywords
       let parsedKeywords = keywords;
       if (typeof keywords === "string") {
         parsedKeywords = keywords.split(",").map((k) => k.trim());
-      }
-
-      let parsedJelCodes = jelCodes;
-      if (typeof jelCodes === "string") {
-        parsedJelCodes = jelCodes.split(",").map((j) => j.trim());
       }
 
       // Parser publication si présent
@@ -317,7 +372,8 @@ router.post(
         submittedBy: req.user._id,
         articleTitle,
         keywords: parsedKeywords,
-        jelCodes: parsedJelCodes,
+        // Les codes JEL sont définis au niveau de l'appel (WP) et non par le soumetteur.
+        jelCodes: parseJelCodesInput(wp.jelCodes || []),
         authors: parsedAuthors,
         abstract,
         publication: parsedPublication,
@@ -603,7 +659,7 @@ router.post(
   requireRole(["admin"]),
   async (req, res) => {
     try {
-      const { title, description, deadline } = req.body;
+      const { title, description, deadline, jelCodes } = req.body;
 
       console.log("📝 Création Working Paper:", {
         title,
@@ -616,6 +672,7 @@ router.post(
         title,
         description,
         deadline,
+        jelCodes: parseJelCodesInput(jelCodes),
         createdBy: req.user._id,
       });
 
@@ -624,7 +681,8 @@ router.post(
       res.status(201).json({ message: "Working Paper créé", wp });
     } catch (error) {
       console.error("❌ Erreur création WP:", error);
-      res.status(500).json({ error: error.message });
+      const status = error.status || 500;
+      res.status(status).json({ error: error.message });
     }
   },
 );
@@ -636,21 +694,34 @@ router.put(
   requireRole(["admin"]),
   async (req, res) => {
     try {
-      const { title, description, deadline, status } = req.body;
+      const { title, description, deadline, status, jelCodes } = req.body;
 
-      const wp = await WorkingPaper.findByIdAndUpdate(
-        req.params.id,
-        { title, description, deadline, status },
-        { new: true },
-      );
+      const wp = await WorkingPaper.findById(req.params.id);
 
       if (!wp) {
         return res.status(404).json({ error: "Working Paper non trouvé" });
       }
 
+      // Seul le créateur de l'appel peut le modifier.
+      if (wp.createdBy.toString() !== req.user._id.toString()) {
+        return res.status(403).json({
+          error: "Accès non autorisé",
+          message: "Seul le créateur de l'appel peut le modifier",
+        });
+      }
+
+      wp.title = title;
+      wp.description = description;
+      wp.deadline = deadline;
+      wp.status = status;
+      wp.jelCodes = parseJelCodesInput(jelCodes);
+
+      await wp.save();
+
       res.json({ message: "Working Paper mis à jour", wp });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const status = error.status || 500;
+      res.status(status).json({ error: error.message });
     }
   },
 );
@@ -862,7 +933,9 @@ router.delete(
   requireRole(["admin"]),
   async (req, res) => {
     try {
-      const publication = await PublicationIssue.findByIdAndDelete(req.params.id);
+      const publication = await PublicationIssue.findByIdAndDelete(
+        req.params.id,
+      );
 
       if (!publication) {
         return res.status(404).json({ error: "Publication non trouvée" });

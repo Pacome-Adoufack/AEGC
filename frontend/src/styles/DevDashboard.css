@@ -362,6 +362,13 @@
     font-size: 1.5rem;
 }
 
+.committee-section {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
 .tool-card {
     background: #f8f9fa;
     padding: 1.5rem;

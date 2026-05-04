@@ -23,7 +23,6 @@ function SubmissionForm() {
     const [formData, setFormData] = useState({
         articleTitle: "",
         keywords: "",
-        jelCodes: "",
         abstract: "",
         publicationJournal: "",
         publicationNumber: "",
@@ -160,7 +159,6 @@ function SubmissionForm() {
             submitData.append("workingPaperId", id);
             submitData.append("articleTitle", formData.articleTitle);
             submitData.append("keywords", formData.keywords);
-            submitData.append("jelCodes", formData.jelCodes);
             submitData.append("abstract", formData.abstract);
             submitData.append("authors", JSON.stringify(authors));
             submitData.append("pdf", pdfFile);
@@ -246,6 +244,11 @@ function SubmissionForm() {
                 <div className="submission-page-header">
                     <h1>Soumettre mon travail</h1>
                     <p className="submission-wp-title">{wp.title}</p>
+                    {Array.isArray(wp.jelCodes) && wp.jelCodes.length > 0 && (
+                        <p className="submission-wp-title">
+                            Codes JEL de l'appel: {wp.jelCodes.join(", ")}
+                        </p>
+                    )}
                 </div>
 
                 {error && <div className="error-message" style={{ marginBottom: "1rem" }}>{error}</div>}
@@ -274,34 +277,16 @@ function SubmissionForm() {
                                 />
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label htmlFor="keywords">Mots-clés</label>
-                                    <input
-                                        type="text"
-                                        id="keywords"
-                                        name="keywords"
-                                        value={formData.keywords}
-                                        onChange={handleInputChange}
-                                        placeholder="COVID-19, Finance, Afrique (séparés par des virgules)"
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="jelCodes">Codes JEL</label>
-                                    <input
-                                        type="text"
-                                        id="jelCodes"
-                                        name="jelCodes"
-                                        value={formData.jelCodes}
-                                        onChange={handleInputChange}
-                                        placeholder="E24, O55"
-                                    />
-                                    <small>
-                                        <a href="https://www.aeaweb.org/jel/guide/jel.php" target="_blank" rel="noopener noreferrer">
-                                            Trouver les codes JEL
-                                        </a>
-                                    </small>
-                                </div>
+                            <div className="form-group">
+                                <label htmlFor="keywords">Mots-clés</label>
+                                <input
+                                    type="text"
+                                    id="keywords"
+                                    name="keywords"
+                                    value={formData.keywords}
+                                    onChange={handleInputChange}
+                                    placeholder="COVID-19, Finance, Afrique (séparés par des virgules)"
+                                />
                             </div>
 
                             <div className="form-group">

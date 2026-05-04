@@ -13,9 +13,6 @@ function NewspaperReview() {
             <a href="/journal/review">Revue AEGC</a>
           </li>
           <li>
-            <a href="/papers and processing">Documents de l'AEGC et traitement des données</a>
-          </li>
-          <li>
             <a href="/economic review">Revue économique de l'AEGC</a>
           </li>
           <li>
