@@ -124,6 +124,42 @@ function MySubmissions() {
         );
     };
 
+    const deleteSubmission = async (submissionId, articleTitle) => {
+        const confirmed = window.confirm(
+            `Supprimer définitivement la soumission "${articleTitle}" ?\n\nCette action est irréversible.`,
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const token = getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/submissions/${submissionId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Erreur lors de la suppression");
+            }
+
+            if (selectedSubmission?._id === submissionId) {
+                setSelectedSubmission(null);
+            }
+
+            setSubmissions((current) => current.filter((submission) => submission._id !== submissionId));
+            setUnreadComments((current) => Math.max(0, current - 1));
+            toast.success(data.message || "Soumission supprimée");
+        } catch (error) {
+            toast.error(error.message || "Erreur lors de la suppression");
+        }
+    };
+
     const getStatusClass = (status) => {
         const normalizedStatus = normalizeStatus(status);
         const map = {
@@ -262,6 +298,14 @@ function MySubmissions() {
                                             >
                                                 Télécharger PDF
                                             </button>
+                                            {normalizeStatus(submission.status) === "soumise" && (
+                                                <button
+                                                    className="btn btn-danger btn-small"
+                                                    onClick={() => deleteSubmission(submission._id, submission.articleTitle)}
+                                                >
+                                                    Supprimer
+                                                </button>
+                                            )}
                                             {normalizeStatus(submission.status) === "revision_requise" && (
                                                 <button
                                                     className="btn btn-primary btn-small"
@@ -395,6 +439,17 @@ function MySubmissions() {
                                             <p className="comment-text">{comment.comment}</p>
                                         </div>
                                     ))}
+                                </div>
+                            )}
+
+                            {normalizeStatus(selectedSubmission.status) === "soumise" && (
+                                <div className="sub-modal-section">
+                                    <button
+                                        className="btn btn-danger"
+                                        onClick={() => deleteSubmission(selectedSubmission._id, selectedSubmission.articleTitle)}
+                                    >
+                                        Supprimer cette soumission
+                                    </button>
                                 </div>
                             )}
                         </div>

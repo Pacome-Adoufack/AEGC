@@ -55,7 +55,7 @@ function AdminWorkingPapers() {
     const [currentUserRole, setCurrentUserRole] = useState("admin");
     const [workingPapers, setWorkingPapers] = useState([]);
     const [submissions, setSubmissions] = useState([]);
-    const [dispatchers, setDispatchers] = useState([]);
+    const [managers, setManagers] = useState([]);
     const [publications, setPublications] = useState([]);
     const [filteredSubmissions, setFilteredSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -63,24 +63,46 @@ function AdminWorkingPapers() {
     const [showCreateWP, setShowCreateWP] = useState(false);
     const [showCreatePublication, setShowCreatePublication] = useState(false);
     const [showEditWP, setShowEditWP] = useState(false);
+    const [createWpStep, setCreateWpStep] = useState(1);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
     const [detailTab, setDetailTab] = useState("overview");
     const navigate = useNavigate();
 
     const [newWP, setNewWP] = useState({
         title: "",
+        subtitle: "",
+        organizer: "",
         description: "",
         deadline: "",
+        status: "ouvert",
+        manuscriptLength: "",
+        language: "francais",
+        submissionRequirements: "",
         jelCodes: [],
+        contactEmail: "",
+        contactPhone: "",
+        contactWebsite: "",
+        contactLinkedin: "",
+        usefulLinksText: "",
     });
 
     const [editWP, setEditWP] = useState({
         id: "",
         title: "",
+        subtitle: "",
+        organizer: "",
         description: "",
         deadline: "",
         status: "ouvert",
+        manuscriptLength: "",
+        language: "francais",
+        submissionRequirements: "",
         jelCodes: [],
+        contactEmail: "",
+        contactPhone: "",
+        contactWebsite: "",
+        contactLinkedin: "",
+        usefulLinksText: "",
     });
 
     const [newWpJelSelect, setNewWpJelSelect] = useState("");
@@ -103,7 +125,8 @@ function AdminWorkingPapers() {
     });
 
     const isAdmin = currentUserRole === "admin";
-    const isDispatcher = currentUserRole === "dispatcher";
+    const isManager = currentUserRole === "dispatcher";
+    const CREATE_WP_TOTAL_STEPS = 3;
 
     useEffect(() => {
         const token = getAuthToken();
@@ -178,15 +201,15 @@ function AdminWorkingPapers() {
             setFilteredSubmissions(normalizedSubmissions);
 
             if (canManageCalls) {
-                const dispatchersResponse = await fetch(`${API_BASE_URL}/api/admin/dispatchers`, {
+                const managersResponse = await fetch(`${API_BASE_URL}/api/admin/dispatchers`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
-                if (dispatchersResponse.ok) {
-                    const dispatchersData = await dispatchersResponse.json();
-                    setDispatchers(Array.isArray(dispatchersData) ? dispatchersData : []);
+                if (managersResponse.ok) {
+                    const managersData = await managersResponse.json();
+                    setManagers(Array.isArray(managersData) ? managersData : []);
                 }
 
                 const publicationsResponse = await fetch(`${API_BASE_URL}/api/admin/publications`, {
@@ -200,7 +223,7 @@ function AdminWorkingPapers() {
                     setPublications(Array.isArray(publicationsData) ? publicationsData : []);
                 }
             } else {
-                setDispatchers([]);
+                setManagers([]);
                 setPublications([]);
             }
         } catch (error) {
@@ -218,6 +241,17 @@ function AdminWorkingPapers() {
             return;
         }
 
+        if (createWpStep < CREATE_WP_TOTAL_STEPS) {
+            if (validateCreateWorkingPaperStep(createWpStep)) {
+                setCreateWpStep((prev) => Math.min(prev + 1, CREATE_WP_TOTAL_STEPS));
+            }
+            return;
+        }
+
+        if (!validateCreateWorkingPaperStep(CREATE_WP_TOTAL_STEPS)) {
+            return;
+        }
+
         try {
             const token = getAuthToken();
 
@@ -227,14 +261,14 @@ function AdminWorkingPapers() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(newWP),
+                body: JSON.stringify({
+                    ...newWP,
+                    usefulLinks: buildUsefulLinksFromText(newWP.usefulLinksText),
+                }),
             });
 
             if (response.ok) {
-                setShowCreateWP(false);
-                setNewWP({ title: "", description: "", deadline: "", jelCodes: [] });
-                setNewWpJelSelect("");
-                setNewWpJelCustom("");
+                closeCreateWorkingPaperModal();
                 fetchData();
                 toast.success("Appel cree avec succes !");
             } else {
@@ -246,14 +280,55 @@ function AdminWorkingPapers() {
         }
     };
 
+    const deleteWorkingPaper = async (workingPaperId, workingPaperTitle) => {
+        if (!isAdmin) {
+            return;
+        }
+
+        if (!window.confirm(`Supprimer le Working Paper \"${workingPaperTitle}\" ?`)) {
+            return;
+        }
+
+        try {
+            const token = getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/admin/working-papers/${workingPaperId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Erreur lors de la suppression");
+            }
+
+            toast.success(data.message || "Working Paper supprimé");
+            fetchData(currentUserRole);
+        } catch (error) {
+            toast.error(error.message || "Erreur lors de la suppression");
+        }
+    };
+
     const startEditWP = (wp) => {
         setEditWP({
             id: wp._id,
             title: wp.title,
+            subtitle: wp.subtitle || "",
+            organizer: wp.organizer || "",
             description: wp.description,
             deadline: wp.deadline.split("T")[0],
             status: wp.status,
+            manuscriptLength: wp.manuscriptLength || "",
+            language: wp.language || "francais",
+            submissionRequirements: wp.submissionRequirements || "",
             jelCodes: Array.isArray(wp.jelCodes) ? wp.jelCodes : [],
+            contactEmail: wp.contact?.email || "",
+            contactPhone: wp.contact?.phone || "",
+            contactWebsite: wp.contact?.website || "",
+            contactLinkedin: wp.contact?.linkedin || "",
+            usefulLinksText: Array.isArray(wp.usefulLinks) ? wp.usefulLinks.join("\n") : "",
         });
         setEditWpJelSelect("");
         setEditWpJelCustom("");
@@ -306,6 +381,101 @@ function AdminWorkingPapers() {
         }
     };
 
+    const resetCreateWorkingPaperForm = () => {
+        setCreateWpStep(1);
+        setNewWP({
+            title: "",
+            subtitle: "",
+            organizer: "",
+            description: "",
+            deadline: "",
+            status: "ouvert",
+            manuscriptLength: "",
+            language: "francais",
+            submissionRequirements: "",
+            jelCodes: [],
+            contactEmail: "",
+            contactPhone: "",
+            contactWebsite: "",
+            contactLinkedin: "",
+            usefulLinksText: "",
+        });
+        setNewWpJelSelect("");
+        setNewWpJelCustom("");
+    };
+
+    const closeCreateWorkingPaperModal = () => {
+        setShowCreateWP(false);
+        resetCreateWorkingPaperForm();
+    };
+
+    const validateCreateWorkingPaperStep = (step) => {
+        if (step === 1) {
+            if (!newWP.title.trim()) {
+                toast.error("Veuillez renseigner le titre de l'appel");
+                return false;
+            }
+
+            if (!newWP.organizer.trim()) {
+                toast.error("Veuillez renseigner l'organisation porteuse");
+                return false;
+            }
+
+            if (!newWP.deadline) {
+                toast.error("Veuillez renseigner la date limite");
+                return false;
+            }
+
+            if (!newWP.status) {
+                toast.error("Veuillez renseigner le statut");
+                return false;
+            }
+        }
+
+        if (step === 2) {
+            if (!newWP.description.trim()) {
+                toast.error("Veuillez renseigner le résumé de l'appel");
+                return false;
+            }
+
+            if (!newWP.language) {
+                toast.error("Veuillez sélectionner une langue");
+                return false;
+            }
+
+            if (!newWP.submissionRequirements.trim()) {
+                toast.error("Veuillez renseigner les exigences de soumission");
+                return false;
+            }
+        }
+
+        if (step === 3) {
+            if (newWP.jelCodes.length === 0) {
+                toast.error("Veuillez ajouter au moins un code JEL");
+                return false;
+            }
+
+            if (!newWP.contactEmail.trim()) {
+                toast.error("Veuillez renseigner l'email de contact");
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    const goToNextCreateWpStep = () => {
+        if (!validateCreateWorkingPaperStep(createWpStep)) {
+            return;
+        }
+
+        setCreateWpStep((prev) => Math.min(prev + 1, CREATE_WP_TOTAL_STEPS));
+    };
+
+    const goToPreviousCreateWpStep = () => {
+        setCreateWpStep((prev) => Math.max(prev - 1, 1));
+    };
+
     const removeJelCode = (target, codeToRemove) => {
         const normalized = normalizeJelCode(codeToRemove);
 
@@ -322,6 +492,12 @@ function AdminWorkingPapers() {
             jelCodes: prev.jelCodes.filter((code) => code !== normalized),
         }));
     };
+
+    const buildUsefulLinksFromText = (text) =>
+        String(text || "")
+            .split("\n")
+            .map((link) => link.trim())
+            .filter(Boolean);
 
     const updateWorkingPaper = async (e) => {
         e.preventDefault();
@@ -343,123 +519,38 @@ function AdminWorkingPapers() {
                     },
                     body: JSON.stringify({
                         title: editWP.title,
+                        subtitle: editWP.subtitle,
+                        organizer: editWP.organizer,
                         description: editWP.description,
                         deadline: editWP.deadline,
                         status: editWP.status,
+                        manuscriptLength: editWP.manuscriptLength,
+                        language: editWP.language,
+                        submissionRequirements: editWP.submissionRequirements,
                         jelCodes: editWP.jelCodes,
+                        contactEmail: editWP.contactEmail,
+                        contactPhone: editWP.contactPhone,
+                        contactWebsite: editWP.contactWebsite,
+                        contactLinkedin: editWP.contactLinkedin,
+                        usefulLinks: buildUsefulLinksFromText(editWP.usefulLinksText),
                     }),
                 }
             );
 
             if (response.ok) {
                 setShowEditWP(false);
-                setEditWP({ id: "", title: "", description: "", deadline: "", status: "ouvert", jelCodes: [] });
-                setEditWpJelSelect("");
-                setEditWpJelCustom("");
-                fetchData();
-                toast.success("Appel mis a jour avec succes !");
+                fetchData(currentUserRole);
+                toast.success("Appel mis à jour avec succes !");
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.error || "Erreur lors de la mise a jour");
+                toast.error(`Erreur: ${errorData.error || "Erreur inconnue"}`);
             }
         } catch (error) {
-            console.error("Erreur:", error);
-            toast.error("Erreur lors de la mise a jour");
+            toast.error(`Erreur lors de la mise à jour: ${error.message}`);
         }
     };
 
-    const deleteWorkingPaper = async (wpId, wpTitle) => {
-        if (!isAdmin) {
-            toast.error("Action reservee a l'administration");
-            return;
-        }
-
-        if (!window.confirm(`Etes-vous sur de vouloir supprimer "${wpTitle}" ?\n\nCette action supprimera aussi toutes les soumissions associees !`)) {
-            return;
-        }
-
-        try {
-            const token = getAuthToken();
-            const response = await fetch(
-                `${API_BASE_URL}/api/admin/working-papers/${wpId}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            if (response.ok) {
-                fetchData();
-                toast.success("Appel supprime avec succes !");
-            }
-        } catch (error) {
-            console.error("Erreur:", error);
-            toast.error("Erreur lors de la suppression");
-        }
-    };
-
-    const changeSubmissionStatus = async (submissionId, newStatus) => {
-        if (!isDispatcher) {
-            toast.error("Seul un dispatcher peut modifier le statut");
-            return;
-        }
-
-        try {
-            const token = getAuthToken();
-            await fetch(`${API_BASE_URL}/api/admin/submissions/${submissionId}/status`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ status: newStatus }),
-            });
-
-            fetchData(currentUserRole);
-        } catch (error) {
-            console.error("Erreur:", error);
-        }
-    };
-
-    const assignDispatcher = async (submissionId, dispatcherId) => {
-        if (!isAdmin) {
-            return;
-        }
-
-        if (!dispatcherId) {
-            toast.error("Veuillez choisir un dispatcher");
-            return;
-        }
-
-        try {
-            const token = getAuthToken();
-            const response = await fetch(
-                `${API_BASE_URL}/api/admin/submissions/${submissionId}/assign-dispatcher`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ dispatcherId }),
-                }
-            );
-
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error || "Erreur lors de l'assignation");
-            }
-
-            toast.success("Dispatcher assigne avec succes");
-            fetchData(currentUserRole);
-        } catch (error) {
-            toast.error(error.message || "Erreur lors de l'assignation");
-        }
-    };
-
-    const closeDispatcherSession = async (dispatcherId, dispatcherLabel) => {
+    const closeManagerSession = async (dispatcherId, dispatcherLabel) => {
         if (!isAdmin) {
             return;
         }
@@ -485,7 +576,7 @@ function AdminWorkingPapers() {
                 throw new Error(data.error || "Impossible de cloturer la session");
             }
 
-            toast.success("Session dispatcher cloturee");
+            toast.success("Session du gestionnaire cloturee");
             fetchData(currentUserRole);
         } catch (error) {
             toast.error(error.message || "Impossible de cloturer la session");
@@ -650,8 +741,8 @@ function AdminWorkingPapers() {
     };
 
     const addComment = async (submissionId) => {
-        if (!isDispatcher) {
-            toast.error("Seul un dispatcher peut ajouter un commentaire");
+        if (!isManager) {
+            toast.error("Seul un gestionnaire peut ajouter un commentaire");
             return;
         }
 
@@ -680,8 +771,8 @@ function AdminWorkingPapers() {
     };
 
     const requestRevision = async (submissionId) => {
-        if (!isDispatcher) {
-            toast.error("Seul un dispatcher peut demander une revision");
+        if (!isManager) {
+            toast.error("Seul un gestionnaire peut demander une revision");
             return;
         }
 
@@ -812,11 +903,11 @@ function AdminWorkingPapers() {
         <div className="admin-container">
             <div className="admin-main">
                 <div className="admin-shell-header">
-                    <p className="admin-shell-kicker">{isAdmin ? "Administration" : "Dispatcher"}</p>
+                    <p className="admin-shell-kicker">{isAdmin ? "Administration" : "Gestionnaire"}</p>
                     <h1>Working Papers</h1>
                     <p className="admin-shell-subtitle">
                         {isAdmin
-                            ? "Assigne les soumissions aux dispatchers, suis leur progression et cloture les sessions finalisees."
+                            ? "Assigne les soumissions aux gestionnaires, suis leur progression et cloture les sessions finalisees."
                             : "Traite uniquement les soumissions qui te sont attribuees: evaluation, demandes de correction et decision finale."
                         }
                     </p>
@@ -834,8 +925,8 @@ function AdminWorkingPapers() {
                             <strong>{closedWorkingPapers}</strong>
                         </div>
                         <div className="admin-stat-tile">
-                            <span className="admin-stat-label">{isAdmin ? "Dispatchers" : "Mes soumissions"}</span>
-                            <strong>{isAdmin ? dispatchers.length : submissions.length}</strong>
+                            <span className="admin-stat-label">{isAdmin ? "Gestionnaires" : "Mes soumissions"}</span>
+                            <strong>{isAdmin ? managers.length : submissions.length}</strong>
                         </div>
                     </div>
                 </div>
@@ -854,7 +945,7 @@ function AdminWorkingPapers() {
                             className={tab === "submissions" ? "active" : ""}
                             onClick={() => setTab("submissions")}
                         >
-                            {isAdmin ? "Dispatching" : "Mes soumissions"} ({submissions.length})
+                            {isAdmin ? "Gestion des soumissions" : "Mes soumissions"} ({submissions.length})
                         </button>
                         {isAdmin && (
                             <button
@@ -868,7 +959,10 @@ function AdminWorkingPapers() {
                     {isAdmin && tab === "workingPapers" && (
                         <button
                             className="btn btn-primary btn-small"
-                            onClick={() => setShowCreateWP(true)}
+                            onClick={() => {
+                                resetCreateWorkingPaperForm();
+                                setShowCreateWP(true);
+                            }}
                         >
                             + Nouvel appel
                         </button>
@@ -933,12 +1027,12 @@ function AdminWorkingPapers() {
                     <div className="admin-section-card">
                         {isAdmin && (
                             <div className="dispatcher-panel">
-                                <h3>Sessions dispatchers</h3>
-                                {dispatchers.length === 0 ? (
-                                    <p className="dispatcher-panel-empty">Aucun dispatcher configure pour le moment.</p>
+                                <h3>Sessions des gestionnaires</h3>
+                                {managers.length === 0 ? (
+                                    <p className="dispatcher-panel-empty">Aucun gestionnaire configure pour le moment.</p>
                                 ) : (
                                     <div className="dispatcher-grid">
-                                        {dispatchers.map((dispatcher) => (
+                                        {managers.map((dispatcher) => (
                                             <div key={dispatcher.id} className="dispatcher-card">
                                                 <div>
                                                     <p className="dispatcher-name">{dispatcher.firstName} {dispatcher.name}</p>
@@ -950,7 +1044,7 @@ function AdminWorkingPapers() {
                                                 <button
                                                     className="btn btn-secondary btn-small"
                                                     disabled={!dispatcher.canCloseSession}
-                                                    onClick={() => closeDispatcherSession(dispatcher.id, `${dispatcher.firstName} ${dispatcher.name}`)}
+                                                    onClick={() => closeManagerSession(dispatcher.id, `${dispatcher.firstName} ${dispatcher.name}`)}
                                                 >
                                                     Cloturer session
                                                 </button>
@@ -1008,14 +1102,14 @@ function AdminWorkingPapers() {
                                                     <span>{sub.submittedBy?.name} {sub.submittedBy?.firstName}</span>
                                                     <span>{sub.submittedBy?.email}</span>
                                                     <span>{sub.workingPaper?.title}</span>
-                                                    <span>Dispatcher: {sub.assignedDispatcher ? `${sub.assignedDispatcher.firstName} ${sub.assignedDispatcher.name}` : "Non assigne"}</span>
+                                                    <span>Gestionnaire: {sub.assignedDispatcher ? `${sub.assignedDispatcher.firstName} ${sub.assignedDispatcher.name}` : "Non assigne"}</span>
                                                     <span>V{sub.currentVersion || 1}</span>
                                                     <span>{formatDate(sub.createdAt)}</span>
                                                 </div>
                                             </div>
 
                                             <div className="sub-row-actions">
-                                                {isDispatcher && (
+                                                {isManager && (
                                                     <select
                                                         className="sub-status-select"
                                                         value={normalizeStatus(sub.status)}
@@ -1033,10 +1127,10 @@ function AdminWorkingPapers() {
                                                     <select
                                                         className="sub-status-select"
                                                         value={sub.assignedDispatcher?._id || ""}
-                                                        onChange={(e) => assignDispatcher(sub._id, e.target.value)}
+                                                        onChange={(e) => assignManager(sub._id, e.target.value)}
                                                     >
-                                                        <option value="">Affecter un dispatcher</option>
-                                                        {dispatchers.map((dispatcher) => (
+                                                        <option value="">Affecter un gestionnaire</option>
+                                                        {managers.map((dispatcher) => (
                                                             <option key={dispatcher.id} value={dispatcher.id}>
                                                                 {dispatcher.firstName} {dispatcher.name}
                                                             </option>
@@ -1149,100 +1243,255 @@ function AdminWorkingPapers() {
 
                 {/* Modal: Creer WP */}
                 {showCreateWP && (
-                    <div className="admin-modal-overlay" onClick={() => setShowCreateWP(false)}>
+                    <div className="admin-modal-overlay" onClick={closeCreateWorkingPaperModal}>
                         <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
                             <div className="admin-modal-header">
                                 <h2>Creer un appel a contribution</h2>
-                                <button className="admin-modal-close" onClick={() => setShowCreateWP(false)}>x</button>
+                                <button className="admin-modal-close" onClick={closeCreateWorkingPaperModal}>x</button>
                             </div>
                             <div className="admin-modal-body">
                                 <form onSubmit={createWorkingPaper}>
-                                    <div className="form-group">
-                                        <label>Titre de l&apos;appel</label>
-                                        <input
-                                            type="text"
-                                            value={newWP.title}
-                                            onChange={(e) => setNewWP({ ...newWP, title: e.target.value })}
-                                            required
-                                            placeholder="Ex : Appel a contributions - Economie comportementale"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Description (texte complet de l&apos;appel)</label>
-                                        <textarea
-                                            value={newWP.description}
-                                            onChange={(e) => setNewWP({ ...newWP, description: e.target.value })}
-                                            rows="8"
-                                            required
-                                            placeholder="Presentation de l'appel, thematiques, consignes..."
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Date limite de soumission</label>
-                                        <input
-                                            type="date"
-                                            value={newWP.deadline}
-                                            onChange={(e) => setNewWP({ ...newWP, deadline: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Codes JEL (definis par le createur)</label>
-                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
-                                            <select
-                                                value={newWpJelSelect}
-                                                onChange={(e) => setNewWpJelSelect(e.target.value)}
-                                            >
-                                                <option value="">Selectionner un code JEL</option>
-                                                {JEL_OPTIONS.map((option) => (
-                                                    <option key={option.code} value={option.code}>
-                                                        {option.code} - {option.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <button
-                                                type="button"
-                                                className="btn btn-secondary btn-small"
-                                                onClick={() => addJelCode("create", newWpJelSelect)}
-                                            >
-                                                Ajouter
-                                            </button>
+                                    <div className="wp-stepper" aria-label="Progression du formulaire">
+                                        <div className={`wp-step ${createWpStep >= 1 ? "active" : ""}`}>
+                                            <span>1</span>
+                                            <p>Général</p>
                                         </div>
-                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
-                                            <input
-                                                type="text"
-                                                value={newWpJelCustom}
-                                                onChange={(e) => setNewWpJelCustom(e.target.value)}
-                                                placeholder="Autre code (ex: D83)"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn btn-secondary btn-small"
-                                                onClick={() => addJelCode("create", newWpJelCustom, true)}
-                                            >
-                                                Ajouter autre
-                                            </button>
+                                        <div className={`wp-step ${createWpStep >= 2 ? "active" : ""}`}>
+                                            <span>2</span>
+                                            <p>Résumé</p>
                                         </div>
-                                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                                            {newWP.jelCodes.map((code) => (
-                                                <span key={code} className="meta-chip" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                                                    {code}
+                                        <div className={`wp-step ${createWpStep >= 3 ? "active" : ""}`}>
+                                            <span>3</span>
+                                            <p>JEL</p>
+                                        </div>
+                                    </div>
+
+                                    {createWpStep === 1 && (
+                                        <div className="wp-step-panel">
+                                            <p className="wp-step-note">Étape 1 sur 3 - informations principales</p>
+                                            <div className="form-group">
+                                                <label>Titre de l&apos;appel</label>
+                                                <input
+                                                    type="text"
+                                                    value={newWP.title}
+                                                    onChange={(e) => setNewWP({ ...newWP, title: e.target.value })}
+                                                    required
+                                                    placeholder="Ex : Appel a contributions - Economie comportementale"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Sous-titre</label>
+                                                <input
+                                                    type="text"
+                                                    value={newWP.subtitle}
+                                                    onChange={(e) => setNewWP({ ...newWP, subtitle: e.target.value })}
+                                                    placeholder="Ex : Summer Empirical Economics and Management"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Organisation porteuse</label>
+                                                <input
+                                                    type="text"
+                                                    value={newWP.organizer}
+                                                    onChange={(e) => setNewWP({ ...newWP, organizer: e.target.value })}
+                                                    required
+                                                    placeholder="Ex : NBEM’AEGC"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Statut</label>
+                                                <select
+                                                    value={newWP.status}
+                                                    onChange={(e) => setNewWP({ ...newWP, status: e.target.value })}
+                                                    required
+                                                >
+                                                    <option value="ouvert">Ouvert</option>
+                                                    <option value="clôturé">Clôturé</option>
+                                                </select>
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Date limite de soumission</label>
+                                                <input
+                                                    type="date"
+                                                    value={newWP.deadline}
+                                                    onChange={(e) => setNewWP({ ...newWP, deadline: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {createWpStep === 2 && (
+                                        <div className="wp-step-panel">
+                                            <p className="wp-step-note">Étape 2 sur 3 - contenu principal</p>
+                                            <div className="form-group">
+                                                <label>Résumé de l&apos;appel</label>
+                                                <textarea
+                                                    value={newWP.description}
+                                                    onChange={(e) => setNewWP({ ...newWP, description: e.target.value })}
+                                                    rows="10"
+                                                    required
+                                                    placeholder="Présentation, objectifs, contexte, indexation, contraintes éthiques..."
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Longueur des manuscrits</label>
+                                                <input
+                                                    type="text"
+                                                    value={newWP.manuscriptLength}
+                                                    onChange={(e) => setNewWP({ ...newWP, manuscriptLength: e.target.value })}
+                                                    placeholder="Ex : 15 à 50 pages"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Langue</label>
+                                                <select
+                                                    value={newWP.language}
+                                                    onChange={(e) => setNewWP({ ...newWP, language: e.target.value })}
+                                                    required
+                                                >
+                                                    <option value="francais">🇫🇷 Français</option>
+                                                    <option value="anglais">🇬🇧 English</option>
+                                                </select>
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Exigences de soumission</label>
+                                                <textarea
+                                                    value={newWP.submissionRequirements}
+                                                    onChange={(e) => setNewWP({ ...newWP, submissionRequirements: e.target.value })}
+                                                    rows="6"
+                                                    required
+                                                    placeholder="PDF ou Word, longueur, abstract, code reproductible, données, etc."
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {createWpStep === 3 && (
+                                        <div className="wp-step-panel">
+                                            <p className="wp-step-note">Étape 3 sur 3 - JEL, contact et liens utiles</p>
+                                            <div className="form-group">
+                                                <label>Codes JEL (definis par le createur)</label>
+                                                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                                                    <select
+                                                        value={newWpJelSelect}
+                                                        onChange={(e) => setNewWpJelSelect(e.target.value)}
+                                                    >
+                                                        <option value="">Selectionner un code JEL</option>
+                                                        {JEL_OPTIONS.map((option) => (
+                                                            <option key={option.code} value={option.code}>
+                                                                {option.code} - {option.label}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                     <button
                                                         type="button"
-                                                        onClick={() => removeJelCode("create", code)}
-                                                        style={{ border: "none", background: "transparent", cursor: "pointer" }}
-                                                        aria-label={`Retirer ${code}`}
+                                                        className="btn btn-secondary btn-small"
+                                                        onClick={() => addJelCode("create", newWpJelSelect)}
                                                     >
-                                                        x
+                                                        Ajouter
                                                     </button>
-                                                </span>
-                                            ))}
+                                                </div>
+                                                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                                                    <input
+                                                        type="text"
+                                                        value={newWpJelCustom}
+                                                        onChange={(e) => setNewWpJelCustom(e.target.value)}
+                                                        placeholder="Autre code (ex: D83)"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-secondary btn-small"
+                                                        onClick={() => addJelCode("create", newWpJelCustom, true)}
+                                                    >
+                                                        Ajouter autre
+                                                    </button>
+                                                </div>
+                                                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                                                    {newWP.jelCodes.map((code) => (
+                                                        <span key={code} className="meta-chip" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                                                            {code}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeJelCode("create", code)}
+                                                                style={{ border: "none", background: "transparent", cursor: "pointer" }}
+                                                                aria-label={`Retirer ${code}`}
+                                                            >
+                                                                x
+                                                            </button>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <small>Ces codes seront appliques automatiquement aux soumissions de cet appel.</small>
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Email de contact</label>
+                                                <input
+                                                    type="email"
+                                                    value={newWP.contactEmail}
+                                                    onChange={(e) => setNewWP({ ...newWP, contactEmail: e.target.value })}
+                                                    placeholder="ex : aegc.admi@gmail.com"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Téléphone</label>
+                                                <input
+                                                    type="text"
+                                                    value={newWP.contactPhone}
+                                                    onChange={(e) => setNewWP({ ...newWP, contactPhone: e.target.value })}
+                                                    placeholder="ex : +237 697 88 17 82"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Site web</label>
+                                                <input
+                                                    type="text"
+                                                    value={newWP.contactWebsite}
+                                                    onChange={(e) => setNewWP({ ...newWP, contactWebsite: e.target.value })}
+                                                    placeholder="ex : aegc-web.com"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>LinkedIn</label>
+                                                <input
+                                                    type="text"
+                                                    value={newWP.contactLinkedin}
+                                                    onChange={(e) => setNewWP({ ...newWP, contactLinkedin: e.target.value })}
+                                                    placeholder="Nom de la page ou URL"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Liens ou documents utiles</label>
+                                                <textarea
+                                                    value={newWP.usefulLinksText}
+                                                    onChange={(e) => setNewWP({ ...newWP, usefulLinksText: e.target.value })}
+                                                    rows="4"
+                                                    placeholder="Un lien par ligne"
+                                                />
+                                            </div>
                                         </div>
-                                        <small>Ces codes seront appliques automatiquement aux soumissions de cet appel.</small>
+                                    )}
+
+                                    <div className="wp-step-summary">
+                                        <div><strong>Titre:</strong> {newWP.title || "-"}</div>
+                                        <div><strong>Organisation:</strong> {newWP.organizer || "-"}</div>
+                                        <div><strong>Date limite:</strong> {newWP.deadline || "-"}</div>
+                                        <div><strong>JEL:</strong> {newWP.jelCodes.length > 0 ? newWP.jelCodes.join(", ") : "Aucun"}</div>
                                     </div>
                                     <div className="form-actions">
-                                        <button type="button" className="btn btn-secondary" onClick={() => setShowCreateWP(false)}>Annuler</button>
-                                        <button type="submit" className="btn btn-primary">Creer l&apos;appel</button>
+                                        <button type="button" className="btn btn-secondary" onClick={closeCreateWorkingPaperModal}>Annuler</button>
+                                        {createWpStep > 1 && (
+                                            <button type="button" className="btn btn-secondary" onClick={goToPreviousCreateWpStep}>
+                                                Précédent
+                                            </button>
+                                        )}
+                                        {createWpStep < CREATE_WP_TOTAL_STEPS ? (
+                                            <button type="button" className="btn btn-primary" onClick={goToNextCreateWpStep}>
+                                                Suivant
+                                            </button>
+                                        ) : (
+                                            <button type="submit" className="btn btn-primary">Creer l&apos;appel</button>
+                                        )}
                                     </div>
                                 </form>
                             </div>
@@ -1270,12 +1519,55 @@ function AdminWorkingPapers() {
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label>Description</label>
+                                        <label>Sous-titre</label>
+                                        <input
+                                            type="text"
+                                            value={editWP.subtitle}
+                                            onChange={(e) => setEditWP({ ...editWP, subtitle: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Organisation porteuse</label>
+                                        <input
+                                            type="text"
+                                            value={editWP.organizer}
+                                            onChange={(e) => setEditWP({ ...editWP, organizer: e.target.value })}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Résumé</label>
                                         <textarea
                                             value={editWP.description}
                                             onChange={(e) => setEditWP({ ...editWP, description: e.target.value })}
-                                            rows="8"
+                                            rows="10"
                                             required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Longueur des manuscrits</label>
+                                        <input
+                                            type="text"
+                                            value={editWP.manuscriptLength}
+                                            onChange={(e) => setEditWP({ ...editWP, manuscriptLength: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Langue</label>
+                                        <select
+                                            value={editWP.language}
+                                            onChange={(e) => setEditWP({ ...editWP, language: e.target.value })}
+                                        >
+                                            <option value="francais">🇫🇷 Français</option>
+                                            <option value="anglais">🇬🇧 English</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Exigences de soumission</label>
+                                        <textarea
+                                            value={editWP.submissionRequirements}
+                                            onChange={(e) => setEditWP({ ...editWP, submissionRequirements: e.target.value })}
+                                            rows="6"
                                         />
                                     </div>
                                     <div className="form-group">
@@ -1349,6 +1641,52 @@ function AdminWorkingPapers() {
                                                 </span>
                                             ))}
                                         </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Email de contact</label>
+                                        <input
+                                            type="email"
+                                            value={editWP.contactEmail}
+                                            onChange={(e) => setEditWP({ ...editWP, contactEmail: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Téléphone</label>
+                                        <input
+                                            type="text"
+                                            value={editWP.contactPhone}
+                                            onChange={(e) => setEditWP({ ...editWP, contactPhone: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Site web</label>
+                                        <input
+                                            type="text"
+                                            value={editWP.contactWebsite}
+                                            onChange={(e) => setEditWP({ ...editWP, contactWebsite: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>LinkedIn</label>
+                                        <input
+                                            type="text"
+                                            value={editWP.contactLinkedin}
+                                            onChange={(e) => setEditWP({ ...editWP, contactLinkedin: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Liens ou documents utiles</label>
+                                        <textarea
+                                            value={editWP.usefulLinksText}
+                                            onChange={(e) => setEditWP({ ...editWP, usefulLinksText: e.target.value })}
+                                            rows="4"
+                                        />
+                                    </div>
+                                    <div className="wp-step-summary">
+                                        <div><strong>Titre:</strong> {editWP.title || "-"}</div>
+                                        <div><strong>Organisation:</strong> {editWP.organizer || "-"}</div>
+                                        <div><strong>Date limite:</strong> {editWP.deadline || "-"}</div>
+                                        <div><strong>JEL:</strong> {editWP.jelCodes.length > 0 ? editWP.jelCodes.join(", ") : "Aucun"}</div>
                                     </div>
                                     <div className="form-actions">
                                         <button type="button" className="btn btn-secondary" onClick={() => setShowEditWP(false)}>Annuler</button>
@@ -1510,7 +1848,7 @@ function AdminWorkingPapers() {
                                                     <p>{formatDate(selectedSubmission.createdAt)}</p>
                                                 </div>
                                                 <div className="sub-modal-meta-item">
-                                                    <strong>Dispatcher</strong>
+                                                    <strong>Gestionnaire</strong>
                                                     <p>
                                                         {selectedSubmission.assignedDispatcher
                                                             ? `${selectedSubmission.assignedDispatcher.firstName} ${selectedSubmission.assignedDispatcher.name}`
@@ -1560,7 +1898,7 @@ function AdminWorkingPapers() {
                                 {/* Contenu: Appreciations */}
                                 {detailTab === "reviews" && (
                                     <>
-                                        {isDispatcher && (
+                                        {isManager && (
                                             <div className="admin-modal-section">
                                                 <h3>Ajouter un commentaire</h3>
                                                 <textarea
@@ -1579,7 +1917,7 @@ function AdminWorkingPapers() {
                                             </div>
                                         )}
 
-                                        {isDispatcher && !["acceptee", "rejetee"].includes(selectedSubmission.status) && (
+                                        {isManager && !["acceptee", "rejetee"].includes(selectedSubmission.status) && (
                                             <div className="admin-modal-section">
                                                 <h3>Demander une modification (appreciation)</h3>
                                                 <div className="form-group">

@@ -90,6 +90,78 @@
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
 }
 
+.wp-stepper {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.wp-step {
+    border: 1px solid #dbe4f0;
+    border-radius: 14px;
+    padding: 0.75rem;
+    background: #f8fafc;
+    text-align: center;
+    color: #64748b;
+}
+
+.wp-step span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+
+.wp-step p {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.wp-step.active {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.wp-step.active span {
+    background: #2563eb;
+    color: white;
+}
+
+.wp-step-panel {
+    padding: 0.5rem 0 0.75rem;
+}
+
+.wp-step-note {
+    margin: 0 0 0.75rem;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.wp-step-summary {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 0.9rem;
+}
+
 /* ---- Page layout ---- */
 .admin-wp-container {
     background: #f4f6f9;

@@ -102,7 +102,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       }
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Dashboard {userRole === 'dev' ? 'Développeur' : userRole === 'dispatcher' ? 'Dispatcher' : 'Administrateur'}
+                      Dashboard {userRole === 'dev' ? 'Développeur' : userRole === 'dispatcher' ? 'Gestionnaire' : 'Administrateur'}
                     </Link>
                   </li>
                   {(userRole === 'admin' || userRole === 'dispatcher') && (

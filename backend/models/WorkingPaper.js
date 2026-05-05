@@ -7,6 +7,16 @@ const workingPaperSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    subtitle: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    organizer: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     description: {
       type: String,
       required: true,
@@ -14,6 +24,21 @@ const workingPaperSchema = new mongoose.Schema(
     deadline: {
       type: Date,
       required: true,
+    },
+    manuscriptLength: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    language: {
+      type: String,
+      enum: ["francais", "anglais"],
+      default: "francais",
+    },
+    submissionRequirements: {
+      type: String,
+      trim: true,
+      default: "",
     },
     status: {
       type: String,
@@ -32,6 +57,18 @@ const workingPaperSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    contact: {
+      email: { type: String, trim: true, default: "" },
+      phone: { type: String, trim: true, default: "" },
+      website: { type: String, trim: true, default: "" },
+      linkedin: { type: String, trim: true, default: "" },
+    },
+    usefulLinks: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
   },
   {
     timestamps: true,

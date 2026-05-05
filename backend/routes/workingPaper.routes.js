@@ -1,5 +1,6 @@
 import express from "express";
 import multer from "multer";
+import fs from "fs/promises";
 import WorkingPaper from "../models/WorkingPaper.js";
 import Submission from "../models/Submission.js";
 import User from "../models/User.js";
@@ -200,6 +201,34 @@ const uploadSubmissionPDF = (req, res, next) => {
       error: error.message || "Fichier PDF invalide",
     });
   });
+};
+
+const removeSubmissionFiles = async (submission) => {
+  const filePaths = new Set();
+
+  if (submission?.pdfFile?.path) {
+    filePaths.add(submission.pdfFile.path);
+  }
+
+  if (Array.isArray(submission?.versions)) {
+    submission.versions.forEach((version) => {
+      if (version?.pdfFile?.path) {
+        filePaths.add(version.pdfFile.path);
+      }
+    });
+  }
+
+  await Promise.all(
+    [...filePaths].map(async (filePath) => {
+      try {
+        await fs.unlink(filePath);
+      } catch (error) {
+        if (error.code !== "ENOENT") {
+          throw error;
+        }
+      }
+    }),
+  );
 };
 
 // ============================================
@@ -648,6 +677,37 @@ router.patch(
   },
 );
 
+// Supprimer sa propre soumission tant qu'elle n'a pas encore été traitée
+router.delete("/submissions/:id", authMiddleware, async (req, res) => {
+  try {
+    const submission = await Submission.findById(req.params.id);
+
+    if (!submission) {
+      return res.status(404).json({ error: "Soumission non trouvée" });
+    }
+
+    const isOwner = submission.submittedBy.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ error: "Accès non autorisé" });
+    }
+
+    if (!isAdmin && normalizeSubmissionStatus(submission.status) !== "soumise") {
+      return res.status(400).json({
+        error: "Vous ne pouvez supprimer la soumission que tant qu'elle est encore en attente",
+      });
+    }
+
+    await removeSubmissionFiles(submission);
+    await Submission.deleteOne({ _id: submission._id });
+
+    res.json({ message: "Soumission supprimée avec succès" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ============================================
 // ROUTES ADMIN
 // ============================================
@@ -659,20 +719,56 @@ router.post(
   requireRole(["admin"]),
   async (req, res) => {
     try {
-      const { title, description, deadline, jelCodes } = req.body;
+      const {
+        title,
+        subtitle,
+        organizer,
+        description,
+        deadline,
+        manuscriptLength,
+        language,
+        submissionRequirements,
+        status,
+        jelCodes,
+        contactEmail,
+        contactPhone,
+        contactWebsite,
+        contactLinkedin,
+        usefulLinks,
+      } = req.body;
 
       console.log("📝 Création Working Paper:", {
         title,
-        description,
+        organizer,
         deadline,
       });
       console.log("👤 User:", req.user);
 
       const wp = new WorkingPaper({
         title,
+        subtitle: subtitle || "",
+        organizer,
         description,
         deadline,
+        manuscriptLength: manuscriptLength || "",
+        language: language || "francais",
+        submissionRequirements: submissionRequirements || "",
+        status: status || "ouvert",
         jelCodes: parseJelCodesInput(jelCodes),
+        contact: {
+          email: contactEmail || "",
+          phone: contactPhone || "",
+          website: contactWebsite || "",
+          linkedin: contactLinkedin || "",
+        },
+        usefulLinks: Array.isArray(usefulLinks)
+          ? usefulLinks.filter(Boolean)
+          : typeof usefulLinks === "string"
+            ? usefulLinks
+                .split("\n")
+                .map((link) => link.trim())
+                .filter(Boolean)
+            : [],
         createdBy: req.user._id,
       });
 
@@ -694,7 +790,23 @@ router.put(
   requireRole(["admin"]),
   async (req, res) => {
     try {
-      const { title, description, deadline, status, jelCodes } = req.body;
+      const {
+        title,
+        subtitle,
+        organizer,
+        description,
+        deadline,
+        status,
+        manuscriptLength,
+        language,
+        submissionRequirements,
+        jelCodes,
+        contactEmail,
+        contactPhone,
+        contactWebsite,
+        contactLinkedin,
+        usefulLinks,
+      } = req.body;
 
       const wp = await WorkingPaper.findById(req.params.id);
 
@@ -711,10 +823,29 @@ router.put(
       }
 
       wp.title = title;
+      wp.subtitle = subtitle || "";
+      wp.organizer = organizer;
       wp.description = description;
       wp.deadline = deadline;
       wp.status = status;
+      wp.manuscriptLength = manuscriptLength || "";
+      wp.language = language || "francais";
+      wp.submissionRequirements = submissionRequirements || "";
       wp.jelCodes = parseJelCodesInput(jelCodes);
+      wp.contact = {
+        email: contactEmail || "",
+        phone: contactPhone || "",
+        website: contactWebsite || "",
+        linkedin: contactLinkedin || "",
+      };
+      wp.usefulLinks = Array.isArray(usefulLinks)
+        ? usefulLinks.filter(Boolean)
+        : typeof usefulLinks === "string"
+          ? usefulLinks
+              .split("\n")
+              .map((link) => link.trim())
+              .filter(Boolean)
+          : [];
 
       await wp.save();
 
@@ -948,7 +1079,7 @@ router.delete(
   },
 );
 
-// Lister les dispatchers (ADMIN)
+// Lister les gestionnaires (ADMIN)
 router.get(
   "/admin/dispatchers",
   authMiddleware,
@@ -993,7 +1124,7 @@ router.get(
   },
 );
 
-// Assigner un dispatcher a une soumission (ADMIN)
+// Assigner un gestionnaire a une soumission (ADMIN)
 router.patch(
   "/admin/submissions/:id/assign-dispatcher",
   authMiddleware,
@@ -1014,7 +1145,7 @@ router.patch(
       if (!dispatcher) {
         return res
           .status(404)
-          .json({ error: "Dispatcher introuvable ou role invalide" });
+          .json({ error: "Gestionnaire introuvable ou role invalide" });
       }
 
       const submission = await Submission.findById(req.params.id);
@@ -1036,7 +1167,7 @@ router.patch(
         .populate("assignedDispatcher", "name firstName email");
 
       res.json({
-        message: "Dispatcher assigne avec succes",
+        message: "Gestionnaire assigne avec succes",
         submission: normalizeSubmission(updated),
       });
     } catch (error) {
@@ -1045,7 +1176,7 @@ router.patch(
   },
 );
 
-// Lister les soumissions assignees au dispatcher connecte
+// Lister les soumissions assignees au gestionnaire connecte
 router.get(
   "/dispatcher/submissions",
   authMiddleware,
@@ -1068,7 +1199,7 @@ router.get(
   },
 );
 
-// Cloturer la session d'un dispatcher (ADMIN) si toutes ses soumissions actives sont finales
+// Cloturer la session d'un gestionnaire (ADMIN) si toutes ses soumissions actives sont finales
 router.post(
   "/admin/dispatchers/:id/close-session",
   authMiddleware,
@@ -1081,7 +1212,7 @@ router.post(
       }).select("_id name firstName email");
 
       if (!dispatcher) {
-        return res.status(404).json({ error: "Dispatcher introuvable" });
+        return res.status(404).json({ error: "Gestionnaire introuvable" });
       }
 
       const activeSubmissions = await Submission.find({
@@ -1091,7 +1222,7 @@ router.post(
 
       if (activeSubmissions.length === 0) {
         return res.status(400).json({
-          error: "Aucune soumission active pour ce dispatcher",
+          error: "Aucune soumission active pour ce gestionnaire",
         });
       }
 
@@ -1125,7 +1256,7 @@ router.post(
       );
 
       res.json({
-        message: "Session du dispatcher cloturee",
+        message: "Session du gestionnaire cloturee",
         closedCount: updateResult.modifiedCount,
       });
     } catch (error) {
@@ -1134,7 +1265,7 @@ router.post(
   },
 );
 
-// Changer le statut d'une soumission (DISPATCHER)
+// Changer le statut d'une soumission (GESTIONNAIRE)
 router.patch(
   "/admin/submissions/:id/status",
   authMiddleware,
@@ -1171,7 +1302,7 @@ router.patch(
   },
 );
 
-// Ajouter un commentaire editorial (DISPATCHER)
+// Ajouter un commentaire editorial (GESTIONNAIRE)
 router.post(
   "/admin/submissions/:id/comments",
   authMiddleware,
@@ -1204,7 +1335,7 @@ router.post(
   },
 );
 
-// Demander des modifications avec appréciation structurée (DISPATCHER)
+// Demander des modifications avec appréciation structurée (GESTIONNAIRE)
 router.post(
   "/admin/submissions/:id/revision-request",
   authMiddleware,

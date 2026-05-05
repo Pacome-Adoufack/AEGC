@@ -113,7 +113,6 @@ function SubmissionForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        setSubmitting(true);
 
         try {
             // Chercher le token dans localStorage ET sessionStorage
@@ -135,6 +134,7 @@ function SubmissionForm() {
                 localStorage.removeItem("token");
                 sessionStorage.removeItem("token");
                 localStorage.removeItem("user");
+                sessionStorage.removeItem("user");
                 toast.error("Votre session n'est pas valide. Veuillez vous reconnecter.");
                 navigate("/login", { state: { from: `/working-papers/${id}/submit` } });
                 return;
@@ -143,16 +143,16 @@ function SubmissionForm() {
             // Vérifier les champs requis
             if (!formData.articleTitle || !formData.abstract || !pdfFile) {
                 setError("Veuillez remplir tous les champs obligatoires");
-                setSubmitting(false);
                 return;
             }
 
             // Vérifier qu'au moins un auteur est renseigné
             if (!authors[0].name || !authors[0].email) {
                 setError("Veuillez renseigner au moins un auteur");
-                setSubmitting(false);
                 return;
             }
+
+            setSubmitting(true);
 
             // Préparer le FormData
             const submitData = new FormData();
@@ -185,7 +185,9 @@ function SubmissionForm() {
             // Gérer les erreurs d'authentification avant de parser le JSON
             if (response.status === 401 || response.status === 403) {
                 localStorage.removeItem("token");
+                sessionStorage.removeItem("token");
                 localStorage.removeItem("user");
+                sessionStorage.removeItem("user");
                 toast.error("Votre session a expiré. Veuillez vous reconnecter.");
                 navigate("/login", { state: { from: `/working-papers/${id}/submit` } });
                 return;
