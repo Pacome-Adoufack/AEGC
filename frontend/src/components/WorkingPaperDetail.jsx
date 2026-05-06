@@ -58,13 +58,22 @@ function WorkingPaperDetail() {
                 </button>
 
                 <div className="wp-detail-header">
-                    <h1>{wp.title}</h1>
+                    <div>
+                        <h1>{wp.title}</h1>
+                        {wp.subtitle && <p className="wp-detail-subtitle">{wp.subtitle}</p>}
+                    </div>
                     <span className={`wp-status ${wp.status === "ouvert" ? "open" : "closed"}`}>
                         {wp.status === "ouvert" ? "Ouvert" : "Clôturé"}
                     </span>
                 </div>
 
                 <div className="wp-detail-meta">
+                    {wp.organizer && (
+                        <div className="meta-item">
+                            <strong>Organisateur</strong>
+                            <p>{wp.organizer}</p>
+                        </div>
+                    )}
                     <div className="meta-item">
                         <strong>Deadline</strong>
                         <p>{formatDate(wp.deadline)}</p>
@@ -87,6 +96,18 @@ function WorkingPaperDetail() {
                                 : "Non definis"}
                         </p>
                     </div>
+                    {wp.language && (
+                        <div className="meta-item">
+                            <strong>Langue</strong>
+                            <p>{wp.language === "anglais" ? "English" : "Français"}</p>
+                        </div>
+                    )}
+                    {wp.manuscriptLength && (
+                        <div className="meta-item">
+                            <strong>Longueur attendue</strong>
+                            <p>{wp.manuscriptLength}</p>
+                        </div>
+                    )}
                 </div>
 
                 <div className="wp-detail-content">
@@ -96,6 +117,59 @@ function WorkingPaperDetail() {
                         dangerouslySetInnerHTML={{ __html: wp.description.replace(/\n/g, "<br/>") }}
                     />
                 </div>
+
+                {wp.submissionRequirements && (
+                    <div className="wp-detail-content">
+                        <h2>Conditions de soumission</h2>
+                        <p className="wp-description-full">{wp.submissionRequirements}</p>
+                    </div>
+                )}
+
+                {(wp.contact?.email || wp.contact?.phone || wp.contact?.website || wp.contact?.linkedin || (Array.isArray(wp.usefulLinks) && wp.usefulLinks.length > 0)) && (
+                    <div className="wp-detail-content">
+                        <h2>Contact et liens utiles</h2>
+                        <div className="wp-detail-contact-grid">
+                            {wp.contact?.email && (
+                                <div className="meta-item">
+                                    <strong>Email</strong>
+                                    <p>{wp.contact.email}</p>
+                                </div>
+                            )}
+                            {wp.contact?.phone && (
+                                <div className="meta-item">
+                                    <strong>Téléphone</strong>
+                                    <p>{wp.contact.phone}</p>
+                                </div>
+                            )}
+                            {wp.contact?.website && (
+                                <div className="meta-item">
+                                    <strong>Site web</strong>
+                                    <p>{wp.contact.website}</p>
+                                </div>
+                            )}
+                            {wp.contact?.linkedin && (
+                                <div className="meta-item">
+                                    <strong>LinkedIn</strong>
+                                    <p>{wp.contact.linkedin}</p>
+                                </div>
+                            )}
+                        </div>
+                        {Array.isArray(wp.usefulLinks) && wp.usefulLinks.length > 0 && (
+                            <div style={{ marginTop: "1rem" }}>
+                                <strong>Liens utiles</strong>
+                                <ul>
+                                    {wp.usefulLinks.map((link, index) => (
+                                        <li key={`${link}-${index}`}>
+                                            <a href={link} target="_blank" rel="noreferrer">
+                                                {link}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {isDeadlinePassed(wp.deadline) ? (
                     <div className="deadline-passed-notice">

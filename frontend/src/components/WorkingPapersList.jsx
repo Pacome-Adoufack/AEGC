@@ -64,7 +64,10 @@ function WorkingPapersList({ embedded = false }) {
 
                             <div className="wp-card-inner">
                                 <div className="wp-card-header">
-                                    <h2>{wp.title}</h2>
+                                    <div>
+                                        <h2>{wp.title}</h2>
+                                        {wp.subtitle && <p className="wp-subtitle">{wp.subtitle}</p>}
+                                    </div>
                                     <span className={`wp-status ${wp.status === "ouvert" ? "open" : "closed"}`}>
                                         {wp.status === "ouvert" ? "Ouvert" : "Clôturé"}
                                     </span>
@@ -72,7 +75,7 @@ function WorkingPapersList({ embedded = false }) {
 
                                 <div className="wp-card-body">
                                     <p className="wp-description">
-                                        {wp.description.substring(0, 180)}...
+                                        {String(wp.description || "").substring(0, 180)}...
                                     </p>
 
                                     <div className="wp-meta">
@@ -90,7 +93,26 @@ function WorkingPapersList({ embedded = false }) {
                                                 {wp.submissionsCount > 1 ? "s" : ""}
                                             </span>
                                         </div>
+                                        {wp.organizer && (
+                                            <div className="wp-meta-item">
+                                                <span className="icon">🏛️</span>
+                                                <span>{wp.organizer}</span>
+                                            </div>
+                                        )}
+                                        {wp.language && (
+                                            <div className="wp-meta-item">
+                                                <span className="icon">🌐</span>
+                                                <span>{wp.language === "anglais" ? "English" : "Français"}</span>
+                                            </div>
+                                        )}
                                     </div>
+
+                                    {(wp.manuscriptLength || wp.submissionRequirements) && (
+                                        <div className="wp-card-extra">
+                                            {wp.manuscriptLength && <p><strong>Longueur attendue :</strong> {wp.manuscriptLength}</p>}
+                                            {wp.submissionRequirements && <p><strong>Soumission :</strong> {wp.submissionRequirements}</p>}
+                                        </div>
+                                    )}
 
                                     {isDeadlinePassed(wp.deadline) && (
                                         <div className="deadline-passed">
