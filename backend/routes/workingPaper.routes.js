@@ -7,7 +7,9 @@ import User from "../models/User.js";
 import PublicationIssue from "../models/PublicationIssue.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import requireRole from "../middlewares/roleMiddleware.js";
-import uploadPDF, { PDF_MAX_SIZE_BYTES } from "../middlewares/uploadPDF.js";
+import uploadDocument, {
+  DOCUMENT_MAX_SIZE_BYTES,
+} from "../middlewares/uploadDocument.js";
 
 const router = express.Router();
 
@@ -179,26 +181,26 @@ const normalizeSubmission = (submission) => {
 };
 
 const uploadSubmissionPDF = (req, res, next) => {
-  uploadPDF.single("pdf")(req, res, (error) => {
+  uploadDocument.single("pdf")(req, res, (error) => {
     if (!error) {
       return next();
     }
 
     if (error instanceof multer.MulterError) {
       if (error.code === "LIMIT_FILE_SIZE") {
-        const maxSizeMb = Math.floor(PDF_MAX_SIZE_BYTES / (1024 * 1024));
+        const maxSizeMb = Math.floor(DOCUMENT_MAX_SIZE_BYTES / (1024 * 1024));
         return res.status(400).json({
-          error: `Le fichier PDF ne doit pas dépasser ${maxSizeMb} MB`,
+          error: `Le fichier ne doit pas dépasser ${maxSizeMb} MB`,
         });
       }
 
       return res.status(400).json({
-        error: `Erreur lors de l'upload du PDF: ${error.message}`,
+        error: `Erreur lors de l'upload du document: ${error.message}`,
       });
     }
 
     return res.status(400).json({
-      error: error.message || "Fichier PDF invalide",
+      error: error.message || "Fichier document invalide",
     });
   });
 };
@@ -686,16 +688,21 @@ router.delete("/submissions/:id", authMiddleware, async (req, res) => {
       return res.status(404).json({ error: "Soumission non trouvée" });
     }
 
-    const isOwner = submission.submittedBy.toString() === req.user._id.toString();
+    const isOwner =
+      submission.submittedBy.toString() === req.user._id.toString();
     const isAdmin = req.user.role === "admin";
 
     if (!isOwner && !isAdmin) {
       return res.status(403).json({ error: "Accès non autorisé" });
     }
 
-    if (!isAdmin && normalizeSubmissionStatus(submission.status) !== "soumise") {
+    if (
+      !isAdmin &&
+      normalizeSubmissionStatus(submission.status) !== "soumise"
+    ) {
       return res.status(400).json({
-        error: "Vous ne pouvez supprimer la soumission que tant qu'elle est encore en attente",
+        error:
+          "Vous ne pouvez supprimer la soumission que tant qu'elle est encore en attente",
       });
     }
 

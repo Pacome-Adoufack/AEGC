@@ -97,8 +97,12 @@ function SubmissionForm() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.type !== "application/pdf") {
-                setError("Seuls les fichiers PDF sont acceptés");
+            const acceptedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+            const acceptedExtensions = [".pdf", ".doc", ".docx"];
+            const fileExt = "." + file.name.split(".").pop().toLowerCase();
+
+            if (!acceptedTypes.includes(file.type) || !acceptedExtensions.includes(fileExt)) {
+                setError("Seuls les fichiers PDF et Word (.doc, .docx) sont acceptés");
                 return;
             }
             if (file.size > PDF_MAX_SIZE_BYTES) {
@@ -406,24 +410,24 @@ function SubmissionForm() {
                         </div>
                     </div>
 
-                    {/* Section 4 — Fichier PDF */}
+                    {/* Section 4 — Document */}
                     <div className="form-section">
                         <div className="form-section-header">
                             <span className="form-section-number">4</span>
-                            <h3>Fichier PDF <span className="required">*</span></h3>
+                            <h3>Document <span className="required">*</span></h3>
                         </div>
                         <div className="form-section-body">
                             <div className="pdf-drop-zone">
                                 <input
                                     type="file"
                                     id="pdf"
-                                    accept="application/pdf"
+                                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                     onChange={handleFileChange}
                                     required={!pdfFile}
                                 />
                                 <span className="pdf-drop-icon">📎</span>
-                                <p className="pdf-drop-label">Glissez votre PDF ici ou cliquez pour sélectionner</p>
-                                <p className="pdf-drop-hint">Format PDF uniquement — maximum {PDF_MAX_SIZE_MB} MB</p>
+                                <p className="pdf-drop-label">Glissez votre document ici ou cliquez pour sélectionner</p>
+                                <p className="pdf-drop-hint">Formats acceptés: PDF, Word (.doc, .docx) — maximum {PDF_MAX_SIZE_MB} MB</p>
                             </div>
                             {pdfFile && (
                                 <div className="file-info">

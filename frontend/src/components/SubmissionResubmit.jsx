@@ -93,8 +93,12 @@ function SubmissionResubmit() {
             return;
         }
 
-        if (file.type !== "application/pdf") {
-            setError("Seuls les fichiers PDF sont acceptés");
+        const acceptedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+        const acceptedExtensions = [".pdf", ".doc", ".docx"];
+        const fileExt = "." + file.name.split(".").pop().toLowerCase();
+
+        if (!acceptedTypes.includes(file.type) || !acceptedExtensions.includes(fileExt)) {
+            setError("Seuls les fichiers PDF et Word (.doc, .docx) sont acceptés");
             return;
         }
 
@@ -111,7 +115,7 @@ function SubmissionResubmit() {
         e.preventDefault();
 
         if (!pdfFile) {
-            setError("Veuillez sélectionner un fichier PDF pour resoumettre");
+            setError("Veuillez sélectionner un fichier document (PDF ou Word) pour resoumettre");
             return;
         }
 
@@ -250,14 +254,14 @@ function SubmissionResubmit() {
                                 <input
                                     type="file"
                                     id="pdf-resubmit"
-                                    accept="application/pdf"
+                                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                     onChange={handleFileChange}
                                     disabled={!canResubmit}
                                     required
                                 />
                                 <span className="pdf-drop-icon">📎</span>
-                                <p className="pdf-drop-label">Sélectionnez la nouvelle version PDF</p>
-                                <p className="pdf-drop-hint">Format PDF uniquement — maximum {PDF_MAX_SIZE_MB} MB</p>
+                                <p className="pdf-drop-label">Sélectionnez la nouvelle version du document</p>
+                                <p className="pdf-drop-hint">Formats acceptés: PDF, Word (.doc, .docx) — maximum {PDF_MAX_SIZE_MB} MB</p>
                             </div>
 
                             {pdfFile && (
