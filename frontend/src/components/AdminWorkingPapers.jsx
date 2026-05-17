@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../hooks/useToast.js";
 import { API_BASE_URL } from "./Url";
 import { getAuthToken } from "../utils/auth";
+import ConfirmDialog from "./common/ConfirmDialog";
 import "../styles/wp-base.css";
 import "../styles/wp-admin.css";
 import "../styles/wp-components.css";
@@ -280,14 +281,15 @@ function AdminWorkingPapers() {
         }
     };
 
+    const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
+    const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => setConfirmState({ isOpen: true, title, message, onConfirm, type });
+
     const deleteWorkingPaper = async (workingPaperId, workingPaperTitle) => {
         if (!isAdmin) {
             return;
         }
 
-        if (!window.confirm(`Supprimer le Working Paper \"${workingPaperTitle}\" ?`)) {
-            return;
-        }
+        // confirmation handled by modal
 
         try {
             const token = getAuthToken();
@@ -555,9 +557,7 @@ function AdminWorkingPapers() {
             return;
         }
 
-        if (!window.confirm(`Cloturer la session de ${dispatcherLabel} ?\n\nToutes ses soumissions actives doivent etre acceptees ou rejetees.`)) {
-            return;
-        }
+        // confirmation handled by modal
 
         try {
             const token = getAuthToken();
@@ -715,9 +715,7 @@ function AdminWorkingPapers() {
             return;
         }
 
-        if (!window.confirm(`Supprimer la publication \"${publicationTitle}\" ?`)) {
-            return;
-        }
+        // confirmation handled by modal
 
         try {
             const token = getAuthToken();
@@ -1009,7 +1007,7 @@ function AdminWorkingPapers() {
                                                 </button>
                                                 <button
                                                     className="btn btn-danger btn-small"
-                                                    onClick={() => deleteWorkingPaper(wp._id, wp.title)}
+                                                    onClick={() => openConfirm({ title: 'Supprimer l\'appel', message: `Supprimer le Working Paper "${wp.title}" ?`, onConfirm: () => deleteWorkingPaper(wp._id, wp.title), type: 'danger' })}
                                                 >
                                                     Supprimer
                                                 </button>
@@ -1021,6 +1019,14 @@ function AdminWorkingPapers() {
                         </div>
                     </div>
                 )}
+                <ConfirmDialog
+                    isOpen={confirmState.isOpen}
+                    title={confirmState.title}
+                    message={confirmState.message}
+                    type={confirmState.type}
+                    onConfirm={() => { if (typeof confirmState.onConfirm === 'function') confirmState.onConfirm(); }}
+                    onClose={() => setConfirmState(s => ({ ...s, isOpen: false }))}
+                />
 
                 {/* TAB: Soumissions */}
                 {tab === "submissions" && (
@@ -1044,7 +1050,7 @@ function AdminWorkingPapers() {
                                                 <button
                                                     className="btn btn-secondary btn-small"
                                                     disabled={!dispatcher.canCloseSession}
-                                                    onClick={() => closeManagerSession(dispatcher.id, `${dispatcher.firstName} ${dispatcher.name}`)}
+                                                    onClick={() => openConfirm({ title: 'Clôturer la session', message: `Cloturer la session de ${dispatcher.firstName} ${dispatcher.name} ?\n\nToutes ses soumissions actives doivent etre acceptees ou rejetees.`, onConfirm: () => closeManagerSession(dispatcher.id, `${dispatcher.firstName} ${dispatcher.name}`), type: 'warning' })}
                                                 >
                                                     Cloturer session
                                                 </button>
@@ -1228,7 +1234,7 @@ function AdminWorkingPapers() {
                                                 </button>
                                                 <button
                                                     className="btn btn-danger btn-small"
-                                                    onClick={() => deletePublication(publication._id, publication.title)}
+                                                        onClick={() => openConfirm({ title: 'Supprimer la publication', message: `Supprimer la publication "${publication.title}" ?`, onConfirm: () => deletePublication(publication._id, publication.title), type: 'danger' })}
                                                 >
                                                     Supprimer
                                                 </button>

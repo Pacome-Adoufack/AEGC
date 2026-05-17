@@ -20,6 +20,8 @@ function MySubmissions() {
     const [unreadComments, setUnreadComments] = useState(0);
     const [loading, setLoading] = useState(true);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
+    const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
+    const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => setConfirmState({ isOpen: true, title, message, onConfirm, type });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -125,14 +127,6 @@ function MySubmissions() {
     };
 
     const deleteSubmission = async (submissionId, articleTitle) => {
-        const confirmed = window.confirm(
-            `Supprimer définitivement la soumission "${articleTitle}" ?\n\nCette action est irréversible.`,
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
         try {
             const token = getAuthToken();
             const response = await fetch(`${API_BASE_URL}/api/submissions/${submissionId}`, {
@@ -158,6 +152,15 @@ function MySubmissions() {
         } catch (error) {
             toast.error(error.message || "Erreur lors de la suppression");
         }
+    };
+
+    const askDeleteSubmission = (submissionId, articleTitle) => {
+        openConfirm({
+            title: 'Supprimer la soumission',
+            message: `Supprimer définitivement la soumission "${articleTitle}" ?\n\nCette action est irréversible.`,
+            onConfirm: () => deleteSubmission(submissionId, articleTitle),
+            type: 'danger',
+        });
     };
 
     const getStatusClass = (status) => {
@@ -301,7 +304,7 @@ function MySubmissions() {
                                             {normalizeStatus(submission.status) === "soumise" && (
                                                 <button
                                                     className="btn btn-danger btn-small"
-                                                    onClick={() => deleteSubmission(submission._id, submission.articleTitle)}
+                                                    onClick={() => askDeleteSubmission(submission._id, submission.articleTitle)}
                                                 >
                                                     Supprimer
                                                 </button>
@@ -323,6 +326,14 @@ function MySubmissions() {
                 )}
 
             </div>
+            <ConfirmDialog
+                isOpen={confirmState.isOpen}
+                title={confirmState.title}
+                message={confirmState.message}
+                type={confirmState.type}
+                onConfirm={() => { if (typeof confirmState.onConfirm === 'function') confirmState.onConfirm(); }}
+                onClose={() => setConfirmState(s => ({ ...s, isOpen: false }))}
+            />
 
             {/* Modal de détails */}
             {selectedSubmission && (
@@ -446,7 +457,7 @@ function MySubmissions() {
                                 <div className="sub-modal-section">
                                     <button
                                         className="btn btn-danger"
-                                        onClick={() => deleteSubmission(selectedSubmission._id, selectedSubmission.articleTitle)}
+                                        onClick={() => askDeleteSubmission(selectedSubmission._id, selectedSubmission.articleTitle)}
                                     >
                                         Supprimer cette soumission
                                     </button>

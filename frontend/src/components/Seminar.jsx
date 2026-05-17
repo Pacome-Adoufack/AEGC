@@ -4,12 +4,18 @@ import { FaCalendarAlt, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../components/Url";
 import logo1 from "../assets/logo1.png";
+import ConfirmDialog from "./common/ConfirmDialog";
 
 const Seminar = () => {
   const [activities, setActivities] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [message, setMessage] = useState("");
   const [now, setNow] = useState(new Date()); // timer global
+  const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
+
+  const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => {
+    setConfirmState({ isOpen: true, title, message, onConfirm, type });
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,9 +74,6 @@ const Seminar = () => {
   }, []);
 
   const handleDeleteReservation = async (Id) => {
-    if (!window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?"))
-      return;
-
     try {
       const response = await fetch(`${API_BASE_URL}/reservation/${Id}`, {
         method: "DELETE",
@@ -82,6 +85,14 @@ const Seminar = () => {
     } catch (error) {
       setMessage("Erreur lors de l'annulation.");
     }
+  };
+
+  const askDeleteReservation = (Id) => {
+    openConfirm({
+      title: 'Annuler la réservation',
+      message: "Êtes-vous sûr de vouloir annuler cette réservation ?",
+      onConfirm: () => handleDeleteReservation(Id),
+    });
   };
   const scrollGallery = (direction) => {
     const container = document.getElementById("scroll-gallery");
@@ -197,7 +208,7 @@ const Seminar = () => {
                         </div> */}
                         <div className="moderator">
                           {activity.moderators &&
-                          activity.moderators.length > 0 ? (
+                            activity.moderators.length > 0 ? (
                             activity.moderators.map((m, index) => (
                               <div key={index}>
                                 <p>
@@ -218,7 +229,7 @@ const Seminar = () => {
                         </div>
                         <div className="participant-card">
                           {activity.participants &&
-                          activity.participants.length > 0 ? (
+                            activity.participants.length > 0 ? (
                             activity.participants.map((p, index) => (
                               <div key={index}>
                                 <p>
@@ -274,6 +285,16 @@ const Seminar = () => {
               <FaArrowRight />
             </button>
           </div>
+          <ConfirmDialog
+            isOpen={confirmState.isOpen}
+            title={confirmState.title}
+            message={confirmState.message}
+            type={confirmState.type}
+            onConfirm={() => {
+              if (typeof confirmState.onConfirm === "function") confirmState.onConfirm();
+            }}
+            onClose={() => setConfirmState((s) => ({ ...s, isOpen: false }))}
+          />
         </div>
       </div>
     </>

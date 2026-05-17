@@ -184,9 +184,10 @@ export default function DevDashboard() {
         setTimeout(() => setMessage(""), 3000);
     };
 
-    const handleDeleteUser = async (userId) => {
-        if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+    const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
+    const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => setConfirmState({ isOpen: true, title, message, onConfirm, type });
 
+    const handleDeleteUser = async (userId) => {
         try {
             const res = await fetch(`${API_BASE_URL}/dev/users/${userId}`, {
                 method: "DELETE",
@@ -205,6 +206,8 @@ export default function DevDashboard() {
         }
         setTimeout(() => setMessage(""), 3000);
     };
+
+    const askDeleteUser = (userId) => openConfirm({ title: 'Supprimer l\'utilisateur', message: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?", onConfirm: () => handleDeleteUser(userId), type: 'danger' });
 
     return (
         <div className="dev-dashboard">
@@ -328,6 +331,14 @@ export default function DevDashboard() {
                                 </div>
                             </div>
                         </div>
+                        <ConfirmDialog
+                            isOpen={confirmState.isOpen}
+                            title={confirmState.title}
+                            message={confirmState.message}
+                            type={confirmState.type}
+                            onConfirm={() => { if (typeof confirmState.onConfirm === 'function') confirmState.onConfirm(); }}
+                            onClose={() => setConfirmState(s => ({ ...s, isOpen: false }))}
+                        />
                     </div>
                 )}
 
@@ -425,7 +436,7 @@ export default function DevDashboard() {
                                             <td>
                                                 <button
                                                     className="btn-delete"
-                                                    onClick={() => handleDeleteUser(user.id)}
+                                                    onClick={() => askDeleteUser(user.id)}
                                                 >
                                                     🗑️
                                                 </button>

@@ -22,6 +22,8 @@ export default function AdminDashboard() {
     const [selectedEmail, setSelectedEmail] = useState('');
     const [activateFeedback, setActivateFeedback] = useState('');
     const [message, setMessage] = useState("");
+    const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
+    const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => setConfirmState({ isOpen: true, title, message, onConfirm, type });
 
     const navigate = useNavigate();
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -116,7 +118,6 @@ export default function AdminDashboard() {
     }, [activeTab, token]);
 
     const handleDeleteContact = async (id) => {
-        if (!confirm("Supprimer ce contact ?")) return;
         try {
             await fetch(`${API_BASE_URL}/contact/${id}`, {
                 method: "DELETE",
@@ -130,8 +131,9 @@ export default function AdminDashboard() {
         setTimeout(() => setMessage(""), 3000);
     };
 
+    const askDeleteContact = (id) => openConfirm({ title: 'Supprimer le contact', message: 'Supprimer ce contact ?', onConfirm: () => handleDeleteContact(id), type: 'danger' });
+
     const handleDeleteSubscriber = async (id) => {
-        if (!confirm("Supprimer cet abonné ?")) return;
         try {
             await fetch(`${API_BASE_URL}/subscribe/${id}`, {
                 method: "DELETE",
@@ -144,6 +146,8 @@ export default function AdminDashboard() {
         }
         setTimeout(() => setMessage(""), 3000);
     };
+
+    const askDeleteSubscriber = (id) => openConfirm({ title: 'Supprimer l\'abonné', message: 'Supprimer cet abonné ?', onConfirm: () => handleDeleteSubscriber(id), type: 'danger' });
 
     return (
         <div className="admin-dashboard">
@@ -362,7 +366,7 @@ export default function AdminDashboard() {
                                         <strong>{contact.email}</strong>
                                         <button
                                             className="btn-delete-small"
-                                            onClick={() => handleDeleteContact(contact._id)}
+                                            onClick={() => askDeleteContact(contact._id)}
                                         >
                                             🗑️
                                         </button>
@@ -405,7 +409,7 @@ export default function AdminDashboard() {
                                             <td>
                                                 <button
                                                     className="btn-delete"
-                                                    onClick={() => handleDeleteSubscriber(sub._id)}
+                                                    onClick={() => askDeleteSubscriber(sub._id)}
                                                 >
                                                     🗑️
                                                 </button>
@@ -747,6 +751,14 @@ export default function AdminDashboard() {
                     </div>
                 )}
             </div>
+            <ConfirmDialog
+                isOpen={confirmState.isOpen}
+                title={confirmState.title}
+                message={confirmState.message}
+                type={confirmState.type}
+                onConfirm={() => { if (typeof confirmState.onConfirm === 'function') confirmState.onConfirm(); }}
+                onClose={() => setConfirmState(s => ({ ...s, isOpen: false }))}
+            />
         </div>
     );
 }

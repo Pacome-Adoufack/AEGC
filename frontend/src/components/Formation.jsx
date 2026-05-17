@@ -3,11 +3,17 @@ import "../styles/Formation.css";
 import logo from "../assets/formation.png";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../components/Url"; // pense à vérifier que ce fichier contient bien ton URL de base, ex: http://localhost:3000
+import ConfirmDialog from "./common/ConfirmDialog";
 
 function Formations() {
   const [formations, setFormations] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [message, setMessage] = useState("");
+  const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
+
+  const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => {
+    setConfirmState({ isOpen: true, title, message, onConfirm, type });
+  };
 
   // Charger les formations
   useEffect(() => {
@@ -52,11 +58,6 @@ function Formations() {
 
   // Annuler une réservation
   const handleDeleteReservation = async (Id) => {
-    if (
-      !window.confirm("Êtes-vous sûr de vouloir annuler cette inscription ?")
-    )
-      return;
-
     try {
       const res = await fetch(`${API_BASE_URL}/api/reservation-formation/${Id}`, {
         method: "DELETE",
@@ -74,6 +75,14 @@ function Formations() {
       console.error(error);
       setMessage(`Erreur : ${error.message}`);
     }
+  };
+
+  const askDeleteReservation = (Id) => {
+    openConfirm({
+      title: 'Annuler l\'inscription',
+      message: "Êtes-vous sûr de vouloir annuler cette inscription ?",
+      onConfirm: () => handleDeleteReservation(Id),
+    });
   };
 
   return (
@@ -120,9 +129,9 @@ function Formations() {
               </p>
 
               <div className="boutton-section">
-                {reservation ? (
+                  {reservation ? (
                   <button
-                    onClick={() => handleDeleteReservation(reservation._id)}
+                    onClick={() => askDeleteReservation(reservation._id)}
                     className="delete-button"
                   >
                     Annuler l’inscription
@@ -141,6 +150,16 @@ function Formations() {
         })}
       </div>
     </div>
+    <ConfirmDialog
+      isOpen={confirmState.isOpen}
+      title={confirmState.title}
+      message={confirmState.message}
+      type={confirmState.type}
+      onConfirm={() => {
+        if (typeof confirmState.onConfirm === "function") confirmState.onConfirm();
+      }}
+      onClose={() => setConfirmState((s) => ({ ...s, isOpen: false }))}
+    />
   );
 }
 
