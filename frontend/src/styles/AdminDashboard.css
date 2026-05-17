@@ -523,6 +523,12 @@
     margin-right: 0.5rem;
 }
 
+.action-buttons {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
 .btn-approve {
     background: #28a745;
     color: white;
@@ -532,7 +538,11 @@
     cursor: pointer;
     font-weight: 600;
 }
-.btn-approve:hover { background: #218838; transform: translateY(-2px); }
+
+.btn-approve:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
 
 .btn-reject {
     background: #dc3545;
@@ -543,7 +553,11 @@
     cursor: pointer;
     font-weight: 600;
 }
-.btn-reject:hover { background: #c82333; transform: translateY(-2px); }
+
+.btn-reject:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
 
 .btn-revoke {
     background: #6f42c1;
@@ -554,7 +568,11 @@
     cursor: pointer;
     font-weight: 600;
 }
-.btn-revoke:hover { background: #5936a8; transform: translateY(-2px); }
+
+.btn-revoke:hover {
+    background: #5936a8;
+    transform: translateY(-2px);
+}
 
 .btn-cleanup {
     background: #dc3545;
@@ -604,6 +622,52 @@
     border-bottom: 1px solid #f1f3f5;
     color: #212529;
     font-weight: 500;
+}
+
+/* Pending submissions: more breathing room and clearer buttons */
+.pending-submissions table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.6rem;
+    /* vertical gap between rows */
+}
+
+.pending-submissions thead th {
+    background: #f8f9fa;
+    color: #2c3e50;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.pending-submissions tbody td {
+    padding: 0.85rem 1rem;
+    background: white;
+    border: 1px solid #f1f3f5;
+    border-radius: 6px;
+    vertical-align: middle;
+}
+
+.pending-submissions tbody tr td:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.pending-submissions tbody tr td:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.pending-submissions tbody tr:hover td {
+    background: #fbfdfa;
+}
+
+/* Make action buttons more visible */
+.btn-approve,
+.btn-reject {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.95rem;
 }
 
 .memberships-table tr:hover {
@@ -671,7 +735,7 @@
 .modal-form label {
     color: #2c3e50;
     font-weight: 600;
-    margin-bottom: -0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .modal-form input,

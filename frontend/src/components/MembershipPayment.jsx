@@ -8,23 +8,15 @@ import '../styles/MembershipPayment.css';
 
 const MembershipPayment = () => {
     const toast = useToast();
-    const [formMode, setFormMode] = useState('email'); // email | online
     const [emailConfirmation, setEmailConfirmation] = useState(false);
-    const [onlineForm, setOnlineForm] = useState({
-        fullName: '',
-        email: '',
-        phone: '',
-        affiliation: '',
-        notes: ''
-    });
     const [paymentInfo, setPaymentInfo] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [onlineFormError, setOnlineFormError] = useState('');
     const [currentMembership, setCurrentMembership] = useState(null);
     const [isActive, setIsActive] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const resubmit = !!location?.state?.resubmit;
     const formatDateSafe = (d) => {
         if (!d) return '-';
         const t = new Date(d);
@@ -33,20 +25,16 @@ const MembershipPayment = () => {
     };
 
     useEffect(() => {
-        const resubmit = !!(location && location.state && location.state.resubmit);
-
         // Si c'est une resoumission, on n'interroge PAS l'API pour éviter de remettre la soumission rejetée
         if (!resubmit) {
             fetchCurrentMembership();
         } else {
             setCurrentMembership(null);
-            setFormMode('email');
             setEmailConfirmation(false);
-            setOnlineForm({ fullName: '', email: '', phone: '', affiliation: '', notes: '' });
         }
 
         fetchPaymentInfo();
-    }, [location && location.state && location.state.resubmit]);
+    }, [resubmit]);
 
     const fetchPaymentInfo = async () => {
         try {
@@ -78,7 +66,6 @@ const MembershipPayment = () => {
     const handlePayment = async () => {
         setLoading(true);
         setError('');
-        setOnlineFormError('');
 
         try {
             const token = getAuthToken();
@@ -89,14 +76,8 @@ const MembershipPayment = () => {
                 return;
             }
 
-            if (formMode === 'email' && !emailConfirmation) {
+            if (!emailConfirmation) {
                 setError('Veuillez confirmer que vous avez envoyé la preuve et le formulaire par email.');
-                setLoading(false);
-                return;
-            }
-
-            if (formMode === 'online' && (!onlineForm.fullName || !onlineForm.email)) {
-                setOnlineFormError('Veuillez remplir au minimum le nom complet et l\'email du formulaire en ligne.');
                 setLoading(false);
                 return;
             }
@@ -104,11 +85,7 @@ const MembershipPayment = () => {
             const formData = new FormData();
             formData.append('currency', 'XAF');
             formData.append('category', 'standard');
-            formData.append('submissionMethod', formMode === 'online' ? 'online' : 'email');
-
-            if (formMode === 'online') {
-                formData.append('formData', JSON.stringify(onlineForm));
-            }
+            // submissionMethod is no longer used (email-only workflow)
 
             const response = await fetch(`${API_BASE_URL}/api/membership/submit`, {
                 method: 'POST',
@@ -132,10 +109,6 @@ const MembershipPayment = () => {
             setError(err.message || 'Une erreur est survenue');
             setLoading(false);
         }
-    };
-
-    const handleOnlineFormChange = (field, value) => {
-        setOnlineForm((prev) => ({ ...prev, [field]: value }));
     };
 
     // Legacy verify functions removed: manual submission flow used instead
@@ -169,7 +142,7 @@ const MembershipPayment = () => {
                     <p>Votre demande d'adhésion a été reçue et est en attente de validation par un administrateur.</p>
                     <div className="membership-info">
                         <p><strong>Numéro de soumission:</strong> {currentMembership.paymentNumber || '-'}</p>
-                        <p><strong>Mode d'envoi:</strong> {currentMembership.submissionMethod}</p>
+                        {/* submissionMethod removed — workflow email-only */}
                         <p><strong>Soumis le:</strong> {formatDateSafe(currentMembership.createdAt)}</p>
                     </div>
                     <button onClick={() => navigate('/informations personnelles')} className="back-button">
@@ -200,9 +173,7 @@ const MembershipPayment = () => {
                             onClick={() => {
                                 // allow user to start a fresh submission
                                 setCurrentMembership(null);
-                                setFormMode('email');
                                 setEmailConfirmation(false);
-                                setOnlineForm({ fullName: '', email: '', phone: '', affiliation: '', notes: '' });
                             }}
                         >
                             Resoumettre ma demande
@@ -216,6 +187,58 @@ const MembershipPayment = () => {
         );
     }
 
+    const defaultPaymentInfo = {
+        iban: paymentInfo?.iban || 'CM21 10005 00021 00000062141-02',
+        bankAccount: paymentInfo?.bankAccount || 'Afriland First Bank - Cameroun',
+        accountNumber: paymentInfo?.accountNumber || '10005 00021 00000062141 02',
+        swift: paymentInfo?.swift || 'CCEICMCX',
+        accountHolder: paymentInfo?.accountHolder || 'ASSOCIATION DES ECONOMISTES ET GESTIONNAIRES DU CAMEROUN (AEGC)',
+        address: paymentInfo?.address || 'Yaoundé, Cameroun',
+        website: paymentInfo?.website || 'www.aegc-web.com',
+        orangeNumber: paymentInfo?.orangeNumber || '+237698905007',
+        mtnNumber: paymentInfo?.mtnNumber || '+237651659996',
+        mobileHolder: paymentInfo?.mobileHolder || 'Dr Zeh Inès Pérolde',
+        adminEmail: paymentInfo?.adminEmail || 'aegc.admi@gmail.com'
+    };
+
+    const pricingRows = [
+        ['Étudiant national', '27 USD'],
+        ['Étudiant étranger', '35 USD'],
+        ['Enseignant‑Chercheur / Professionnel (National - sur le territoire)', '50 USD'],
+        ['Enseignant‑Chercheur / Professionnel (Étranger - pays à revenu élevé)', '100 USD'],
+        ['Enseignant‑Chercheur / Professionnel (Étranger - pays à revenus faibles)', '50 USD']
+    ];
+
+    const advantagesByProfile = [
+        {
+            title: 'Étudiants',
+            items: [
+                'Participation gratuite aux activités',
+                'Mentorat',
+                'Prix de recherche',
+                'Publication dans les bulletins'
+            ]
+        },
+        {
+            title: 'Enseignants',
+            items: [
+                'Réduction de 80% sur les conférences',
+                'Bourses de recherche',
+                'Publication gratuite ou à tarif réduit',
+                'Participation aux comités scientifiques'
+            ]
+        },
+        {
+            title: 'Professionnels',
+            items: [
+                'Réduction de 80% sur les événements',
+                'Accès aux réseaux partenaires',
+                'Conférencier invité',
+                'Promotion de leurs entreprises via l\'AEGC'
+            ]
+        }
+    ];
+
     return (
         <div className="membership-payment-container">
             <div className="membership-payment-card">
@@ -226,20 +249,29 @@ const MembershipPayment = () => {
                 </p>
 
                 <div className="manual-payment-info">
-                    <h4>Montant unique</h4>
-                    <p>La cotisation annuelle est fixée à <strong>10 000 FCFA</strong>.</p>
+                    <h4>Tarifs</h4>
+                    <p>Les tarifs varient selon la catégorie et l'origine. Référence actuelle :</p>
+                    <ul>
+                        {pricingRows.map(([label, price]) => (
+                            <li key={label}><strong>{label}:</strong> {price}</li>
+                        ))}
+                    </ul>
                 </div>
 
                 <div className="membership-benefits">
-                    <h4>Avantages du membership</h4>
-                    <ul>
-                        <li>Accès aux publications et revues de l'association</li>
-                        <li>Réductions sur les événements et formations</li>
-                        <li>Réseautage professionnel et opportunités de collaboration</li>
-                        <li>Accès aux ressources et annonces réservées aux membres</li>
-                        <li>Droit de vote aux assemblées générales</li>
-                    </ul>
-                    <p>Pour la version complète du formulaire et des conditions, téléchargez le PDF ou utilisez le lien dans le bloc « J'envoie formulaire + preuve par email ».</p>
+                    <h4>Avantages (par profil)</h4>
+                    {advantagesByProfile.map((profile) => (
+                        <div key={profile.title} style={{ marginBottom: '0.75rem' }}>
+                            <strong>{profile.title}</strong>
+                            <ul>
+                                {profile.items.map((item) => (
+                                    <li key={item}>{item}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+
+                    <p>Pour la version complète du formulaire et des conditions, téléchargez le fichier Word fourni ci‑dessous.</p>
                 </div>
 
                 {error && <div className="error-message">{error}</div>}
@@ -247,121 +279,37 @@ const MembershipPayment = () => {
                 <div className="manual-payment-info">
                     <h4>Instructions de paiement manuel</h4>
                     <ul>
-                        <li><strong>IBAN:</strong> {paymentInfo?.iban || 'FR76 3000 6000 0112 3456 7890 189'}</li>
-                        <li><strong>Compte bancaire:</strong> {paymentInfo?.bankAccount || '002376XXXXXXXX'}</li>
-                        <li><strong>Orange Money:</strong> {paymentInfo?.orangeNumber || '002376XXXXXXXX'}</li>
-                        <li><strong>MTN MoMo:</strong> {paymentInfo?.mtnNumber || '002376YYYYYYYY'}</li>
-                        <li><strong>Envoyez la preuve à:</strong> {paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</li>
+                        <li><strong>IBAN:</strong> {defaultPaymentInfo.iban}</li>
+                        <li><strong>Compte bancaire:</strong> {defaultPaymentInfo.bankAccount}</li>
+                        <li><strong>Numéro de compte:</strong> {defaultPaymentInfo.accountNumber}</li>
+                        <li><strong>Code SWIFT:</strong> {defaultPaymentInfo.swift}</li>
+                        <li><strong>Titulaire du compte:</strong> {defaultPaymentInfo.accountHolder}</li>
+                        <li><strong>Adresse:</strong> {defaultPaymentInfo.address}</li>
+                        <li><strong>Site web:</strong> {defaultPaymentInfo.website}</li>
+                        <li><strong>Orange Money (compte):</strong> {defaultPaymentInfo.orangeNumber}</li>
+                        <li><strong>MTN MoMo (compte):</strong> {defaultPaymentInfo.mtnNumber || 'Non communiqué'}</li>
+                        <li><strong>Titulaire des comptes mobile:</strong> {defaultPaymentInfo.mobileHolder}</li>
+                        <li><strong>Envoyez la preuve à:</strong> {defaultPaymentInfo.adminEmail}</li>
                     </ul>
-                    {!paymentInfo && <small>Coordonnées d'exemple affichées — configurez `PAYMENT_INFO_*` dans le backend</small>}
+                    {!paymentInfo && <small>Coordonnées par défaut affichées — configurez `PAYMENT_INFO_*` dans le backend pour les remplacer</small>}
 
-                    <h4>Mode d'envoi du formulaire</h4>
-                    <div className="payment-methods">
-                        <div
-                            className={`payment-method ${formMode === 'email' ? 'selected' : ''}`}
-                            onClick={() => setFormMode('email')}
-                        >
-                            <input
-                                type="radio"
-                                name="formMode"
-                                value="email"
-                                checked={formMode === 'email'}
-                                onChange={() => setFormMode('email')}
-                            />
-                            <span>📧 J'envoie formulaire + preuve par email</span>
-                        </div>
+                    <div className="file-inputs">
+                        <p>
+                            Merci d'effectuer le paiement puis d'envoyer la preuve de paiement et le formulaire rempli
+                            par email à <strong>{paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</strong>.
+                        </p>
 
-                        <div
-                            className={`payment-method ${formMode === 'online' ? 'selected' : ''}`}
-                            onClick={() => setFormMode('online')}
-                        >
+                        <a className="download-form-link" href="/pdf/Formulaire_Adhesion_AEGC_2026.docx" target="_blank" rel="noreferrer" download>Télécharger le formulaire d'adhésion (Word)</a>
+
+                        <label style={{ display: 'block', marginTop: '0.8rem' }}>
                             <input
-                                type="radio"
-                                name="formMode"
-                                value="online"
-                                checked={formMode === 'online'}
-                                onChange={() => setFormMode('online')}
-                            />
-                            <span>📝 Je remplis le formulaire en ligne</span>
-                        </div>
+                                type="checkbox"
+                                checked={emailConfirmation}
+                                onChange={(e) => setEmailConfirmation(e.target.checked)}
+                            />{' '}
+                            J'ai envoyé la preuve de paiement et le formulaire par email.
+                        </label>
                     </div>
-
-                    {formMode === 'email' && (
-                        <div className="file-inputs">
-                            <p>
-                                Merci d'effectuer le paiement puis d'envoyer la preuve de paiement et le formulaire rempli
-                                par email à <strong>{paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</strong>.
-                            </p>
-
-                            <a className="download-form-link" href="/pdf/AEGC_membership_form.pdf" target="_blank" rel="noreferrer">Télécharger le formulaire d'adhésion (PDF)</a>
-
-                            <label style={{ display: 'block', marginTop: '0.8rem' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={emailConfirmation}
-                                    onChange={(e) => setEmailConfirmation(e.target.checked)}
-                                />{' '}
-                                J'ai envoyé la preuve de paiement et le formulaire par email.
-                            </label>
-                        </div>
-                    )}
-
-                    {formMode === 'online' && (
-                        <div className="file-inputs">
-                            <p>
-                                La preuve de paiement doit toujours être envoyée par email à{' '}
-                                <strong>{paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</strong>.
-                            </p>
-
-                            {onlineFormError && (
-                                <div className="inline-form-message" role="alert">
-                                    {onlineFormError}
-                                </div>
-                            )}
-
-                            <div className="online-form-grid">
-                                <label>Nom complet</label>
-                                <input
-                                    type="text"
-                                    value={onlineForm.fullName}
-                                    onChange={(e) => handleOnlineFormChange('fullName', e.target.value)}
-                                    placeholder="Votre nom complet"
-                                />
-
-                                <label>Email</label>
-                                <input
-                                    type="email"
-                                    value={onlineForm.email}
-                                    onChange={(e) => handleOnlineFormChange('email', e.target.value)}
-                                    placeholder="votre@email.com"
-                                />
-
-                                <label>Téléphone</label>
-                                <input
-                                    type="tel"
-                                    value={onlineForm.phone}
-                                    onChange={(e) => handleOnlineFormChange('phone', e.target.value)}
-                                    placeholder="Ex: 237670000000"
-                                />
-
-                                <label>Affiliation / Institution</label>
-                                <input
-                                    type="text"
-                                    value={onlineForm.affiliation}
-                                    onChange={(e) => handleOnlineFormChange('affiliation', e.target.value)}
-                                    placeholder="Université, entreprise, etc."
-                                />
-
-                                <label>Informations complémentaires</label>
-                                <textarea
-                                    value={onlineForm.notes}
-                                    onChange={(e) => handleOnlineFormChange('notes', e.target.value)}
-                                    rows={4}
-                                    placeholder="Ajoutez toute précision utile"
-                                />
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 <button
@@ -372,9 +320,9 @@ const MembershipPayment = () => {
                     {loading ? 'Traitement...' : 'Soumettre ma demande d\'adhésion'}
                 </button>
 
-                {(error || onlineFormError) && (
+                {error && (
                     <div className="inline-form-message" role="alert" style={{ marginTop: '1rem' }}>
-                        {error || onlineFormError}
+                        {error}
                     </div>
                 )}
 

@@ -514,9 +514,18 @@ router.post(
         });
       }
 
+      // Accept optional overrides from admin: years, amount, currency
+      const { years, amount, currency } = req.body || {};
+      if (amount !== undefined && !isNaN(Number(amount)))
+        membership.amount = Number(amount);
+      if (currency && ["EUR", "USD", "XAF"].includes(currency))
+        membership.currency = currency;
+
       membership.submissionStatus = "approved";
       membership.startDate = new Date();
-      membership.calculateEndDate();
+      membership.calculateEndDate(
+        Number.isInteger(Number(years)) ? Number(years) : 1,
+      );
       membership.approvedBy = req.user.id;
       membership.approvedAt = new Date();
       await membership.save();
@@ -526,7 +535,16 @@ router.post(
         currentMembership: membership._id,
       });
 
-      res.json({ success: true, message: "Membership approuvé", membership });
+      // Récupérer le membership peuplé pour renvoyer les informations utilisateur
+      const populatedMembership = await Membership.findById(membership._id)
+        .populate("user", "firstName name email membershipStatus")
+        .populate("approvedBy", "firstName name");
+
+      res.json({
+        success: true,
+        message: "Membership approuvé",
+        membership: populatedMembership,
+      });
     } catch (error) {
       console.error("Erreur approbation membership:", error);
       res.status(500).json({ error: error.message });
@@ -558,7 +576,15 @@ router.post(
         membershipStatus: "none",
       });
 
-      res.json({ success: true, message: "Membership rejeté", membership });
+      const populatedMembership = await Membership.findById(membership._id)
+        .populate("user", "firstName name email membershipStatus")
+        .populate("approvedBy", "firstName name");
+
+      res.json({
+        success: true,
+        message: "Membership rejeté",
+        membership: populatedMembership,
+      });
     } catch (error) {
       console.error("Erreur rejet membership:", error);
       res.status(500).json({ error: error.message });
@@ -625,7 +651,20 @@ router.post(
         notes: notes || "Activation manuelle par admin",
       });
 
-      membership.calculateEndDate();
+      // If admin provided a specific number of years or an explicit amount, apply them
+      if (
+        req.body &&
+        req.body.years &&
+        Number.isInteger(Number(req.body.years))
+      ) {
+        membership.calculateEndDate(Number(req.body.years));
+      } else {
+        membership.calculateEndDate(1);
+      }
+      if (req.body && req.body.amount && !isNaN(Number(req.body.amount))) {
+        membership.amount = Number(req.body.amount);
+      }
+
       await membership.save();
 
       // Mettre à jour l'utilisateur
@@ -633,10 +672,14 @@ router.post(
       user.currentMembership = membership._id;
       await user.save();
 
+      const populatedMembership = await Membership.findById(membership._id)
+        .populate("user", "firstName name email membershipStatus")
+        .populate("approvedBy", "firstName name");
+
       res.json({
         success: true,
         message: "Membership activé avec succès",
-        membership,
+        membership: populatedMembership,
       });
     } catch (error) {
       console.error("Erreur activation membership:", error);
@@ -712,7 +755,9 @@ const activateMembershipHandler = async (req, res) => {
     res.json({
       success: true,
       message: "Utilisateur trouvé et abonnement activé",
-      membership,
+      membership: await Membership.findById(membership._id)
+        .populate("user", "firstName name email membershipStatus")
+        .populate("approvedBy", "firstName name"),
     });
   } catch (error) {
     console.error("Erreur activation membership:", error);
@@ -762,8 +807,20 @@ router.put(
 
       if (normalizedSubmissionStatus)
         membership.submissionStatus = normalizedSubmissionStatus;
+      // Allow admin to set amount/currency/years when updating
+      if (req.body.amount !== undefined && !isNaN(Number(req.body.amount)))
+        membership.amount = Number(req.body.amount);
+      if (
+        req.body.currency &&
+        ["EUR", "USD", "XAF"].includes(req.body.currency)
+      )
+        membership.currency = req.body.currency;
+      if (req.body.years && Number.isInteger(Number(req.body.years))) {
+        membership.calculateEndDate(Number(req.body.years));
+      } else if (endDate) {
+        membership.endDate = new Date(endDate);
+      }
       if (notes !== undefined) membership.notes = notes;
-      if (endDate) membership.endDate = new Date(endDate);
 
       await membership.save();
 
@@ -780,10 +837,14 @@ router.put(
         });
       }
 
+      const populatedMembership = await Membership.findById(membership._id)
+        .populate("user", "firstName name email membershipStatus")
+        .populate("approvedBy", "firstName name");
+
       res.json({
         success: true,
         message: "Membership mis à jour",
-        membership,
+        membership: populatedMembership,
       });
     } catch (error) {
       console.error("Erreur modification membership:", error);

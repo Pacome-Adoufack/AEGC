@@ -13,14 +13,32 @@ export default function AdminDashboard() {
     const [pendingMemberships, setPendingMemberships] = useState([]);
     const [selectedPending, setSelectedPending] = useState(null);
     const [showApproveConfirm, setShowApproveConfirm] = useState(false);
+    const [showApproveModal, setShowApproveModal] = useState(false);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState('');
     const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
     const [selectedRevoke, setSelectedRevoke] = useState(null);
+    const [approveYears, setApproveYears] = useState(1);
+    const [approveAmount, setApproveAmount] = useState('');
+    const [approveCurrency, setApproveCurrency] = useState('XAF');
+    const [approveAmountOption, setApproveAmountOption] = useState('');
+    const [approveCustomAmount, setApproveCustomAmount] = useState('');
     const [membershipStats, setMembershipStats] = useState(null);
     const [showActivateModal, setShowActivateModal] = useState(false);
     const [selectedEmail, setSelectedEmail] = useState('');
     const [activateFeedback, setActivateFeedback] = useState('');
+    const [activateYears, setActivateYears] = useState(1);
+    const [activateAmount, setActivateAmount] = useState('');
+    const [activateCurrency, setActivateCurrency] = useState('XAF');
+    const [activateAmountOption, setActivateAmountOption] = useState('');
+    const [activateCustomAmount, setActivateCustomAmount] = useState('');
+
+    // Conversion rates (base USD)
+    const USD_TO_EUR = 0.92; // 100 USD => 92 EUR
+    const USD_TO_XAF = 602; // 100 USD => 60200 XOF
+
+    const fmt = (n) => new Intl.NumberFormat('fr-FR').format(n);
+    const fmtEUR = (n) => (Math.round(n * 100) / 100).toFixed(2).replace('.', ',');
     const [message, setMessage] = useState("");
     const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
     const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => setConfirmState({ isOpen: true, title, message, onConfirm, type });
@@ -455,7 +473,7 @@ export default function AdminDashboard() {
                         <div className="membership-actions">
                             <button
                                 className="btn-activate"
-                                onClick={() => setShowActivateModal(true)}
+                                onClick={() => { setShowActivateModal(true); setSelectedEmail(''); setActivateFeedback(''); setActivateYears(1); setActivateAmount(''); setActivateCurrency('XAF'); }}
                             >
                                 ➕ Activer une cotisation manuellement
                             </button>
@@ -549,7 +567,13 @@ export default function AdminDashboard() {
                                                 <td className="action-buttons">
                                                     <button
                                                         className="btn-approve"
-                                                        onClick={() => { setSelectedPending(m); setShowApproveConfirm(true); }}
+                                                        onClick={() => {
+                                                            setSelectedPending(m);
+                                                            setApproveYears(1);
+                                                            setApproveAmount(m.amount || '');
+                                                            setApproveCurrency(m.currency || 'XAF');
+                                                            setShowApproveModal(true);
+                                                        }}
                                                     >
                                                         ✓ Approuver
                                                     </button>
@@ -568,35 +592,73 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* Approve confirm dialog */}
-                        <ConfirmDialog
-                            isOpen={showApproveConfirm}
-                            title="Confirmer l'approbation"
-                            message={`Approuver la soumission de ${selectedPending?.user?.email || ''} ?`}
-                            confirmText="Approuver"
-                            cancelText="Annuler"
-                            onClose={() => { setShowApproveConfirm(false); setSelectedPending(null); }}
-                            onConfirm={async () => {
-                                try {
-                                    const res = await fetch(`${API_BASE_URL}/memberships/${selectedPending._id}/approve`, {
-                                        method: 'POST',
-                                        headers: { 'Authorization': `Bearer ${token}` }
-                                    });
-                                    const data = await res.json();
-                                    if (data.success) {
-                                        setMessage('Soumission approuvée');
-                                        setPendingMemberships(pendingMemberships.filter(p => p._id !== selectedPending._id));
-                                        setMemberships([data.membership, ...memberships]);
-                                    } else {
-                                        setMessage('Erreur: ' + (data.error || data.message));
-                                    }
-                                } catch (err) {
-                                    setMessage('Erreur: ' + err.message);
-                                }
-                                setShowApproveConfirm(false);
-                                setSelectedPending(null);
-                                setTimeout(() => setMessage(''), 3000);
-                            }}
-                        />
+                        {showApproveModal && (
+                            <div className="modal-overlay" onClick={() => setShowApproveModal(false)}>
+                                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                    <h3>Approuver la soumission</h3>
+                                    <p>Approuver la soumission de {selectedPending?.user?.email} :</p>
+                                    <div style={{ display: 'grid', gap: '0.5rem' }}>
+                                        <label>Nombre d'années</label>
+                                        <input type="number" min={1} value={approveYears} onChange={(e) => setApproveYears(Number(e.target.value))} />
+
+                                        <label>Montant</label>
+                                        <select value={approveAmountOption} onChange={(e) => setApproveAmountOption(e.target.value)}>
+                                            <option value="">-- Choisir un montant --</option>
+                                            {[27, 35, 50, 70, 100].map((usd) => (
+                                                <option key={usd} value={usd}>
+                                                    {usd} USD — {fmtEUR(usd * USD_TO_EUR)} EUR — {fmt(usd * USD_TO_XAF)} XOF
+                                                </option>
+                                            ))}
+                                            <option value="other">Autre</option>
+                                        </select>
+                                        {approveAmountOption === 'other' && (
+                                            <input type="number" value={approveCustomAmount} onChange={(e) => setApproveCustomAmount(e.target.value)} placeholder="Montant personnalisé" />
+                                        )}
+
+                                        <label>Devise</label>
+                                        <select value={approveCurrency} onChange={(e) => setApproveCurrency(e.target.value)}>
+                                            <option value="XAF">XAF</option>
+                                            <option value="USD">USD</option>
+                                            <option value="EUR">EUR</option>
+                                        </select>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                                        <button className="btn-confirm" onClick={async () => {
+                                            try {
+                                                let selectedAmount;
+                                                if (approveAmountOption === 'other') {
+                                                    selectedAmount = Number(approveCustomAmount) || 0;
+                                                } else {
+                                                    const baseUSD = Number(approveAmountOption || approveAmount) || 0;
+                                                    if (approveCurrency === 'USD') selectedAmount = baseUSD;
+                                                    else if (approveCurrency === 'EUR') selectedAmount = Number((baseUSD * USD_TO_EUR).toFixed(2));
+                                                    else selectedAmount = Math.round(baseUSD * USD_TO_XAF);
+                                                }
+                                                const res = await fetch(`${API_BASE_URL}/memberships/${selectedPending._id}/approve`, {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                                    body: JSON.stringify({ years: approveYears, amount: selectedAmount, currency: approveCurrency })
+                                                });
+                                                const data = await res.json();
+                                                if (data.success) {
+                                                    setMessage('Soumission approuvée');
+                                                    setPendingMemberships(pendingMemberships.filter(p => p._id !== selectedPending._id));
+                                                    setMemberships([data.membership, ...memberships]);
+                                                } else {
+                                                    setMessage('Erreur: ' + (data.error || data.message));
+                                                }
+                                            } catch (err) {
+                                                setMessage('Erreur: ' + err.message);
+                                            }
+                                            setShowApproveModal(false);
+                                            setSelectedPending(null);
+                                            setTimeout(() => setMessage(''), 3000);
+                                        }}>Approuver</button>
+                                        <button className="btn-cancel" onClick={() => { setShowApproveModal(false); setSelectedPending(null); }}>Annuler</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Reject modal with textarea */}
                         {showRejectModal && (
@@ -684,6 +746,30 @@ export default function AdminDashboard() {
                                             placeholder="exemple@email.com"
                                         />
 
+                                        <label>Nombre d'années</label>
+                                        <input type="number" min={1} value={activateYears} onChange={(e) => setActivateYears(Number(e.target.value))} />
+
+                                        <label>Montant</label>
+                                        <select value={activateAmountOption} onChange={(e) => setActivateAmountOption(e.target.value)}>
+                                            <option value="">-- Choisir un montant --</option>
+                                            {[27, 35, 50, 70, 100].map((usd) => (
+                                                <option key={usd} value={usd}>
+                                                    {usd} USD — {fmtEUR(usd * USD_TO_EUR)} EUR — {fmt(usd * USD_TO_XAF)} XOF
+                                                </option>
+                                            ))}
+                                            <option value="other">Autre</option>
+                                        </select>
+                                        {activateAmountOption === 'other' && (
+                                            <input type="number" value={activateCustomAmount} onChange={(e) => setActivateCustomAmount(e.target.value)} placeholder="Montant personnalisé" />
+                                        )}
+
+                                        <label>Devise</label>
+                                        <select value={activateCurrency} onChange={(e) => setActivateCurrency(e.target.value)}>
+                                            <option value="XAF">XAF</option>
+                                            <option value="USD">USD</option>
+                                            <option value="EUR">EUR</option>
+                                        </select>
+
                                         {activateFeedback && (
                                             <div className="inline-feedback" style={{ marginTop: '0.75rem' }}>
                                                 {activateFeedback}
@@ -696,13 +782,22 @@ export default function AdminDashboard() {
                                                 onClick={async () => {
                                                     setActivateFeedback('');
                                                     try {
+                                                        let selectedActAmount;
+                                                        if (activateAmountOption === 'other') {
+                                                            selectedActAmount = Number(activateCustomAmount) || 0;
+                                                        } else {
+                                                            const baseUSD = Number(activateAmountOption || activateAmount) || 0;
+                                                            if (activateCurrency === 'USD') selectedActAmount = baseUSD;
+                                                            else if (activateCurrency === 'EUR') selectedActAmount = Number((baseUSD * USD_TO_EUR).toFixed(2));
+                                                            else selectedActAmount = Math.round(baseUSD * USD_TO_XAF);
+                                                        }
                                                         const response = await fetch(`${API_BASE_URL}/memberships/activate`, {
                                                             method: 'POST',
                                                             headers: {
                                                                 'Content-Type': 'application/json',
                                                                 'Authorization': `Bearer ${token}`
                                                             },
-                                                            body: JSON.stringify({ email: selectedEmail })
+                                                            body: JSON.stringify({ email: selectedEmail, years: activateYears, amount: selectedActAmount, currency: activateCurrency })
                                                         });
                                                         const data = await response.json();
                                                         if (data.success) {
@@ -710,6 +805,9 @@ export default function AdminDashboard() {
                                                             setMessage('Cotisation activée avec succès');
                                                             setShowActivateModal(false);
                                                             setSelectedEmail('');
+                                                            setActivateYears(1);
+                                                            setActivateAmount('');
+                                                            setActivateCurrency('XAF');
                                                             setActiveTab("overview");
                                                             setTimeout(() => setActiveTab("memberships"), 100);
                                                         } else {

@@ -29,7 +29,14 @@ const MembershipSchema = new mongoose.Schema(
     },
     submissionMethod: {
       type: String,
-      enum: ["bank_transfer", "orange_money", "mtn_momo", "manual_form", "email", "online"],
+      enum: [
+        "bank_transfer",
+        "orange_money",
+        "mtn_momo",
+        "manual_form",
+        "email",
+        "online",
+      ],
       default: "bank_transfer",
     },
     proofOfPaymentUrl: {
@@ -111,11 +118,15 @@ MembershipSchema.methods.isActive = function () {
 
 // Méthode pour calculer la date de fin (1 an après la date de début)
 MembershipSchema.methods.calculateEndDate = function () {
+  const yearsToAdd =
+    arguments[0] && Number.isInteger(arguments[0]) && arguments[0] > 0
+      ? arguments[0]
+      : 1;
   if (!this.startDate) {
     this.startDate = new Date();
   }
   const endDate = new Date(this.startDate);
-  endDate.setFullYear(endDate.getFullYear() + 1);
+  endDate.setFullYear(endDate.getFullYear() + yearsToAdd);
   this.endDate = endDate;
   return this.endDate;
 };

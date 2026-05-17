@@ -86,6 +86,7 @@ function Formations() {
   };
 
   return (
+    <>
     <div className="formations-container">
       <h2>Nos Formations</h2>
       {message && <p className="message">{message}</p>}
@@ -160,6 +161,7 @@ function Formations() {
       }}
       onClose={() => setConfirmState((s) => ({ ...s, isOpen: false }))}
     />
+    </>
   );
 }
 
