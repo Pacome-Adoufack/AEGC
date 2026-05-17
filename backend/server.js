@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import { config } from "./config/env.js";
+import path from "path";
 
 // Import des routes (après le chargement de la config)
 import authRoutes from "./routes/auth.routes.js";
@@ -19,6 +20,12 @@ const isProduction = process.env.NODE_ENV === "production";
 
 app.use(cors());
 app.use(express.json());
+
+// Servir les fichiers uploadés (preuves, formulaires)
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "backend", "uploads")),
+);
 
 // Connexion à MongoDB
 const connectDB = async () => {

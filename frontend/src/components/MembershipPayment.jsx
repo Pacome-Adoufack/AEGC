@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../hooks/useToast.js';
 import { API_BASE_URL } from '../components/Url';
@@ -7,35 +8,55 @@ import '../styles/MembershipPayment.css';
 
 const MembershipPayment = () => {
     const toast = useToast();
-    const [currency, setCurrency] = useState('EUR');
-    const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' ou 'mobile_money'
-    const [mobileChannel, setMobileChannel] = useState('orange_money'); // 'orange_money' ou 'mtn_momo'
-    const [phone, setPhone] = useState('');
+    const [formMode, setFormMode] = useState('email'); // email | online
+    const [emailConfirmation, setEmailConfirmation] = useState(false);
+    const [onlineForm, setOnlineForm] = useState({
+        fullName: '',
+        email: '',
+        phone: '',
+        affiliation: '',
+        notes: ''
+    });
+    const [paymentInfo, setPaymentInfo] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [onlineFormError, setOnlineFormError] = useState('');
     const [currentMembership, setCurrentMembership] = useState(null);
     const [isActive, setIsActive] = useState(false);
     const navigate = useNavigate();
-
-    const prices = {
-        EUR: 16,
-        USD: 18,
-        XAF: 10000
+    const location = useLocation();
+    const formatDateSafe = (d) => {
+        if (!d) return '-';
+        const t = new Date(d);
+        if (isNaN(t.getTime())) return '-';
+        return t.toLocaleDateString('fr-FR');
     };
 
     useEffect(() => {
-        // Vérifier si l'utilisateur a déjà une cotisation
-        fetchCurrentMembership();
-    }, []);
+        const resubmit = !!(location && location.state && location.state.resubmit);
 
-    // Adapter le mode de paiement selon la devise sélectionnée
-    useEffect(() => {
-        if (currency === 'XAF') {
-            setPaymentMethod('mobile_money');
+        // Si c'est une resoumission, on n'interroge PAS l'API pour éviter de remettre la soumission rejetée
+        if (!resubmit) {
+            fetchCurrentMembership();
         } else {
-            setPaymentMethod('card');
+            setCurrentMembership(null);
+            setFormMode('email');
+            setEmailConfirmation(false);
+            setOnlineForm({ fullName: '', email: '', phone: '', affiliation: '', notes: '' });
         }
-    }, [currency]);
+
+        fetchPaymentInfo();
+    }, [location && location.state && location.state.resubmit]);
+
+    const fetchPaymentInfo = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/membership/payment-info`);
+            const data = await res.json();
+            setPaymentInfo(data);
+        } catch (err) {
+            console.error('Erreur récupération infos paiement:', err);
+        }
+    };
 
     const fetchCurrentMembership = async () => {
         try {
@@ -57,6 +78,7 @@ const MembershipPayment = () => {
     const handlePayment = async () => {
         setLoading(true);
         setError('');
+        setOnlineFormError('');
 
         try {
             const token = getAuthToken();
@@ -67,78 +89,43 @@ const MembershipPayment = () => {
                 return;
             }
 
-            // Paiement Mobile Money (Notch Pay)
-            if (paymentMethod === 'mobile_money') {
-                if (currency !== 'XAF') {
-                    setError('Mobile Money ne supporte que le Franc CFA (XAF).');
-                    setLoading(false);
-                    return;
-                }
-
-                if (!phone) {
-                    setError('Veuillez entrer votre numéro de téléphone.');
-                    setLoading(false);
-                    return;
-                }
-
-                const response = await fetch(`${API_BASE_URL}/api/membership/create-notchpay-payment`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        currency: 'XAF',
-                        phone,
-                        paymentChannel: mobileChannel
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Erreur lors de la création du paiement');
-                }
-
-                // Afficher un message et rediriger si nécessaire
-                if (data.authorizationUrl) {
-                    window.location.href = data.authorizationUrl;
-                } else {
-                    toast.info(data.message || 'Paiement initialisé. Suivez les instructions sur votre téléphone.');
-                    // Vérifier le statut après quelques secondes
-                    setTimeout(() => verifyMobilePayment(data.reference), 5000);
-                }
+            if (formMode === 'email' && !emailConfirmation) {
+                setError('Veuillez confirmer que vous avez envoyé la preuve et le formulaire par email.');
+                setLoading(false);
+                return;
             }
-            // Paiement par carte (Stripe)
-            else {
-                if (currency === 'XAF') {
-                    setError('Le paiement par carte ne supporte pas le Franc CFA. Utilisez Mobile Money.');
-                    setLoading(false);
-                    return;
-                }
 
-                const response = await fetch(`${API_BASE_URL}/api/membership/create-checkout-session`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ currency })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Erreur lors de la création de la session de paiement');
-                }
-
-                // Rediriger vers Stripe Checkout
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    throw new Error('URL de paiement non disponible');
-                }
+            if (formMode === 'online' && (!onlineForm.fullName || !onlineForm.email)) {
+                setOnlineFormError('Veuillez remplir au minimum le nom complet et l\'email du formulaire en ligne.');
+                setLoading(false);
+                return;
             }
+
+            const formData = new FormData();
+            formData.append('currency', 'XAF');
+            formData.append('category', 'standard');
+            formData.append('submissionMethod', formMode === 'online' ? 'online' : 'email');
+
+            if (formMode === 'online') {
+                formData.append('formData', JSON.stringify(onlineForm));
+            }
+
+            const response = await fetch(`${API_BASE_URL}/api/membership/submit`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Erreur lors de la soumission');
+            }
+
+            toast.success(data.message || 'Soumission reçue. En attente de validation.');
+            navigate('/membership/success');
 
         } catch (err) {
             console.error('Erreur paiement:', err);
@@ -147,29 +134,11 @@ const MembershipPayment = () => {
         }
     };
 
-    const verifyMobilePayment = async (reference) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/membership/verify-notchpay`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ reference })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                navigate('/membership/success?reference=' + reference);
-            } else {
-                setError('Paiement en attente. Vérifiez votre téléphone.');
-                setLoading(false);
-            }
-        } catch (err) {
-            console.error('Erreur vérification:', err);
-            setLoading(false);
-        }
+    const handleOnlineFormChange = (field, value) => {
+        setOnlineForm((prev) => ({ ...prev, [field]: value }));
     };
+
+    // Legacy verify functions removed: manual submission flow used instead
 
     if (isActive && currentMembership) {
         return (
@@ -179,13 +148,69 @@ const MembershipPayment = () => {
                     <p>Votre cotisation annuelle est active.</p>
                     <div className="membership-info">
                         <p><strong>Montant:</strong> {currentMembership.amount} {currentMembership.currency}</p>
-                        <p><strong>Date de début:</strong> {new Date(currentMembership.startDate).toLocaleDateString('fr-FR')}</p>
-                        <p><strong>Date de fin:</strong> {new Date(currentMembership.endDate).toLocaleDateString('fr-FR')}</p>
+                        <p><strong>Date de début:</strong> {formatDateSafe(currentMembership.startDate)}</p>
+                        <p><strong>Date de fin:</strong> {formatDateSafe(currentMembership.endDate)}</p>
                         <p><strong>Numéro de paiement:</strong> {currentMembership.paymentNumber}</p>
                     </div>
                     <button onClick={() => navigate('/informations personnelles')} className="back-button">
                         Retour au profil
                     </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Si une soumission existe mais est en attente, montrer l'état en attente
+    if (currentMembership && currentMembership.submissionStatus === 'pending') {
+        return (
+            <div className="membership-payment-container">
+                <div className="membership-pending-card">
+                    <h2>⏳ Soumission en attente</h2>
+                    <p>Votre demande d'adhésion a été reçue et est en attente de validation par un administrateur.</p>
+                    <div className="membership-info">
+                        <p><strong>Numéro de soumission:</strong> {currentMembership.paymentNumber || '-'}</p>
+                        <p><strong>Mode d'envoi:</strong> {currentMembership.submissionMethod}</p>
+                        <p><strong>Soumis le:</strong> {formatDateSafe(currentMembership.createdAt)}</p>
+                    </div>
+                    <button onClick={() => navigate('/informations personnelles')} className="back-button">
+                        Retour au profil
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Si la soumission a été rejetée, permettre la resoumission
+    if (currentMembership && currentMembership.submissionStatus === 'rejected') {
+        return (
+            <div className="membership-payment-container">
+                <div className="membership-rejected-card">
+                    <h2>✗ Demande rejetée</h2>
+                    <p>Votre demande d'adhésion a été rejetée par l'administrateur.</p>
+                    {currentMembership.rejectionReason && (
+                        <p><strong>Motif:</strong> {currentMembership.rejectionReason}</p>
+                    )}
+                    <div className="membership-info">
+                        <p><strong>Numéro de soumission:</strong> {currentMembership.paymentNumber || '-'}</p>
+                        <p><strong>Soumis le:</strong> {formatDateSafe(currentMembership.createdAt)}</p>
+                    </div>
+                    <div style={{ marginTop: '1rem' }}>
+                        <button
+                            className="primary-button"
+                            onClick={() => {
+                                // allow user to start a fresh submission
+                                setCurrentMembership(null);
+                                setFormMode('email');
+                                setEmailConfirmation(false);
+                                setOnlineForm({ fullName: '', email: '', phone: '', affiliation: '', notes: '' });
+                            }}
+                        >
+                            Resoumettre ma demande
+                        </button>
+                        <button onClick={() => navigate('/informations personnelles')} className="back-button" style={{ marginLeft: '0.5rem' }}>
+                            Voir mon profil
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -200,147 +225,161 @@ const MembershipPayment = () => {
                     et bénéficiez d'avantages exclusifs pendant 1 an.
                 </p>
 
-                <div className="currency-selector">
-                    <h3>Choisissez votre devise</h3>
-                    <div className="currency-options">
-                        <div
-                            className={`currency-option ${currency === 'EUR' ? 'selected' : ''}`}
-                            onClick={() => setCurrency('EUR')}
-                        >
-                            <input
-                                type="radio"
-                                name="currency"
-                                value="EUR"
-                                checked={currency === 'EUR'}
-                                onChange={() => setCurrency('EUR')}
-                            />
-                            <div className="currency-details">
-                                <span className="currency-label">Euro</span>
-                                <span className="currency-price">{prices.EUR} €</span>
-                            </div>
-                        </div>
-
-                        <div
-                            className={`currency-option ${currency === 'USD' ? 'selected' : ''}`}
-                            onClick={() => setCurrency('USD')}
-                        >
-                            <input
-                                type="radio"
-                                name="currency"
-                                value="USD"
-                                checked={currency === 'USD'}
-                                onChange={() => setCurrency('USD')}
-                            />
-                            <div className="currency-details">
-                                <span className="currency-label">Dollar US</span>
-                                <span className="currency-price">{prices.USD} $</span>
-                            </div>
-                        </div>
-
-                        <div
-                            className={`currency-option ${currency === 'XAF' ? 'selected' : ''}`}
-                            onClick={() => setCurrency('XAF')}
-                        >
-                            <input
-                                type="radio"
-                                name="currency"
-                                value="XAF"
-                                checked={currency === 'XAF'}
-                                onChange={() => setCurrency('XAF')}
-                            />
-                            <div className="currency-details">
-                                <span className="currency-label">Franc CFA</span>
-                                <span className="currency-price">{prices.XAF.toLocaleString()} FCFA</span>
-                            </div>
-                        </div>
-                    </div>
+                <div className="manual-payment-info">
+                    <h4>Montant unique</h4>
+                    <p>La cotisation annuelle est fixée à <strong>10 000 FCFA</strong>.</p>
                 </div>
 
-                {currency !== 'XAF' && (
-                    <div className="payment-method-selector">
-                        <h3>Mode de paiement</h3>
-                        <div className="payment-methods">
-                            <div
-                                className={`payment-method ${paymentMethod === 'card' ? 'selected' : ''}`}
-                                onClick={() => setPaymentMethod('card')}
-                            >
-                                <input
-                                    type="radio"
-                                    name="paymentMethod"
-                                    value="card"
-                                    checked={paymentMethod === 'card'}
-                                    onChange={() => setPaymentMethod('card')}
-                                />
-                                <span>💳 Carte bancaire</span>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {currency === 'XAF' && (
-                    <div className="mobile-money-section">
-                        <h3>Mobile Money</h3>
-
-                        <div className="mobile-channels">
-                            <div
-                                className={`mobile-channel ${mobileChannel === 'orange_money' ? 'selected' : ''}`}
-                                onClick={() => setMobileChannel('orange_money')}
-                            >
-                                <input
-                                    type="radio"
-                                    name="mobileChannel"
-                                    value="orange_money"
-                                    checked={mobileChannel === 'orange_money'}
-                                    onChange={() => setMobileChannel('orange_money')}
-                                />
-                                <span>🟠 Orange Money</span>
-                            </div>
-
-                            <div
-                                className={`mobile-channel ${mobileChannel === 'mtn_momo' ? 'selected' : ''}`}
-                                onClick={() => setMobileChannel('mtn_momo')}
-                            >
-                                <input
-                                    type="radio"
-                                    name="mobileChannel"
-                                    value="mtn_momo"
-                                    checked={mobileChannel === 'mtn_momo'}
-                                    onChange={() => setMobileChannel('mtn_momo')}
-                                />
-                                <span>🟡 MTN Mobile Money</span>
-                            </div>
-                        </div>
-
-                        <div className="phone-input-group">
-                            <label htmlFor="phone">Numéro de téléphone</label>
-                            <input
-                                type="tel"
-                                id="phone"
-                                placeholder="Ex: 237670000000"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                className="phone-input"
-                            />
-                            <small>Format international avec indicatif pays (237)</small>
-                        </div>
-                    </div>
-                )}
+                <div className="membership-benefits">
+                    <h4>Avantages du membership</h4>
+                    <ul>
+                        <li>Accès aux publications et revues de l'association</li>
+                        <li>Réductions sur les événements et formations</li>
+                        <li>Réseautage professionnel et opportunités de collaboration</li>
+                        <li>Accès aux ressources et annonces réservées aux membres</li>
+                        <li>Droit de vote aux assemblées générales</li>
+                    </ul>
+                    <p>Pour la version complète du formulaire et des conditions, téléchargez le PDF ou utilisez le lien dans le bloc « J'envoie formulaire + preuve par email ».</p>
+                </div>
 
                 {error && <div className="error-message">{error}</div>}
+
+                <div className="manual-payment-info">
+                    <h4>Instructions de paiement manuel</h4>
+                    <ul>
+                        <li><strong>IBAN:</strong> {paymentInfo?.iban || 'FR76 3000 6000 0112 3456 7890 189'}</li>
+                        <li><strong>Compte bancaire:</strong> {paymentInfo?.bankAccount || '002376XXXXXXXX'}</li>
+                        <li><strong>Orange Money:</strong> {paymentInfo?.orangeNumber || '002376XXXXXXXX'}</li>
+                        <li><strong>MTN MoMo:</strong> {paymentInfo?.mtnNumber || '002376YYYYYYYY'}</li>
+                        <li><strong>Envoyez la preuve à:</strong> {paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</li>
+                    </ul>
+                    {!paymentInfo && <small>Coordonnées d'exemple affichées — configurez `PAYMENT_INFO_*` dans le backend</small>}
+
+                    <h4>Mode d'envoi du formulaire</h4>
+                    <div className="payment-methods">
+                        <div
+                            className={`payment-method ${formMode === 'email' ? 'selected' : ''}`}
+                            onClick={() => setFormMode('email')}
+                        >
+                            <input
+                                type="radio"
+                                name="formMode"
+                                value="email"
+                                checked={formMode === 'email'}
+                                onChange={() => setFormMode('email')}
+                            />
+                            <span>📧 J'envoie formulaire + preuve par email</span>
+                        </div>
+
+                        <div
+                            className={`payment-method ${formMode === 'online' ? 'selected' : ''}`}
+                            onClick={() => setFormMode('online')}
+                        >
+                            <input
+                                type="radio"
+                                name="formMode"
+                                value="online"
+                                checked={formMode === 'online'}
+                                onChange={() => setFormMode('online')}
+                            />
+                            <span>📝 Je remplis le formulaire en ligne</span>
+                        </div>
+                    </div>
+
+                    {formMode === 'email' && (
+                        <div className="file-inputs">
+                            <p>
+                                Merci d'effectuer le paiement puis d'envoyer la preuve de paiement et le formulaire rempli
+                                par email à <strong>{paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</strong>.
+                            </p>
+
+                            <a className="download-form-link" href="/pdf/AEGC_membership_form.pdf" target="_blank" rel="noreferrer">Télécharger le formulaire d'adhésion (PDF)</a>
+
+                            <label style={{ display: 'block', marginTop: '0.8rem' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={emailConfirmation}
+                                    onChange={(e) => setEmailConfirmation(e.target.checked)}
+                                />{' '}
+                                J'ai envoyé la preuve de paiement et le formulaire par email.
+                            </label>
+                        </div>
+                    )}
+
+                    {formMode === 'online' && (
+                        <div className="file-inputs">
+                            <p>
+                                La preuve de paiement doit toujours être envoyée par email à{' '}
+                                <strong>{paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</strong>.
+                            </p>
+
+                            {onlineFormError && (
+                                <div className="inline-form-message" role="alert">
+                                    {onlineFormError}
+                                </div>
+                            )}
+
+                            <div className="online-form-grid">
+                                <label>Nom complet</label>
+                                <input
+                                    type="text"
+                                    value={onlineForm.fullName}
+                                    onChange={(e) => handleOnlineFormChange('fullName', e.target.value)}
+                                    placeholder="Votre nom complet"
+                                />
+
+                                <label>Email</label>
+                                <input
+                                    type="email"
+                                    value={onlineForm.email}
+                                    onChange={(e) => handleOnlineFormChange('email', e.target.value)}
+                                    placeholder="votre@email.com"
+                                />
+
+                                <label>Téléphone</label>
+                                <input
+                                    type="tel"
+                                    value={onlineForm.phone}
+                                    onChange={(e) => handleOnlineFormChange('phone', e.target.value)}
+                                    placeholder="Ex: 237670000000"
+                                />
+
+                                <label>Affiliation / Institution</label>
+                                <input
+                                    type="text"
+                                    value={onlineForm.affiliation}
+                                    onChange={(e) => handleOnlineFormChange('affiliation', e.target.value)}
+                                    placeholder="Université, entreprise, etc."
+                                />
+
+                                <label>Informations complémentaires</label>
+                                <textarea
+                                    value={onlineForm.notes}
+                                    onChange={(e) => handleOnlineFormChange('notes', e.target.value)}
+                                    rows={4}
+                                    placeholder="Ajoutez toute précision utile"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 <button
                     onClick={handlePayment}
                     disabled={loading}
                     className="payment-button"
                 >
-                    {loading ? 'Traitement...' : `Payer ${currency === 'XAF' ? prices.XAF.toLocaleString() + ' FCFA' : prices[currency] + ' ' + (currency === 'EUR' ? '€' : '$')}`}
+                    {loading ? 'Traitement...' : 'Soumettre ma demande d\'adhésion'}
                 </button>
 
+                {(error || onlineFormError) && (
+                    <div className="inline-form-message" role="alert" style={{ marginTop: '1rem' }}>
+                        {error || onlineFormError}
+                    </div>
+                )}
+
                 <p className="payment-info">
-                    {paymentMethod === 'card'
-                        ? '🔒 Paiement sécurisé par Stripe'
-                        : '📱 Vous recevrez une notification pour valider le paiement'
-                    }
+                    La preuve de paiement est envoyée par email ; un administrateur validera votre adhésion après vérification.
                 </p>
             </div>
         </div>

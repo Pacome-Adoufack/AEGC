@@ -13,7 +13,7 @@ function WorkingPapersMain() {
             <div className="wp-hero">
                 <div className="wp-hero-content">
                     <span className="wp-hero-eyebrow">Plateforme de recherche</span>
-                    <h1>AEGC Papers &amp; Processing</h1>
+                    <h1>AEGC Papers &amp; Proceedings</h1>
                     <p>
                         Soumettez vos travaux académiques, suivez l’état de vos articles
                         et accédez aux publications validées des membres de l’AEGC.

@@ -34,7 +34,16 @@ const InfoPersonelle = () => {
 
       if (data.membership) {
         setMembership(data.membership);
-        setMembershipStatus(data.isActive ? 'active' : 'expired');
+
+        const statusField = data.membership.submissionStatus || data.membership.paymentStatus;
+        let status = 'none';
+
+        if (statusField === 'pending') status = 'pending';
+        else if (statusField === 'rejected' || statusField === 'cancelled') status = 'rejected';
+        else if (statusField === 'approved') status = data.isActive ? 'active' : 'expired';
+        else status = data.isActive ? 'active' : 'none';
+
+        setMembershipStatus(status);
       } else {
         setMembershipStatus('none');
       }
@@ -55,6 +64,10 @@ const InfoPersonelle = () => {
         return { color: '#28a745', text: 'Actif', icon: '✓' };
       case 'expired':
         return { color: '#dc3545', text: 'Expiré', icon: '⚠' };
+      case 'pending':
+        return { color: '#ffc107', text: "En attente", icon: '⏳' };
+      case 'rejected':
+        return { color: '#6c757d', text: 'Rejeté', icon: '✗' };
       case 'none':
         return { color: '#6c757d', text: 'Non membre', icon: '○' };
       default:
@@ -63,6 +76,14 @@ const InfoPersonelle = () => {
   };
 
   const badge = getMembershipBadge();
+  const formatDateSafe = (d) => {
+    if (!d) return null;
+    const t = new Date(d);
+    if (isNaN(t.getTime())) return null;
+    return t.toLocaleDateString('fr-FR');
+  };
+
+  const activeUntil = formatDateSafe(membership && membership.endDate);
 
   return (
     <div className="info-container">
@@ -83,6 +104,10 @@ const InfoPersonelle = () => {
           <p>Chargement...</p>
         ) : membership && membershipStatus === 'active' ? (
           <div className="membership-info-card">
+            <div className="membership-active-note">
+              <strong>Adhésion validée</strong>
+              <span>Votre statut est actif jusqu'au {activeUntil}.</span>
+            </div>
             <div className="membership-info-row">
               <span className="info-label">Numéro de paiement:</span>
               <span className="info-value">{membership.paymentNumber}</span>
@@ -93,16 +118,16 @@ const InfoPersonelle = () => {
             </div>
             <div className="membership-info-row">
               <span className="info-label">Date de début:</span>
-              <span className="info-value">{new Date(membership.startDate).toLocaleDateString('fr-FR')}</span>
+              <span className="info-value">{formatDateSafe(membership && membership.startDate) || '-'}</span>
             </div>
             <div className="membership-info-row">
               <span className="info-label">Date de fin:</span>
-              <span className="info-value">{new Date(membership.endDate).toLocaleDateString('fr-FR')}</span>
+              <span className="info-value">{formatDateSafe(membership && membership.endDate) || '-'}</span>
             </div>
           </div>
         ) : membership && membershipStatus === 'expired' ? (
           <div className="membership-expired-card">
-            <p className="expired-message">Votre cotisation a expiré le {new Date(membership.endDate).toLocaleDateString('fr-FR')}</p>
+            <p className="expired-message">Votre cotisation a expiré le {formatDateSafe(membership && membership.endDate) || '-'}</p>
             <button
               className="renew-button"
               onClick={() => navigate('/membership/payment')}
@@ -110,12 +135,27 @@ const InfoPersonelle = () => {
               Renouveler ma cotisation
             </button>
           </div>
+        ) : membership && membershipStatus === 'pending' ? (
+          <div className="membership-pending-card">
+            <p className="pending-message">Votre demande d'adhésion est en attente de validation par l'administrateur.</p>
+          </div>
+        ) : membership && membershipStatus === 'rejected' ? (
+          <div className="membership-rejected-card">
+            <p className="rejected-message">Votre demande d'adhésion a été rejetée.</p>
+            {membership.rejectionReason && <p className="rejected-reason">Motif: {membership.rejectionReason}</p>}
+            <button
+              className="resubmit-button"
+              onClick={() => navigate('/membership/payment', { state: { resubmit: true } })}
+            >
+              Resoumettre ma demande
+            </button>
+          </div>
         ) : (
           <div className="membership-none-card">
             <p className="none-message">Vous n'avez pas encore de cotisation active.</p>
             <button
               className="subscribe-button"
-              onClick={() => navigate('/membership/payment')}
+              onClick={() => navigate('/membership/payment', { state: { resubmit: false } })}
             >
               Souscrire à la cotisation annuelle
             </button>

@@ -355,7 +355,7 @@ router.get(
     try {
       const memberships = await Membership.find()
         .populate("user", "firstName name email membershipStatus")
-        .populate("activatedBy", "firstName name")
+        .populate("approvedBy", "firstName name")
         .sort({ createdAt: -1 });
 
       res.json({
@@ -379,72 +379,78 @@ router.get(
     try {
       const now = new Date();
 
-      // Total des memberships payés
-      const totalPaid = await Membership.countDocuments({
-        paymentStatus: "paid",
+      // Total des memberships approuvés
+      const totalApproved = await Membership.countDocuments({
+        submissionStatus: "approved",
       });
 
-      // Memberships actifs (payés et non expirés)
+      // Memberships actifs (approuvés et non expirés)
       const activeMemberships = await Membership.find({
-        paymentStatus: "paid",
+        submissionStatus: "approved",
         endDate: { $gt: now },
       });
 
       // Memberships expirés
       const expiredCount = await Membership.countDocuments({
-        paymentStatus: "paid",
+        submissionStatus: "approved",
         endDate: { $lte: now },
       });
 
       // Memberships en attente
       const pendingCount = await Membership.countDocuments({
-        paymentStatus: "pending",
+        submissionStatus: "pending",
       });
 
-      // Calcul des revenus totaux
+      // Calcul des revenus totaux (selon montant renseigné)
       let revenueEUR = 0;
       let revenueUSD = 0;
 
-      const paidMemberships = await Membership.find({ paymentStatus: "paid" });
-      paidMemberships.forEach((m) => {
+      const approvedMemberships = await Membership.find({
+        submissionStatus: "approved",
+      });
+      approvedMemberships.forEach((m) => {
         if (m.currency === "EUR") {
-          revenueEUR += m.amount;
+          revenueEUR += m.amount || 0;
         } else if (m.currency === "USD") {
-          revenueUSD += m.amount;
+          revenueUSD += m.amount || 0;
         }
       });
 
-      // Memberships par méthode de paiement
-      const stripeCount = await Membership.countDocuments({
-        paymentStatus: "paid",
-        paymentMethod: "stripe",
-      });
-      const manualCount = await Membership.countDocuments({
-        paymentStatus: "paid",
-        paymentMethod: "manual",
+      // Memberships par méthode de soumission
+      const bankCount = await Membership.countDocuments({
+        submissionStatus: "approved",
+        submissionMethod: "bank_transfer",
       });
       const orangeMoneyCount = await Membership.countDocuments({
-        paymentStatus: "paid",
-        paymentMethod: "orange_money",
+        submissionStatus: "approved",
+        submissionMethod: "orange_money",
       });
       const mtnMomoCount = await Membership.countDocuments({
-        paymentStatus: "paid",
-        paymentMethod: "mtn_momo",
+        submissionStatus: "approved",
+        submissionMethod: "mtn_momo",
       });
-      const notchpayCount = await Membership.countDocuments({
-        paymentStatus: "paid",
-        paymentMethod: "notchpay",
+      const manualFormCount = await Membership.countDocuments({
+        submissionStatus: "approved",
+        submissionMethod: "manual_form",
+      });
+      const emailCount = await Membership.countDocuments({
+        submissionStatus: "approved",
+        submissionMethod: "email",
+      });
+      const onlineCount = await Membership.countDocuments({
+        submissionStatus: "approved",
+        submissionMethod: "online",
       });
 
       // Revenus par devise incluant XAF
-      const revenueXAF = paidMemberships
+      const revenueXAF = approvedMemberships
         .filter((m) => m.currency === "XAF")
-        .reduce((sum, m) => sum + m.amount, 0);
+        .reduce((sum, m) => sum + (m.amount || 0), 0);
 
       res.json({
         success: true,
         stats: {
-          total: totalPaid,
+          total: totalApproved,
           active: activeMemberships.length,
           expired: expiredCount,
           pending: pendingCount,
@@ -454,16 +460,107 @@ router.get(
             XAF: revenueXAF,
           },
           paymentMethods: {
-            stripe: stripeCount,
-            manual: manualCount,
+            bank_transfer: bankCount,
             orange_money: orangeMoneyCount,
             mtn_momo: mtnMomoCount,
-            notchpay: notchpayCount,
+            manual_form: manualFormCount,
+            email: emailCount,
+            online: onlineCount,
           },
         },
       });
     } catch (error) {
       console.error("Erreur stats memberships:", error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// Obtenir les memberships en attente (ADMIN/DEV)
+router.get(
+  "/memberships/pending",
+  authMiddleware,
+  requireRole(["admin", "dev"]),
+  async (req, res) => {
+    try {
+      const pending = await Membership.find({ submissionStatus: "pending" })
+        .populate("user", "firstName name email membershipStatus")
+        .sort({ createdAt: -1 });
+
+      res.json({ success: true, count: pending.length, data: pending });
+    } catch (error) {
+      console.error("Erreur récupération pending memberships:", error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// Approuver une demande de membership (ADMIN)
+router.post(
+  "/memberships/:id/approve",
+  authMiddleware,
+  requireRole(["admin", "dev"]),
+  async (req, res) => {
+    try {
+      const id = req.params.id;
+      const membership = await Membership.findById(id);
+      if (!membership)
+        return res.status(404).json({ message: "Membership not found" });
+      if (membership.submissionStatus === "approved") {
+        return res.json({
+          success: true,
+          message: "Déjà approuvé",
+          membership,
+        });
+      }
+
+      membership.submissionStatus = "approved";
+      membership.startDate = new Date();
+      membership.calculateEndDate();
+      membership.approvedBy = req.user.id;
+      membership.approvedAt = new Date();
+      await membership.save();
+
+      await User.findByIdAndUpdate(membership.user, {
+        membershipStatus: "active",
+        currentMembership: membership._id,
+      });
+
+      res.json({ success: true, message: "Membership approuvé", membership });
+    } catch (error) {
+      console.error("Erreur approbation membership:", error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// Rejeter une demande de membership (ADMIN)
+router.post(
+  "/memberships/:id/reject",
+  authMiddleware,
+  requireRole(["admin", "dev"]),
+  async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { reason } = req.body;
+      if (!reason) return res.status(400).json({ message: "Reason required" });
+
+      const membership = await Membership.findById(id);
+      if (!membership)
+        return res.status(404).json({ message: "Membership not found" });
+
+      membership.submissionStatus = "rejected";
+      membership.rejectionReason = reason;
+      await membership.save();
+
+      await User.findByIdAndUpdate(membership.user, {
+        currentMembership: membership._id,
+        membershipStatus: "none",
+      });
+
+      res.json({ success: true, message: "Membership rejeté", membership });
+    } catch (error) {
+      console.error("Erreur rejet membership:", error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -477,18 +574,11 @@ router.post(
   async (req, res) => {
     console.log("🔥 Route /memberships/activate appelée!", req.body);
     try {
+      // Simplification: n'exiger que l'email. Les autres champs sont facultatifs.
       const { email, currency, notes } = req.body;
 
-      if (!email || !currency) {
-        return res.status(400).json({
-          error: "email et currency requis",
-        });
-      }
-
-      if (!["EUR", "USD", "XAF"].includes(currency)) {
-        return res.status(400).json({
-          error: "Devise invalide. Choisissez EUR, USD ou XAF.",
-        });
+      if (!email) {
+        return res.status(400).json({ error: "email requis" });
       }
 
       // Vérifier que l'utilisateur existe
@@ -502,7 +592,7 @@ router.post(
       // Vérifier s'il a déjà un membership actif
       const existingMembership = await Membership.findOne({
         user: user._id,
-        paymentStatus: "paid",
+        submissionStatus: "approved",
         endDate: { $gt: new Date() },
       });
 
@@ -513,27 +603,25 @@ router.post(
         });
       }
 
-      // Créer un nouveau membership avec le bon montant selon la devise
-      let amount;
-      if (currency === "EUR") {
-        amount = 16;
-      } else if (currency === "USD") {
-        amount = 18;
-      } else if (currency === "XAF") {
-        amount = 10000;
-      }
+      // Choisir une devise par défaut si non précisée (XAF)
+      const chosenCurrency =
+        currency && ["EUR", "USD", "XAF"].includes(currency) ? currency : "XAF";
+      let amount = 10000;
+      if (chosenCurrency === "EUR") amount = 16;
+      if (chosenCurrency === "USD") amount = 18;
 
       const paymentNumber = await Membership.generatePaymentNumber();
 
       const membership = new Membership({
         user: user._id,
         amount,
-        currency,
-        paymentStatus: "paid",
-        paymentMethod: "manual",
+        currency: chosenCurrency,
+        submissionStatus: "approved",
+        submissionMethod: "manual_form",
         paymentNumber,
         startDate: new Date(),
-        activatedBy: req.user.id,
+        approvedBy: req.user.id,
+        approvedAt: new Date(),
         notes: notes || "Activation manuelle par admin",
       });
 
@@ -557,6 +645,96 @@ router.post(
   },
 );
 
+const activateMembershipHandler = async (req, res) => {
+  try {
+    // Simplification: n'exiger que l'email. Les autres champs sont facultatifs.
+    const { email, currency, notes } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "email requis" });
+    }
+
+    // Vérifier que l'utilisateur existe
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "Utilisateur non trouvé avec cet email" });
+    }
+
+    // Empêcher l'activation si le membre est déjà actif
+    const currentMembership = user.currentMembership
+      ? await Membership.findById(user.currentMembership)
+      : null;
+    const isAlreadyActive =
+      user.membershipStatus === "active" &&
+      currentMembership &&
+      typeof currentMembership.isActive === "function" &&
+      currentMembership.isActive();
+
+    if (isAlreadyActive) {
+      return res.status(409).json({
+        error: "Abonnement déjà actif",
+        message: "Ce membre a déjà un abonnement actif.",
+      });
+    }
+
+    // Choisir une devise par défaut si non précisée (XAF)
+    const chosenCurrency =
+      currency && ["EUR", "USD", "XAF"].includes(currency) ? currency : "XAF";
+    let amount = 10000;
+    if (chosenCurrency === "EUR") amount = 16;
+    if (chosenCurrency === "USD") amount = 18;
+
+    const paymentNumber = await Membership.generatePaymentNumber();
+
+    const membership = new Membership({
+      user: user._id,
+      amount,
+      currency: chosenCurrency,
+      submissionStatus: "approved",
+      submissionMethod: "manual_form",
+      paymentNumber,
+      startDate: new Date(),
+      approvedBy: req.user.id,
+      approvedAt: new Date(),
+      notes: notes || "Activation manuelle par admin",
+    });
+
+    membership.calculateEndDate();
+    await membership.save();
+
+    // Mettre à jour l'utilisateur
+    user.membershipStatus = "active";
+    user.currentMembership = membership._id;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Utilisateur trouvé et abonnement activé",
+      membership,
+    });
+  } catch (error) {
+    console.error("Erreur activation membership:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+router.post(
+  "/memberships/activate",
+  authMiddleware,
+  requireRole(["admin", "dev"]),
+  activateMembershipHandler,
+);
+
+// Alias pour couvrir les appels qui utilisent /api/memberships/activate
+router.post(
+  "/api/memberships/activate",
+  authMiddleware,
+  requireRole(["admin", "dev"]),
+  activateMembershipHandler,
+);
+
 // Modifier un membership (ADMIN/DEV)
 router.put(
   "/memberships/:id",
@@ -564,7 +742,7 @@ router.put(
   requireRole(["admin", "dev"]),
   async (req, res) => {
     try {
-      const { paymentStatus, notes, endDate } = req.body;
+      const { submissionStatus, paymentStatus, notes, endDate } = req.body;
 
       const membership = await Membership.findById(req.params.id);
       if (!membership) {
@@ -572,21 +750,33 @@ router.put(
       }
 
       // Mettre à jour les champs
-      if (paymentStatus) membership.paymentStatus = paymentStatus;
+      const normalizedSubmissionStatus =
+        submissionStatus ||
+        (paymentStatus === "paid"
+          ? "approved"
+          : paymentStatus === "pending"
+            ? "pending"
+            : paymentStatus === "cancelled"
+              ? "rejected"
+              : null);
+
+      if (normalizedSubmissionStatus)
+        membership.submissionStatus = normalizedSubmissionStatus;
       if (notes !== undefined) membership.notes = notes;
       if (endDate) membership.endDate = new Date(endDate);
 
       await membership.save();
 
       // Mettre à jour le statut de l'utilisateur
-      if (paymentStatus === "paid" && membership.isActive()) {
+      if (membership.submissionStatus === "approved" && membership.isActive()) {
         await User.findByIdAndUpdate(membership.user, {
           membershipStatus: "active",
           currentMembership: membership._id,
         });
-      } else if (paymentStatus === "expired" || !membership.isActive()) {
+      } else if (!membership.isActive()) {
         await User.findByIdAndUpdate(membership.user, {
           membershipStatus: "expired",
+          currentMembership: null,
         });
       }
 
@@ -597,35 +787,6 @@ router.put(
       });
     } catch (error) {
       console.error("Erreur modification membership:", error);
-      res.status(500).json({ error: error.message });
-    }
-  },
-);
-
-// Nettoyer les memberships en attente (ADMIN/DEV)
-// NOTE IMPORTANTE: Cette route DOIT être AVANT /memberships/:id
-// sinon Express matche "cleanup-pending" comme un paramètre :id
-router.delete(
-  "/memberships/cleanup-pending",
-  authMiddleware,
-  requireRole(["admin", "dev"]),
-  async (req, res) => {
-    try {
-      // Supprimer les memberships "pending" créés il y a plus de 1 heure
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-
-      const result = await Membership.deleteMany({
-        paymentStatus: "pending",
-        createdAt: { $lt: oneHourAgo },
-      });
-
-      res.json({
-        success: true,
-        message: `${result.deletedCount} cotisation(s) en attente supprimée(s)`,
-        deletedCount: result.deletedCount,
-      });
-    } catch (error) {
-      console.error("Erreur nettoyage memberships:", error);
       res.status(500).json({ error: error.message });
     }
   },

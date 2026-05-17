@@ -8,42 +8,43 @@ const MembershipSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    category: {
+      type: String,
+      default: "standard",
+    },
     amount: {
       type: Number,
-      required: true,
+      required: false,
     },
     currency: {
       type: String,
-      enum: ["EUR", "USD", "XAF"], // 16 EUR, 18 USD ou 10000 XAF
-      required: true,
+      enum: ["EUR", "USD", "XAF"],
+      default: "XAF",
     },
-    paymentStatus: {
+
+    submissionStatus: {
       type: String,
-      enum: ["pending", "paid", "expired", "cancelled"],
+      enum: ["pending", "approved", "rejected"],
       default: "pending",
     },
-    paymentMethod: {
+    submissionMethod: {
       type: String,
-      enum: ["stripe", "manual", "notchpay", "orange_money", "mtn_momo"],
-      default: "stripe",
+      enum: ["bank_transfer", "orange_money", "mtn_momo", "manual_form", "email", "online"],
+      default: "bank_transfer",
     },
-    stripePaymentIntentId: {
-      type: String,
-      default: null,
-    },
-    stripeSessionId: {
+    proofOfPaymentUrl: {
       type: String,
       default: null,
     },
-    notchpayReference: {
+    membershipFormUrl: {
       type: String,
       default: null,
     },
-    notchpayTransactionId: {
-      type: String,
+    membershipFormData: {
+      type: mongoose.Schema.Types.Mixed,
       default: null,
     },
-    mobileMoneyPhone: {
+    rejectionReason: {
       type: String,
       default: null,
     },
@@ -60,10 +61,14 @@ const MembershipSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    activatedBy: {
+    approvedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: null, // Utilisé si activation manuelle par admin
+      default: null,
+    },
+    approvedAt: {
+      type: Date,
+      default: null,
     },
     notes: {
       type: String,
@@ -76,26 +81,30 @@ const MembershipSchema = new mongoose.Schema(
 );
 
 // Index pour recherche rapide
-MembershipSchema.index({ user: 1, paymentStatus: 1 });
-MembershipSchema.index({ paymentNumber: 1 });
+MembershipSchema.index({ user: 1, submissionStatus: 1 });
 MembershipSchema.index({ endDate: 1 });
 
 // Méthode statique pour générer un numéro de paiement unique
 MembershipSchema.statics.generatePaymentNumber = async function () {
   const year = new Date().getFullYear();
-  const count = await this.countDocuments({
-    createdAt: {
-      $gte: new Date(year, 0, 1),
-      $lt: new Date(year + 1, 0, 1),
-    },
-  });
-  const number = String(count + 1).padStart(5, "0");
-  return `AEGC-${year}-${number}`;
+  const lastMembership = await this.findOne({
+    paymentNumber: new RegExp(`^AEGC-${year}-\\d{5}$`),
+  })
+    .sort({ paymentNumber: -1 })
+    .select("paymentNumber")
+    .lean();
+
+  const lastSequence = lastMembership?.paymentNumber
+    ? Number.parseInt(lastMembership.paymentNumber.slice(-5), 10)
+    : 0;
+
+  const nextNumber = String(lastSequence + 1).padStart(5, "0");
+  return `AEGC-${year}-${nextNumber}`;
 };
 
 // Méthode pour vérifier si le membership est actif
 MembershipSchema.methods.isActive = function () {
-  if (this.paymentStatus !== "paid") return false;
+  if (this.submissionStatus !== "approved") return false;
   if (!this.endDate) return false;
   return new Date() < this.endDate;
 };

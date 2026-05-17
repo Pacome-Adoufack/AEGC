@@ -22,8 +22,7 @@
     "mongoose": "^8.15.2",
     "multer": "^2.0.1",
     "node-fetch": "^3.3.2",
-    "resend": "^4.5.2",
-    "stripe": "^20.3.1"
+    "resend": "^4.5.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

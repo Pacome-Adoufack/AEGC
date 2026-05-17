@@ -9,61 +9,55 @@
 
 .membership-success-card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(18, 34, 64, 0.12);
+    border: 1px solid rgba(44, 62, 80, 0.08);
     padding: 3rem;
     max-width: 600px;
     width: 100%;
     text-align: center;
 }
 
-.success-icon {
-    font-size: 5rem;
+.success-eyebrow {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: #edf7f0;
+    color: #246b3c;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     margin-bottom: 1rem;
-    animation: scaleIn 0.5s ease-out;
-}
-
-@keyframes scaleIn {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
 }
 
 .membership-success-card h1 {
-    color: #28a745;
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    color: #1f2937;
+    font-size: 1.9rem;
+    margin-bottom: 0.85rem;
+    line-height: 1.2;
 }
 
 .success-message {
-    color: #666;
-    font-size: 1.1rem;
+    color: #4b5563;
+    font-size: 1.05rem;
     margin-bottom: 2rem;
     line-height: 1.6;
 }
 
 .membership-details {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 2rem;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
     margin: 2rem 0;
     text-align: left;
 }
 
 .membership-details h3 {
-    color: #2c3e50;
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
+    color: #111827;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
     text-align: center;
 }
 
@@ -80,15 +74,24 @@
 }
 
 .detail-label {
-    color: #666;
+    color: #6b7280;
     font-weight: 600;
     font-size: 0.95rem;
 }
 
 .detail-value {
-    color: #2c3e50;
-    font-weight: 700;
+    color: #111827;
+    font-weight: 600;
     font-size: 1rem;
+}
+
+.detail-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #3730a3;
 }
 
 .success-actions {
@@ -101,7 +104,7 @@
 
 .primary-button {
     padding: 0.75rem 2rem;
-    background: #28a745;
+    background: #1f6f43;
     color: white;
     border: none;
     border-radius: 6px;
@@ -112,9 +115,9 @@
 }
 
 .primary-button:hover {
-    background: #218838;
+    background: #185c37;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 12px rgba(31, 111, 67, 0.24);
 }
 
 .secondary-button {
@@ -145,7 +148,7 @@
     width: 50px;
     height: 50px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #28a745;
+    border-top: 4px solid #1f6f43;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 1rem;

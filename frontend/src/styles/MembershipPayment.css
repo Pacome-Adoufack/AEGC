@@ -108,6 +108,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     margin-bottom: 1rem;
+    margin-top: 1.25rem;
 }
 
 .payment-button:hover:not(:disabled) {
@@ -136,6 +137,70 @@
     color: #666;
     font-size: 0.9rem;
     line-height: 1.4;
+}
+
+.membership-benefits {
+    margin: 1.5rem 0;
+    background: #fafafa;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.membership-benefits ul {
+    margin: 0.5rem 0 1rem 1.1rem;
+}
+
+.download-form-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.9rem;
+    background: #eef6ff;
+    color: #0b5ed7;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.file-inputs p {
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.inline-form-message {
+    margin: 0.75rem 0 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    background: #fff3cd;
+    border: 1px solid #ffe69c;
+    color: #856404;
+    font-weight: 600;
+}
+
+.online-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0.5rem 1rem;
+    align-items: center;
+}
+
+.online-form-grid label {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.online-form-grid input,
+.online-form-grid textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 2px solid #eaeef3;
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+    .online-form-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Membership Active Card */

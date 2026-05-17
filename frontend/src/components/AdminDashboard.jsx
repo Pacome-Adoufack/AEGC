@@ -10,17 +10,28 @@ export default function AdminDashboard() {
     const [contacts, setContacts] = useState([]);
     const [subscribers, setSubscribers] = useState([]);
     const [memberships, setMemberships] = useState([]);
+    const [pendingMemberships, setPendingMemberships] = useState([]);
+    const [selectedPending, setSelectedPending] = useState(null);
+    const [showApproveConfirm, setShowApproveConfirm] = useState(false);
+    const [showRejectModal, setShowRejectModal] = useState(false);
+    const [rejectReason, setRejectReason] = useState('');
+    const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
+    const [selectedRevoke, setSelectedRevoke] = useState(null);
     const [membershipStats, setMembershipStats] = useState(null);
     const [showActivateModal, setShowActivateModal] = useState(false);
     const [selectedEmail, setSelectedEmail] = useState('');
-    const [selectedCurrency, setSelectedCurrency] = useState('EUR');
-    const [activateNotes, setActivateNotes] = useState('');
+    const [activateFeedback, setActivateFeedback] = useState('');
     const [message, setMessage] = useState("");
-    const [showCleanupConfirm, setShowCleanupConfirm] = useState(false);
 
     const navigate = useNavigate();
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const formatDateSafe = (d) => {
+        if (!d) return '-';
+        const t = new Date(d);
+        if (isNaN(t.getTime())) return '-';
+        return t.toLocaleDateString('fr-FR');
+    };
 
     // Vérifier que l'utilisateur est bien ADMIN ou DEV
     useEffect(() => {
@@ -77,6 +88,16 @@ export default function AdminDashboard() {
                     if (data.success) {
                         setMemberships(data.data);
                     }
+                })
+                .catch((err) => console.error(err));
+
+            // Récupérer les soumissions en attente
+            fetch(`${API_BASE_URL}/memberships/pending`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data && data.data) setPendingMemberships(data.data);
                 })
                 .catch((err) => console.error(err));
 
@@ -424,35 +445,7 @@ export default function AdminDashboard() {
                             </div>
                         )}
 
-                        {/* Revenus */}
-                        {membershipStats && (
-                            <div className="revenue-section">
-                                <h3>Revenus par devise</h3>
-                                <div className="revenue-cards">
-                                    <div className="revenue-card">
-                                        <span className="revenue-label">Euro (EUR)</span>
-                                        <span className="revenue-amount">{membershipStats.revenue.EUR} €</span>
-                                    </div>
-                                    <div className="revenue-card">
-                                        <span className="revenue-label">Dollar US (USD)</span>
-                                        <span className="revenue-amount">{membershipStats.revenue.USD} $</span>
-                                    </div>
-                                    <div className="revenue-card">
-                                        <span className="revenue-label">Franc CFA (XAF)</span>
-                                        <span className="revenue-amount">{membershipStats.revenue.XAF?.toLocaleString()} FCFA</span>
-                                    </div>
-                                </div>
-                                <div className="payment-methods">
-                                    <small>
-                                        <strong>Méthodes:</strong>
-                                        💳 Stripe ({membershipStats.paymentMethods.stripe}) |
-                                        👤 Manuel ({membershipStats.paymentMethods.manual}) |
-                                        🟠 Orange ({membershipStats.paymentMethods.orange_money || 0}) |
-                                        🟡 MTN ({membershipStats.paymentMethods.mtn_momo || 0})
-                                    </small>
-                                </div>
-                            </div>
-                        )}
+                        {/* Revenus: section supprimée (redondante) */}
 
                         {/* Bouton d'activation manuelle */}
                         <div className="membership-actions">
@@ -462,17 +455,11 @@ export default function AdminDashboard() {
                             >
                                 ➕ Activer une cotisation manuellement
                             </button>
-                            <button
-                                className="btn-cleanup"
-                                onClick={() => setShowCleanupConfirm(true)}
-                            >
-                                🗑️ Nettoyer les paiements échoués
-                            </button>
                         </div>
 
                         {/* Liste des memberships */}
                         <div className="memberships-table">
-                            <h3>Liste des cotisations ({memberships.filter(m => m.paymentStatus === 'paid' || m.paymentStatus === 'expired').length})</h3>
+                            <h3>Liste des cotisations ({memberships.filter(m => m.submissionStatus === 'approved').length})</h3>
                             <table>
                                 <thead>
                                     <tr>
@@ -488,17 +475,16 @@ export default function AdminDashboard() {
                                 </thead>
                                 <tbody>
                                     {memberships
-                                        .filter(m => m.paymentStatus === 'paid' || m.paymentStatus === 'expired')
+                                        .filter(m => m.submissionStatus === 'approved')
                                         .map((membership) => (
                                             <tr key={membership._id}>
                                                 <td>{membership.user?.firstName} {membership.user?.name}</td>
                                                 <td>{membership.user?.email}</td>
                                                 <td>
-                                                    <span className={`badge-status ${membership.paymentStatus}`}>
-                                                        {membership.paymentStatus === 'paid' && '✓ Payé'}
-                                                        {membership.paymentStatus === 'pending' && '⏳ En attente'}
-                                                        {membership.paymentStatus === 'expired' && '⚠ Expiré'}
-                                                        {membership.paymentStatus === 'cancelled' && '✗ Annulé'}
+                                                    <span className={`badge-status ${membership.submissionStatus}`}>
+                                                        {membership.submissionStatus === 'approved' && '✓ Approuvé'}
+                                                        {membership.submissionStatus === 'pending' && '⏳ En attente'}
+                                                        {membership.submissionStatus === 'rejected' && '✗ Rejeté'}
                                                     </span>
                                                 </td>
                                                 <td>{membership.amount} {membership.currency}</td>
@@ -510,17 +496,21 @@ export default function AdminDashboard() {
                                                     }
                                                 </td>
                                                 <td>
-                                                    {membership.endDate
-                                                        ? new Date(membership.endDate).toLocaleDateString('fr-FR')
-                                                        : '-'
-                                                    }
+                                                    {membership.endDate ? formatDateSafe(membership.endDate) : '-'}
                                                 </td>
                                                 <td>
-                                                    {membership.paymentMethod === 'stripe' && '💳 Stripe'}
-                                                    {membership.paymentMethod === 'manual' && '👤 Manuel'}
-                                                    {membership.paymentMethod === 'notchpay' && '📱 Notch Pay'}
-                                                    {membership.paymentMethod === 'orange_money' && '🟠 Orange Money'}
-                                                    {membership.paymentMethod === 'mtn_momo' && '🟡 MTN MoMo'}
+                                                    {membership.submissionMethod === 'bank_transfer' && '🏦 Virement'}
+                                                    {membership.submissionMethod === 'orange_money' && '🟠 Orange Money'}
+                                                    {membership.submissionMethod === 'mtn_momo' && '🟡 MTN MoMo'}
+                                                    {membership.submissionMethod === 'manual_form' && '📄 Formulaire'}
+                                                </td>
+                                                <td>
+                                                    <button
+                                                        className="btn-revoke"
+                                                        onClick={() => { setSelectedRevoke(membership); setShowRevokeConfirm(true); }}
+                                                    >
+                                                        🛑 Révoquer
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -528,13 +518,161 @@ export default function AdminDashboard() {
                             </table>
                         </div>
 
+                        {/* Pending submissions */}
+                        <div className="pending-submissions" style={{ marginTop: '2rem' }}>
+                            <h3>Soumissions en attente ({pendingMemberships.length})</h3>
+                            {pendingMemberships.length === 0 && <p>Aucune soumission en attente.</p>}
+                            {pendingMemberships.length > 0 && (
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Membre</th>
+                                            <th>Email</th>
+                                            <th>N° Paiement</th>
+                                            <th>Méthode</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {pendingMemberships.map((m) => (
+                                            <tr key={m._id}>
+                                                <td>{m.user?.firstName} {m.user?.name}</td>
+                                                <td>{m.user?.email}</td>
+                                                <td>{m.paymentNumber}</td>
+                                                <td>{m.submissionMethod}</td>
+                                                <td>{new Date(m.createdAt).toLocaleDateString()}</td>
+                                                <td className="action-buttons">
+                                                    <button
+                                                        className="btn-approve"
+                                                        onClick={() => { setSelectedPending(m); setShowApproveConfirm(true); }}
+                                                    >
+                                                        ✓ Approuver
+                                                    </button>
+                                                    <button
+                                                        className="btn-reject"
+                                                        onClick={() => { setSelectedPending(m); setRejectReason(''); setShowRejectModal(true); }}
+                                                    >
+                                                        ✗ Rejeter
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+
+                        {/* Approve confirm dialog */}
+                        <ConfirmDialog
+                            isOpen={showApproveConfirm}
+                            title="Confirmer l'approbation"
+                            message={`Approuver la soumission de ${selectedPending?.user?.email || ''} ?`}
+                            confirmText="Approuver"
+                            cancelText="Annuler"
+                            onClose={() => { setShowApproveConfirm(false); setSelectedPending(null); }}
+                            onConfirm={async () => {
+                                try {
+                                    const res = await fetch(`${API_BASE_URL}/memberships/${selectedPending._id}/approve`, {
+                                        method: 'POST',
+                                        headers: { 'Authorization': `Bearer ${token}` }
+                                    });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                        setMessage('Soumission approuvée');
+                                        setPendingMemberships(pendingMemberships.filter(p => p._id !== selectedPending._id));
+                                        setMemberships([data.membership, ...memberships]);
+                                    } else {
+                                        setMessage('Erreur: ' + (data.error || data.message));
+                                    }
+                                } catch (err) {
+                                    setMessage('Erreur: ' + err.message);
+                                }
+                                setShowApproveConfirm(false);
+                                setSelectedPending(null);
+                                setTimeout(() => setMessage(''), 3000);
+                            }}
+                        />
+
+                        {/* Reject modal with textarea */}
+                        {showRejectModal && (
+                            <div className="modal-overlay" onClick={() => setShowRejectModal(false)}>
+                                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                    <h3>Rejeter la soumission</h3>
+                                    <p>Motif du rejet pour {selectedPending?.user?.email} :</p>
+                                    <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={4} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #ccc' }} />
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                                        <button
+                                            className="btn-reject"
+                                            onClick={async () => {
+                                                if (!rejectReason) { setMessage('Veuillez fournir un motif'); return; }
+                                                try {
+                                                    const res = await fetch(`${API_BASE_URL}/memberships/${selectedPending._id}/reject`, {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                                        body: JSON.stringify({ reason: rejectReason })
+                                                    });
+                                                    const data = await res.json();
+                                                    if (data.success) {
+                                                        setMessage('Soumission rejetée');
+                                                        setPendingMemberships(pendingMemberships.filter(p => p._id !== selectedPending._id));
+                                                    } else {
+                                                        setMessage('Erreur: ' + (data.error || data.message));
+                                                    }
+                                                } catch (err) {
+                                                    setMessage('Erreur: ' + err.message);
+                                                }
+                                                setShowRejectModal(false);
+                                                setSelectedPending(null);
+                                                setTimeout(() => setMessage(''), 3000);
+                                            }}
+                                        >
+                                            Confirmer le rejet
+                                        </button>
+                                        <button className="btn-cancel" onClick={() => { setShowRejectModal(false); setSelectedPending(null); }}>Annuler</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Revoke confirm dialog */}
+                        <ConfirmDialog
+                            isOpen={showRevokeConfirm}
+                            title="Confirmer la révocation"
+                            message={`Révoquer la cotisation de ${selectedRevoke?.user?.email || ''} ?`}
+                            confirmText="Révoquer"
+                            cancelText="Annuler"
+                            onClose={() => { setShowRevokeConfirm(false); setSelectedRevoke(null); }}
+                            onConfirm={async () => {
+                                try {
+                                    const res = await fetch(`${API_BASE_URL}/memberships/${selectedRevoke._id}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                        body: JSON.stringify({ submissionStatus: 'rejected', notes: 'Révocation par admin' })
+                                    });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                        setMessage('Cotisation révoquée');
+                                        setMemberships(memberships.map(m => m._id === selectedRevoke._id ? data.membership : m));
+                                    } else {
+                                        setMessage('Erreur: ' + (data.error || data.message));
+                                    }
+                                } catch (err) {
+                                    setMessage('Erreur: ' + err.message);
+                                }
+                                setShowRevokeConfirm(false);
+                                setSelectedRevoke(null);
+                                setTimeout(() => setMessage(''), 3000);
+                            }}
+                        />
+
                         {/* Modal d'activation manuelle */}
                         {showActivateModal && (
                             <div className="modal-overlay" onClick={() => setShowActivateModal(false)}>
                                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                                     <h3>Activer une cotisation manuellement</h3>
                                     <div className="modal-form">
-                                        <label>Email de l'utilisateur:</label>
+                                        <label>Email de l'utilisateur</label>
                                         <input
                                             type="email"
                                             value={selectedEmail}
@@ -542,28 +680,17 @@ export default function AdminDashboard() {
                                             placeholder="exemple@email.com"
                                         />
 
-                                        <label>Devise:</label>
-                                        <select
-                                            value={selectedCurrency}
-                                            onChange={(e) => setSelectedCurrency(e.target.value)}
-                                        >
-                                            <option value="EUR">Euro (16 €)</option>
-                                            <option value="USD">Dollar US (18 $)</option>
-                                            <option value="XAF">Franc CFA (10 000 FCFA)</option>
-                                        </select>
-
-                                        <label>Notes (optionnel):</label>
-                                        <textarea
-                                            value={activateNotes}
-                                            onChange={(e) => setActivateNotes(e.target.value)}
-                                            placeholder="Raison de l'activation manuelle..."
-                                            rows="3"
-                                        />
+                                        {activateFeedback && (
+                                            <div className="inline-feedback" style={{ marginTop: '0.75rem' }}>
+                                                {activateFeedback}
+                                            </div>
+                                        )}
 
                                         <div className="modal-actions">
                                             <button
                                                 className="btn-confirm"
                                                 onClick={async () => {
+                                                    setActivateFeedback('');
                                                     try {
                                                         const response = await fetch(`${API_BASE_URL}/memberships/activate`, {
                                                             method: 'POST',
@@ -571,26 +698,30 @@ export default function AdminDashboard() {
                                                                 'Content-Type': 'application/json',
                                                                 'Authorization': `Bearer ${token}`
                                                             },
-                                                            body: JSON.stringify({
-                                                                email: selectedEmail,
-                                                                currency: selectedCurrency,
-                                                                notes: activateNotes
-                                                            })
+                                                            body: JSON.stringify({ email: selectedEmail })
                                                         });
                                                         const data = await response.json();
                                                         if (data.success) {
+                                                            setActivateFeedback(data.message || 'Utilisateur trouvé et abonnement activé.');
                                                             setMessage('Cotisation activée avec succès');
                                                             setShowActivateModal(false);
                                                             setSelectedEmail('');
-                                                            setActivateNotes('');
-                                                            // Recharger les memberships
                                                             setActiveTab("overview");
                                                             setTimeout(() => setActiveTab("memberships"), 100);
                                                         } else {
-                                                            setMessage('Erreur: ' + data.error);
+                                                            const feedback =
+                                                                response.status === 404
+                                                                    ? 'Utilisateur non trouvé avec cet email.'
+                                                                    : response.status === 409
+                                                                        ? 'Abonnement déjà actif pour cet utilisateur.'
+                                                                        : data.error || data.message || 'Erreur lors de l’activation.';
+                                                            setActivateFeedback(feedback);
+                                                            setMessage('Erreur: ' + feedback);
                                                         }
                                                     } catch (err) {
-                                                        setMessage('Erreur: ' + err.message);
+                                                        const feedback = 'Erreur serveur ou réseau: ' + err.message;
+                                                        setActivateFeedback(feedback);
+                                                        setMessage(feedback);
                                                     }
                                                     setTimeout(() => setMessage(''), 3000);
                                                 }}
@@ -602,7 +733,7 @@ export default function AdminDashboard() {
                                                 onClick={() => {
                                                     setShowActivateModal(false);
                                                     setSelectedEmail('');
-                                                    setActivateNotes('');
+                                                    setActivateFeedback('');
                                                 }}
                                             >
                                                 Annuler
@@ -613,38 +744,6 @@ export default function AdminDashboard() {
                             </div>
                         )}
 
-                        {/* Dialog de confirmation pour le nettoyage */}
-                        <ConfirmDialog
-                            isOpen={showCleanupConfirm}
-                            onClose={() => setShowCleanupConfirm(false)}
-                            onConfirm={async () => {
-                                try {
-                                    const response = await fetch(`${API_BASE_URL}/memberships/cleanup-pending`, {
-                                        method: 'DELETE',
-                                        headers: {
-                                            'Authorization': `Bearer ${token}`
-                                        }
-                                    });
-                                    const data = await response.json();
-                                    if (data.success) {
-                                        setMessage(`✓ ${data.deletedCount} paiement(s) échoué(s) supprimé(s)`);
-                                        // Recharger les memberships
-                                        setActiveTab("overview");
-                                        setTimeout(() => setActiveTab("memberships"), 100);
-                                    } else {
-                                        setMessage('Erreur: ' + data.error);
-                                    }
-                                } catch (err) {
-                                    setMessage('Erreur: ' + err.message);
-                                }
-                                setTimeout(() => setMessage(''), 3000);
-                            }}
-                            title="Nettoyage des paiements"
-                            message="Voulez-vous vraiment supprimer tous les paiements en attente de plus d'1 heure ? Cette action est irréversible."
-                            confirmText="Supprimer"
-                            cancelText="Annuler"
-                            type="danger"
-                        />
                     </div>
                 )}
             </div>

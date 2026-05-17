@@ -234,6 +234,37 @@
   font-weight: 600;
 }
 
+.membership-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-left: 4px;
+  border: 1px solid transparent;
+}
+
+.membership-pill.active {
+  background: #e8f8ef;
+  color: #116b33;
+  border-color: #b7e8c8;
+}
+
+.membership-pill.expired {
+  background: #fff3e8;
+  color: #a14c00;
+  border-color: #ffd4a8;
+}
+
+.membership-pill.neutral {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
 /* ===== Tablette (max 1048px) ===== */
 @media (max-width: 1048px) {
   .header {
@@ -415,5 +446,10 @@
 
   .user {
     font-size: 14px !important;
+  }
+
+  .membership-pill {
+    font-size: 10px;
+    padding: 3px 8px;
   }
 }

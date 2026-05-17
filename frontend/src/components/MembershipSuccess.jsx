@@ -1,14 +1,26 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../components/Url';
 import { getAuthHeaders } from '../utils/auth';
 import '../styles/MembershipSuccess.css';
 
 const MembershipSuccess = () => {
-    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [membership, setMembership] = useState(null);
+
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case 'pending':
+                return 'En attente de validation';
+            case 'approved':
+                return 'Validée';
+            case 'rejected':
+                return 'Rejetée';
+            default:
+                return 'En cours de traitement';
+        }
+    };
 
     const fetchMembership = useCallback(async () => {
         try {
@@ -28,72 +40,10 @@ const MembershipSuccess = () => {
         }
     }, []);
 
-    const verifyStripePayment = useCallback(async (sessionId) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/membership/verify-session`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ session_id: sessionId })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                setTimeout(() => {
-                    fetchMembership();
-                }, 1000);
-            } else {
-                console.error('Erreur vérification:', data.message);
-                setLoading(false);
-            }
-        } catch (err) {
-            console.error('Erreur vérification paiement Stripe:', err);
-            setLoading(false);
-        }
-    }, [fetchMembership]);
-
-    const verifyNotchPayPayment = useCallback(async (reference) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/membership/verify-notchpay`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ reference })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                setTimeout(() => {
-                    fetchMembership();
-                }, 1000);
-            } else {
-                console.error('Erreur vérification:', data.message);
-                setLoading(false);
-            }
-        } catch (err) {
-            console.error('Erreur vérification paiement Notch Pay:', err);
-            setLoading(false);
-        }
-    }, [fetchMembership]);
-
     useEffect(() => {
-        const sessionId = searchParams.get('session_id');
-        const reference = searchParams.get('reference');
-
-        if (sessionId) {
-            // Vérifier paiement Stripe
-            verifyStripePayment(sessionId);
-        } else if (reference) {
-            // Vérifier paiement Notch Pay
-            verifyNotchPayPayment(reference);
-        } else {
-            setLoading(false);
-        }
-    }, [searchParams, verifyStripePayment, verifyNotchPayPayment]);
+        // For manual submission flow we simply fetch membership status
+        fetchMembership();
+    }, [fetchMembership]);
 
     if (loading) {
         return (
@@ -110,35 +60,25 @@ const MembershipSuccess = () => {
     return (
         <div className="membership-success-container">
             <div className="membership-success-card">
-                <div className="success-icon">✅</div>
-                <h1>Paiement réussi !</h1>
+                <div className="success-eyebrow">Soumission enregistrée</div>
+                <h1>Votre demande a bien été reçue</h1>
                 <p className="success-message">
-                    Félicitations ! Votre cotisation annuelle a été activée avec succès.
+                    Merci. Votre demande d'adhésion est bien enregistrée et sera traitée par l'équipe administrative.
                 </p>
 
                 {membership && (
                     <div className="membership-details">
-                        <h3>Détails de votre cotisation</h3>
+                        <h3>État de la demande</h3>
                         <div className="detail-row">
-                            <span className="detail-label">Numéro de paiement:</span>
-                            <span className="detail-value">{membership.paymentNumber}</span>
+                            <span className="detail-label">Statut</span>
+                            <span className="detail-value detail-pill">{getStatusLabel(membership.submissionStatus)}</span>
                         </div>
-                        <div className="detail-row">
-                            <span className="detail-label">Montant:</span>
-                            <span className="detail-value">{membership.amount} {membership.currency}</span>
-                        </div>
-                        <div className="detail-row">
-                            <span className="detail-label">Date de début:</span>
-                            <span className="detail-value">
-                                {new Date(membership.startDate).toLocaleDateString('fr-FR')}
-                            </span>
-                        </div>
-                        <div className="detail-row">
-                            <span className="detail-label">Date de fin:</span>
-                            <span className="detail-value">
-                                {new Date(membership.endDate).toLocaleDateString('fr-FR')}
-                            </span>
-                        </div>
+                        {membership.submissionStatus === 'rejected' && (
+                            <div className="detail-row">
+                                <span className="detail-label">Motif du rejet</span>
+                                <span className="detail-value">{membership.rejectionReason || '-'}</span>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -152,7 +92,7 @@ const MembershipSuccess = () => {
                 </div>
 
                 <p className="info-text">
-                    Un email de confirmation vous a été envoyé avec tous les détails de votre cotisation.
+                    Un message de confirmation a été envoyé avec les informations utiles.
                 </p>
             </div>
         </div>

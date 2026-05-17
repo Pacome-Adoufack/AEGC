@@ -116,6 +116,26 @@
   border-left: 4px solid #28a745;
 }
 
+.membership-active-note {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e9f9ee 0%, #d8f3df 100%);
+  color: #1f6b34;
+  border: 1px solid #bde5c6;
+}
+
+.membership-active-note strong {
+  font-size: 1rem;
+}
+
+.membership-active-note span {
+  font-size: 0.92rem;
+}
+
 .membership-info-row {
   display: flex;
   justify-content: space-between;

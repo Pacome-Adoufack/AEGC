@@ -29,6 +29,12 @@ export default function DevDashboard() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const formatDateSafe = (d) => {
+        if (!d) return '-';
+        const t = new Date(d);
+        if (isNaN(t.getTime())) return '-';
+        return t.toLocaleDateString('fr-FR');
+    };
 
     // Vérifier que l'utilisateur est bien DEV
     useEffect(() => {
@@ -520,28 +526,7 @@ export default function DevDashboard() {
                             </div>
                         )}
 
-                        {/* Revenus */}
-                        {membershipStats && (
-                            <div className="revenue-section">
-                                <h3>Revenus par devise</h3>
-                                <div className="revenue-cards">
-                                    <div className="revenue-card">
-                                        <span className="revenue-label">Euro (EUR)</span>
-                                        <span className="revenue-amount">{membershipStats.revenue.EUR} €</span>
-                                    </div>
-                                    <div className="revenue-card">
-                                        <span className="revenue-label">Dollar US (USD)</span>
-                                        <span className="revenue-amount">{membershipStats.revenue.USD} $</span>
-                                    </div>
-                                </div>
-                                <div className="payment-methods">
-                                    <small>
-                                        <strong>Méthodes:</strong> Stripe ({membershipStats.paymentMethods.stripe}) |
-                                        Manuel ({membershipStats.paymentMethods.manual})
-                                    </small>
-                                </div>
-                            </div>
-                        )}
+                        {/* Revenus: section supprimée (redondante) */}
 
                         {/* Bouton d'activation manuelle */}
                         <div className="membership-actions">
@@ -551,17 +536,16 @@ export default function DevDashboard() {
                             >
                                 ➕ Activer une cotisation manuellement
                             </button>
-                            <button
-                                className="btn-cleanup"
-                                onClick={() => setShowCleanupConfirm(true)}
-                            >
-                                🗑️ Nettoyer les paiements échoués
-                            </button>
                         </div>
 
                         {/* Liste des memberships */}
                         <div className="memberships-table">
-                            <h3>Liste des cotisations ({memberships.filter(m => m.paymentStatus === 'paid' || m.paymentStatus === 'expired').length})</h3>
+                            <h3>
+                                Liste des cotisations ({memberships.filter((membership) => {
+                                    const status = membership.submissionStatus || membership.paymentStatus;
+                                    return status === 'approved';
+                                }).length})
+                            </h3>
                             <table>
                                 <thead>
                                     <tr>
@@ -577,36 +561,43 @@ export default function DevDashboard() {
                                 </thead>
                                 <tbody>
                                     {memberships
-                                        .filter(m => m.paymentStatus === 'paid' || m.paymentStatus === 'expired')
+                                        .filter((membership) => {
+                                            const status = membership.submissionStatus || membership.paymentStatus;
+                                            return status === 'approved';
+                                        })
                                         .map((membership) => (
                                             <tr key={membership._id}>
                                                 <td>{membership.user?.firstName} {membership.user?.name}</td>
                                                 <td>{membership.user?.email}</td>
                                                 <td>
-                                                    <span className={`badge-status ${membership.paymentStatus}`}>
-                                                        {membership.paymentStatus === 'paid' && '✓ Payé'}
-                                                        {membership.paymentStatus === 'pending' && '⏳ En attente'}
-                                                        {membership.paymentStatus === 'expired' && '⚠ Expiré'}
-                                                        {membership.paymentStatus === 'cancelled' && '✗ Annulé'}
+                                                    <span className={`badge-status ${membership.submissionStatus || membership.paymentStatus}`}>
+                                                        {(() => {
+                                                            const status = membership.submissionStatus || membership.paymentStatus;
+                                                            const expired = membership.endDate && new Date(membership.endDate) <= new Date();
+                                                            if (status === 'approved' && expired) return '⚠ Expiré';
+                                                            if (status === 'approved') return '✓ Approuvé';
+                                                            if (status === 'pending') return '⏳ En attente';
+                                                            if (status === 'rejected' || status === 'cancelled') return '✗ Rejeté';
+                                                            return status || '-';
+                                                        })()}
                                                     </span>
                                                 </td>
                                                 <td>{membership.amount} {membership.currency}</td>
                                                 <td>{membership.paymentNumber}</td>
                                                 <td>
-                                                    {membership.startDate
-                                                        ? new Date(membership.startDate).toLocaleDateString('fr-FR')
-                                                        : '-'
-                                                    }
+                                                    {membership.startDate ? formatDateSafe(membership.startDate) : '-'}
                                                 </td>
                                                 <td>
-                                                    {membership.endDate
-                                                        ? new Date(membership.endDate).toLocaleDateString('fr-FR')
-                                                        : '-'
-                                                    }
+                                                    {membership.endDate ? formatDateSafe(membership.endDate) : '-'}
                                                 </td>
                                                 <td>
-                                                    {membership.paymentMethod === 'stripe' && '💳 Stripe'}
-                                                    {membership.paymentMethod === 'manual' && '👤 Manuel'}
+                                                    {membership.submissionMethod === 'bank_transfer' && '🏦 Virement'}
+                                                    {membership.submissionMethod === 'orange_money' && '🟠 Orange Money'}
+                                                    {membership.submissionMethod === 'mtn_momo' && '🟡 MTN MoMo'}
+                                                    {membership.submissionMethod === 'manual_form' && '📄 Formulaire'}
+                                                    {membership.submissionMethod === 'email' && '📧 Email'}
+                                                    {membership.submissionMethod === 'online' && '📝 En ligne'}
+                                                    {!membership.submissionMethod && membership.paymentMethod === 'manual' && '👤 Manuel'}
                                                 </td>
                                             </tr>
                                         ))}
@@ -620,7 +611,7 @@ export default function DevDashboard() {
                                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                                     <h3>Activer une cotisation manuellement</h3>
                                     <div className="modal-form">
-                                        <label>Email de l'utilisateur:</label>
+                                        <label>Email de l'utilisateur</label>
                                         <input
                                             type="email"
                                             value={selectedEmail}
@@ -628,28 +619,17 @@ export default function DevDashboard() {
                                             placeholder="exemple@email.com"
                                         />
 
-                                        <label>Devise:</label>
-                                        <select
-                                            value={selectedCurrency}
-                                            onChange={(e) => setSelectedCurrency(e.target.value)}
-                                        >
-                                            <option value="EUR">Euro (16 €)</option>
-                                            <option value="USD">Dollar US (18 $)</option>
-                                            <option value="XAF">Franc CFA (10 000 FCFA)</option>
-                                        </select>
-
-                                        <label>Notes (optionnel):</label>
-                                        <textarea
-                                            value={activateNotes}
-                                            onChange={(e) => setActivateNotes(e.target.value)}
-                                            placeholder="Raison de l'activation manuelle..."
-                                            rows="3"
-                                        />
+                                        {activateFeedback && (
+                                            <div className="inline-feedback" style={{ marginTop: '0.75rem' }}>
+                                                {activateFeedback}
+                                            </div>
+                                        )}
 
                                         <div className="modal-actions">
                                             <button
                                                 className="btn-confirm"
                                                 onClick={async () => {
+                                                    setActivateFeedback('');
                                                     try {
                                                         const response = await fetch(`${API_BASE_URL}/memberships/activate`, {
                                                             method: 'POST',
@@ -657,26 +637,30 @@ export default function DevDashboard() {
                                                                 'Content-Type': 'application/json',
                                                                 'Authorization': `Bearer ${token}`
                                                             },
-                                                            body: JSON.stringify({
-                                                                email: selectedEmail,
-                                                                currency: selectedCurrency,
-                                                                notes: activateNotes
-                                                            })
+                                                            body: JSON.stringify({ email: selectedEmail })
                                                         });
                                                         const data = await response.json();
                                                         if (data.success) {
+                                                            setActivateFeedback(data.message || 'Utilisateur trouvé et abonnement activé.');
                                                             setMessage('Cotisation activée avec succès');
                                                             setShowActivateModal(false);
                                                             setSelectedEmail('');
-                                                            setActivateNotes('');
-                                                            // Recharger les memberships
                                                             setActiveTab("overview");
                                                             setTimeout(() => setActiveTab("memberships"), 100);
                                                         } else {
-                                                            setMessage('Erreur: ' + data.error);
+                                                            const feedback =
+                                                                response.status === 404
+                                                                    ? 'Utilisateur non trouvé avec cet email.'
+                                                                    : response.status === 409
+                                                                        ? 'Abonnement déjà actif pour cet utilisateur.'
+                                                                        : data.error || data.message || 'Erreur lors de l’activation.';
+                                                            setActivateFeedback(feedback);
+                                                            setMessage('Erreur: ' + feedback);
                                                         }
                                                     } catch (err) {
-                                                        setMessage('Erreur: ' + err.message);
+                                                        const feedback = 'Erreur serveur ou réseau: ' + err.message;
+                                                        setActivateFeedback(feedback);
+                                                        setMessage(feedback);
                                                     }
                                                     setTimeout(() => setMessage(''), 3000);
                                                 }}
@@ -688,7 +672,7 @@ export default function DevDashboard() {
                                                 onClick={() => {
                                                     setShowActivateModal(false);
                                                     setSelectedEmail('');
-                                                    setActivateNotes('');
+                                                    setActivateFeedback('');
                                                 }}
                                             >
                                                 Annuler
@@ -699,38 +683,6 @@ export default function DevDashboard() {
                             </div>
                         )}
 
-                        {/* Dialog de confirmation pour le nettoyage */}
-                        <ConfirmDialog
-                            isOpen={showCleanupConfirm}
-                            onClose={() => setShowCleanupConfirm(false)}
-                            onConfirm={async () => {
-                                try {
-                                    const response = await fetch(`${API_BASE_URL}/memberships/cleanup-pending`, {
-                                        method: 'DELETE',
-                                        headers: {
-                                            'Authorization': `Bearer ${token}`
-                                        }
-                                    });
-                                    const data = await response.json();
-                                    if (data.success) {
-                                        setMessage(`✓ ${data.deletedCount} paiement(s) échoué(s) supprimé(s)`);
-                                        // Recharger les memberships
-                                        setActiveTab("overview");
-                                        setTimeout(() => setActiveTab("memberships"), 100);
-                                    } else {
-                                        setMessage('Erreur: ' + data.error);
-                                    }
-                                } catch (err) {
-                                    setMessage('Erreur: ' + err.message);
-                                }
-                                setTimeout(() => setMessage(''), 3000);
-                            }}
-                            title="Nettoyage des paiements"
-                            message="Voulez-vous vraiment supprimer tous les paiements en attente de plus d'1 heure ? Cette action est irréversible."
-                            confirmText="Supprimer"
-                            cancelText="Annuler"
-                            type="danger"
-                        />
                     </div>
                 )}
             </div>
