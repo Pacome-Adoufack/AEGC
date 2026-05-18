@@ -32,7 +32,7 @@ const Home = () => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/announcements?limit=5`);
+        const response = await fetch(`${API_BASE_URL}/api/announcements?limit=7`);
         const result = await response.json();
         if (result.success) setAnnouncements(result.data || []);
       } catch (error) {
