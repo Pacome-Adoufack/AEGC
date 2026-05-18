@@ -13,38 +13,74 @@
   height: 85vh;
   min-height: 520px;
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-repeat: no-repeat;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(0, 21, 51, 0.75) 0%, rgba(0, 85, 164, 0.52) 100%);
+  background: linear-gradient(160deg, rgba(0, 21, 51, 0.58) 0%, rgba(0, 55, 130, 0.38) 100%);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  text-align: center;
   padding: 2rem;
 }
 
-.hero-logo {
-  height: 150px;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.45));
+.hero-content {
+  max-width: 720px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
 }
 
-.hero-tagline {
+.hero-title {
+  color: #ffffff;
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+.hero-subtitle {
   color: rgba(255, 255, 255, 0.88);
   font-size: 1.1rem;
   font-weight: 400;
-  max-width: 500px;
+  max-width: 580px;
   line-height: 1.65;
   margin: 0;
-  letter-spacing: 0.01em;
+}
+
+.hero-ctas {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.8rem 2rem;
+  background: #0069d9;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 18px rgba(0, 105, 217, 0.45);
+}
+
+.hero-cta-primary:hover {
+  background: #0057b8;
+  transform: translateY(-2px);
 }
 
 .hero-play-btn {
@@ -557,11 +593,11 @@
     min-height: 440px;
   }
 
-  .hero-logo {
-    height: 110px;
+  .hero-title {
+    font-size: 1.9rem;
   }
 
-  .hero-tagline {
+  .hero-subtitle {
     font-size: 0.95rem;
   }
 
@@ -602,13 +638,17 @@
     min-height: 380px;
   }
 
-  .hero-logo {
-    height: 90px;
+  .hero-title {
+    font-size: 1.5rem;
   }
 
-  .hero-tagline {
+  .hero-subtitle {
     font-size: 0.88rem;
-    max-width: 90%;
+  }
+
+  .hero-ctas {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .hero-play-btn {

@@ -66,14 +66,23 @@ const Home = () => {
         style={{ backgroundImage: `url(${firstImage})` }}
       >
         <div className="hero-overlay">
-          <img src={logo} alt="AEGC" className="hero-logo" />
-          <p className="hero-tagline">
-            Association des Économistes et Gestionnaires du Cameroun
-          </p>
-          <button className="hero-play-btn" onClick={handlePlay}>
-            <span className="hero-play-icon">▶</span>
-            Le Film AEGC
-          </button>
+          <div className="hero-content">
+            <h1 className="hero-title">
+              Le réseau des économistes et gestionnaires du Cameroun
+            </h1>
+            <p className="hero-subtitle">
+              Rejoignez une communauté d'experts engagés pour le développement économique et la recherche en gestion.
+            </p>
+            <div className="hero-ctas">
+              <Link to="/membership/payment" className="hero-cta-primary">
+                Devenir membre
+              </Link>
+              <button className="hero-play-btn" onClick={handlePlay}>
+                <span className="hero-play-icon">▶</span>
+                Le Film AEGC
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
