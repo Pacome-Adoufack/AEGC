@@ -32,6 +32,20 @@ export default function AdminDashboard() {
     const [activateCurrency, setActivateCurrency] = useState('XAF');
     const [activateAmountOption, setActivateAmountOption] = useState('');
     const [activateCustomAmount, setActivateCustomAmount] = useState('');
+    const [announcements, setAnnouncements] = useState([]);
+    const [announcementsLoading, setAnnouncementsLoading] = useState(false);
+    const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+    const [editingAnnouncementId, setEditingAnnouncementId] = useState(null);
+    const [announcementForm, setAnnouncementForm] = useState({
+        title: '',
+        summary: '',
+        content: '',
+        category: 'ANNOUNCEMENT',
+        isPublished: true,
+        isPinned: false,
+        expiresAt: '',
+        expiresForever: true,
+    });
 
     // Conversion rates (base USD)
     const USD_TO_EUR = 0.92; // 100 USD => 92 EUR
@@ -135,6 +149,46 @@ export default function AdminDashboard() {
         }
     }, [activeTab, token]);
 
+    const resetAnnouncementForm = () => {
+        setAnnouncementForm({
+            title: '',
+            summary: '',
+            content: '',
+            category: 'ANNOUNCEMENT',
+            isPublished: true,
+            isPinned: false,
+            expiresAt: '',
+            expiresForever: true,
+        });
+        setEditingAnnouncementId(null);
+        setShowAnnouncementModal(false);
+    };
+
+    const loadAnnouncements = async () => {
+        setAnnouncementsLoading(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/admin/announcements`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.success) {
+                setAnnouncements(data.data || []);
+            } else {
+                setMessage(`Erreur: ${data.error || 'Impossible de récupérer les annonces'}`);
+            }
+        } catch (err) {
+            setMessage(`Erreur: ${err.message}`);
+        } finally {
+            setAnnouncementsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "announcements") {
+            loadAnnouncements();
+        }
+    }, [activeTab, token]);
+
     const handleDeleteContact = async (id) => {
         try {
             await fetch(`${API_BASE_URL}/contact/${id}`, {
@@ -166,6 +220,86 @@ export default function AdminDashboard() {
     };
 
     const askDeleteSubscriber = (id) => openConfirm({ title: 'Supprimer l\'abonné', message: 'Supprimer cet abonné ?', onConfirm: () => handleDeleteSubscriber(id), type: 'danger' });
+
+    const handleAnnouncementSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const payload = {
+                ...announcementForm,
+                expiresAt: announcementForm.expiresForever ? null : (announcementForm.expiresAt || null),
+            };
+
+            const endpoint = editingAnnouncementId
+                ? `${API_BASE_URL}/api/admin/announcements/${editingAnnouncementId}`
+                : `${API_BASE_URL}/api/admin/announcements`;
+
+            const method = editingAnnouncementId ? 'PUT' : 'POST';
+
+            const res = await fetch(endpoint, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.error || data.message || "Erreur lors de l’enregistrement");
+            }
+
+            setMessage(editingAnnouncementId ? 'Annonce mise à jour' : 'Annonce créée');
+            setShowAnnouncementModal(false);
+            resetAnnouncementForm();
+            await loadAnnouncements();
+        } catch (err) {
+            setMessage(`Erreur: ${err.message}`);
+        }
+        setTimeout(() => setMessage(''), 3000);
+    };
+
+    const handleEditAnnouncement = (announcement) => {
+        setEditingAnnouncementId(announcement._id);
+        setAnnouncementForm({
+            title: announcement.title || '',
+            summary: announcement.summary || '',
+            content: announcement.content || '',
+            category: announcement.category || 'ANNOUNCEMENT',
+            isPublished: Boolean(announcement.isPublished),
+            isPinned: Boolean(announcement.isPinned),
+            expiresAt: announcement.expiresAt || '',
+            expiresForever: !announcement.expiresAt,
+        });
+        setShowAnnouncementModal(true);
+    };
+
+    const handleDeleteAnnouncement = async (id) => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/admin/announcements/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.error || data.message || 'Erreur lors de la suppression');
+            }
+
+            setAnnouncements((prev) => prev.filter((item) => item._id !== id));
+            setMessage('Annonce supprimée');
+        } catch (err) {
+            setMessage(`Erreur: ${err.message}`);
+        }
+        setTimeout(() => setMessage(''), 3000);
+    };
+
+    const askDeleteAnnouncement = (id) =>
+        openConfirm({
+            title: "Supprimer l’annonce",
+            message: 'Confirmer la suppression de cette annonce ?',
+            onConfirm: () => handleDeleteAnnouncement(id),
+            type: 'danger',
+        });
 
     return (
         <div className="admin-dashboard">
@@ -212,6 +346,12 @@ export default function AdminDashboard() {
                     onClick={() => setActiveTab("memberships")}
                 >
                     💳 Cotisations
+                </button>
+                <button
+                    className={activeTab === "announcements" ? "active" : ""}
+                    onClick={() => setActiveTab("announcements")}
+                >
+                    📢 Annonces
                 </button>
             </div>
 
@@ -816,7 +956,7 @@ export default function AdminDashboard() {
                                                                     ? 'Utilisateur non trouvé avec cet email.'
                                                                     : response.status === 409
                                                                         ? 'Abonnement déjà actif pour cet utilisateur.'
-                                                                        : data.error || data.message || 'Erreur lors de l’activation.';
+                                                                        : data.error || data.message || "Erreur lors de l’activation.";
                                                             setActivateFeedback(feedback);
                                                             setMessage('Erreur: ' + feedback);
                                                         }
@@ -846,6 +986,179 @@ export default function AdminDashboard() {
                             </div>
                         )}
 
+                    </div>
+                )}
+
+                {/* ANNOUNCEMENTS */}
+                {activeTab === "announcements" && (
+                    <div className="announcements-section">
+                        <div className="announcements-section-header">
+                            <div>
+                                <h2>Gestion des annonces</h2>
+                                <p className="announcements-section-subtitle">{announcements.length} annonce{announcements.length !== 1 ? 's' : ''} au total</p>
+                            </div>
+                            <button
+                                className="btn-create-announcement"
+                                onClick={() => { resetAnnouncementForm(); setShowAnnouncementModal(true); }}
+                            >
+                                + Créer une annonce
+                            </button>
+                        </div>
+
+                        <div className="announcements-list">
+                            {announcementsLoading ? (
+                                <p>Chargement…</p>
+                            ) : announcements.length === 0 ? (
+                                <p className="announcements-empty">Aucune annonce pour le moment. Cliquez sur "Créer une annonce" pour commencer.</p>
+                            ) : (
+                                <div className="announcements-cards">
+                                    {announcements.map((announcement) => (
+                                        <div key={announcement._id} className="announcement-card">
+                                            <div className="announcement-card-top">
+                                                <span className="announcement-tag">{announcement.category}</span>
+                                                <span className={`badge-status ${announcement.isPublished ? 'paid' : 'pending'}`}>
+                                                    {announcement.isPublished ? 'Publié' : 'Brouillon'}
+                                                </span>
+                                            </div>
+                                            <h4>{announcement.title}</h4>
+                                            <p>{announcement.summary}</p>
+                                            <small>
+                                                {announcement.isPinned ? '📌 Épinglé · ' : ''}
+                                                Créé le {new Date(announcement.createdAt).toLocaleDateString('fr-FR')}
+                                            </small>
+                                            <div className="announcement-card-actions">
+                                                <button className="btn-approve" onClick={() => handleEditAnnouncement(announcement)}>
+                                                    Modifier
+                                                </button>
+                                                <button className="btn-delete" onClick={() => askDeleteAnnouncement(announcement._id)}>
+                                                    Supprimer
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Modal formulaire */}
+                        {showAnnouncementModal && (
+                            <div className="modal-overlay" onClick={resetAnnouncementForm}>
+                                <div className="ann-form-modal" onClick={(e) => e.stopPropagation()}>
+                                    <div className="ann-form-modal-header">
+                                        <h3>{editingAnnouncementId ? "Modifier l'annonce" : 'Nouvelle annonce'}</h3>
+                                        <button className="ann-form-close" onClick={resetAnnouncementForm}>✕</button>
+                                    </div>
+                                    <form className="announcements-form" onSubmit={handleAnnouncementSubmit}>
+                                        <div className="announcements-grid-2">
+                                            <div>
+                                                <label>Titre</label>
+                                                <input
+                                                    type="text"
+                                                    value={announcementForm.title}
+                                                    onChange={(e) =>
+                                                        setAnnouncementForm((prev) => ({ ...prev, title: e.target.value }))
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label>Catégorie</label>
+                                                <select
+                                                    value={announcementForm.category}
+                                                    onChange={(e) =>
+                                                        setAnnouncementForm((prev) => ({ ...prev, category: e.target.value }))
+                                                    }
+                                                >
+                                                    <option value="ANNOUNCEMENT">Annonce</option>
+                                                    <option value="INFO">Information</option>
+                                                    <option value="EVENT">Événement</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label>Résumé</label>
+                                            <textarea
+                                                rows={3}
+                                                value={announcementForm.summary}
+                                                onChange={(e) =>
+                                                    setAnnouncementForm((prev) => ({ ...prev, summary: e.target.value }))
+                                                }
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label>Contenu détaillé (optionnel)</label>
+                                            <textarea
+                                                rows={5}
+                                                value={announcementForm.content}
+                                                onChange={(e) =>
+                                                    setAnnouncementForm((prev) => ({ ...prev, content: e.target.value }))
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className="announcements-grid-2">
+                                            <div>
+                                                <label>Date d’expiration</label>
+                                                <input
+                                                    type="date"
+                                                    value={announcementForm.expiresAt}
+                                                    onChange={(e) =>
+                                                        setAnnouncementForm((prev) => ({ ...prev, expiresAt: e.target.value }))
+                                                    }
+                                                    disabled={announcementForm.expiresForever}
+                                                />
+                                                <div className="forever-label-wrapper">
+                                                    <label className="forever-label">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={announcementForm.expiresForever}
+                                                            onChange={(e) =>
+                                                                setAnnouncementForm((prev) => ({ ...prev, expiresForever: e.target.checked }))
+                                                            }
+                                                        />
+                                                        À vie (par défaut)
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div className="announcements-checkboxes">
+                                                <label>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={announcementForm.isPublished}
+                                                        onChange={(e) =>
+                                                            setAnnouncementForm((prev) => ({ ...prev, isPublished: e.target.checked }))
+                                                        }
+                                                    />
+                                                    Publier
+                                                </label>
+                                                <label>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={announcementForm.isPinned}
+                                                        onChange={(e) =>
+                                                            setAnnouncementForm((prev) => ({ ...prev, isPinned: e.target.checked }))
+                                                        }
+                                                    />
+                                                    Épingler en haut
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div className="announcements-actions">
+                                            <button type="submit" className="btn-confirm">
+                                                {editingAnnouncementId ? 'Mettre à jour' : 'Publier'}
+                                            </button>
+                                            <button type="button" className="btn-cancel" onClick={resetAnnouncementForm}>
+                                                Annuler
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

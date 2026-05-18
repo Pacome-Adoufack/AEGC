@@ -1,17 +1,19 @@
+/* ===== Gallery container ===== */
 .gallery-container {
-  max-width: 1300px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 48px 40px;
 }
 
 .gallery-title {
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2.5rem;
-  color: #333;
-  position: relative;
+  margin-bottom: 1.5rem;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #0d1b2a;
 }
 
+/* ===== Year filters ===== */
 .year-filters {
   display: flex;
   justify-content: center;
@@ -21,68 +23,48 @@
 }
 
 .year-filter {
-  padding: 0.5rem 1rem;
-  border: none;
-  background: #f1f1f1;
-  color: #333;
-  border-radius: 20px;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  border-radius: 999px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 0.875rem;
   font-weight: 500;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .year-filter:hover {
-  background: #ddd;
+  background: #f0f7ff;
+  border-color: #0084ff;
+  color: #0084ff;
 }
 
 .year-filter.active {
-  background: linear-gradient(to right, #3498db, #2ecc71);
+  background: #0084ff;
+  border-color: #0084ff;
   color: white;
-}
-.show-more-container {
-  text-align: center;
-  margin: 20px 0;
 }
 
-.show-more-button {
-  padding: 10px 20px;
-  background-color: #259B2E;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
+/* ===== Masonry grid ===== */
 .masonry-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
 
+/* ===== Gallery item ===== */
 .gallery-item {
   position: relative;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
-.gallery-item::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: #259b2f96; /* vert transparent */
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 1;
-}
-
-.gallery-item:hover::before {
-  opacity: 1;
-}
-
 
 .gallery-item:hover {
-  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .gallery-image {
@@ -90,24 +72,23 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.5s ease;
-  position: relative;
-  z-index: 0;
+  transition: transform 0.4s ease;
 }
-
 
 .gallery-item:hover .gallery-image {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
+/* ===== Hover overlay ===== */
 .image-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent);
   color: white;
-  padding: 1rem;
+  padding: 1.2rem 1rem 0.9rem;
+  z-index: 2;
   transform: translateY(100%);
   transition: transform 0.3s ease;
 }
@@ -116,24 +97,54 @@
   transform: translateY(0);
 }
 
-.image-overlay h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-}
-
 .image-overlay p {
   margin: 0;
   font-size: 0.9rem;
-  opacity: 0.8;
+  font-weight: 600;
+  opacity: 0.9;
 }
 
+/* ===== Show more ===== */
+.show-more-container {
+  text-align: center;
+  margin-top: 2rem;
+}
 
+.show-more-button {
+  padding: 0.65rem 2rem;
+  background: #0084ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.show-more-button:hover {
+  background: #0069d9;
+  transform: translateY(-2px);
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .masonry-gallery {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  .gallery-container {
+    padding: 36px 20px;
   }
-  
+
   .gallery-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
+  }
+
+  .masonry-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .masonry-gallery {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

@@ -29,6 +29,7 @@ import Picture from "./components/Picture.jsx";
 import OrgChart from "./components/OrgChart.jsx";
 import Ethics from "./components/Ethics.jsx";
 import Release from "./components/Release.jsx";
+import AllAnnouncements from "./components/AllAnnouncements.jsx";
 import Faq from "./components/Faq.jsx";
 import President from "./member/President.jsx";
 import VicePresident from "./member/VicePresident.jsx";
@@ -123,6 +124,7 @@ function App() {
               <Route path="/organigrame" element={<OrgChart />} />
               <Route path="/ethique" element={<Ethics />} />
               <Route path="/communiqué" element={<Release />} />
+              <Route path="/actualites" element={<AllAnnouncements />} />
               <Route path="/questionnaire" element={<Faq />} />
               <Route path="/president" element={<President />} />
               <Route path="/vice president" element={<VicePresident />} />

@@ -47,7 +47,7 @@ const Images = () => {
 
   return (
     <div className="gallery-container">
-      <h2 className="gallery-title">📷 Galerie Photos</h2>
+      <h2 className="gallery-title">Galerie Photos</h2>
 
       <div className="year-filters">
         {years.map((year) => (
@@ -84,7 +84,6 @@ const Images = () => {
                   hoveredImage === index ? "visible" : ""
                 }`}
               >
-                <h3>{img.name}</h3>
                 <p>{img.year}</p>
               </div>
             </div>
