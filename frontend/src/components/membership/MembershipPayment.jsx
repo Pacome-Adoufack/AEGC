@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '../hooks/useToast.js';
-import { API_BASE_URL } from '../components/Url';
-import { getAuthToken, getAuthHeaders } from '../utils/auth';
-import '../styles/MembershipPayment.css';
+import { useToast } from '../../hooks/useToast.js';
+import { API_BASE_URL } from '../Url';
+import { getAuthToken, getAuthHeaders } from '../../utils/auth';
+import '@/styles/MembershipPayment.css';
 
 const MembershipPayment = () => {
     const toast = useToast();

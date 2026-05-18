@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Login.css";
+import "@/styles/Login.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { API_BASE_URL } from "../components/Url";
+import { API_BASE_URL } from "../Url";
 
 export default function Login({ setIsLoggedIn }) {
   const [data, setData] = useState({ email: "", password: "" });

@@ -2,20 +2,19 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import "../styles/Reservation.css";
-import { API_BASE_URL } from "../components/Url";
+import "@/styles/Reservation.css";
+import { API_BASE_URL } from "../Url";
 
 const Reservation = () => {
-  const { activityId } = useParams();
-  console.log("Activity ID:", activityId);
+  const { formationId } = useParams();
+  console.log("formationId:", formationId);
 
   const [data, setData] = useState({
-    firstname: "",
-    lastname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
-    gender: "",
-    profession: "",
+    message: "",
   });
 
   const [message, setMessage] = useState("");
@@ -31,22 +30,22 @@ const Reservation = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
-  
+
     if (!token) {
       setMessage("Vous devez être connecté pour réserver.");
       return;
     }
-  
-    fetch(`${API_BASE_URL}/reservation`, {
+
+    fetch(`${API_BASE_URL}/api/reservation-formation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ ...data, activityId }),
+      body: JSON.stringify({ ...data, formationId }),
     })
       .then((res) => {
         if (!res.ok) {
@@ -65,7 +64,7 @@ const Reservation = () => {
       })
       .catch((error) => {
         console.error("Erreur lors de la réservation", error);
-      
+
         setMessage("Erreur lors de la réservation : " + error.message);
         if (
           error.message.toLowerCase().includes("unauthorized") ||
@@ -78,24 +77,23 @@ const Reservation = () => {
           }, 2000);
         }
       });
-      
+
   };
-  
+
   return (
     <div className="reservation-container">
       {message && (
         <div
-          className={`register-message ${
-            message.includes("Fehler") ? "error" : "success"
-          }`}
+          className={`register-message ${message.includes("Fehler") ? "error" : "success"
+            }`}
         >
           {message}
         </div>
       )}
-      <h1 className="reservation-title">Réservation</h1>
+      <h1 className="reservation-title">S'inscrire</h1>
       <p className="reservation-description">
-        Merci de votre intérêt pour nos activités. Veuillez remplir le
-        formulaire de réservation ci-dessous.
+        Merci de votre intérêt pour nos Formations. Veuillez remplir le
+        formulaire d'inscription ci-dessous.
       </p>
       <form onSubmit={handleSubmit} className="reservation-form">
         <div className="form-group">
@@ -103,8 +101,8 @@ const Reservation = () => {
           <input
             type="text"
             id="firstname"
-            name="firstname"
-            value={data.firstname}
+            name="firstName"
+            value={data.firstName}
             onChange={handleChange}
             required
           />
@@ -114,8 +112,8 @@ const Reservation = () => {
           <input
             type="text"
             id="lastname"
-            name="lastname"
-            value={data.lastname}
+            name="lastName"
+            value={data.lastName}
             onChange={handleChange}
             required
           />
@@ -143,32 +141,16 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="gender">Sexe:</label>
-          <select
-            id="gender"
-            name="gender"
-            value={data.gender}
+          <label htmlFor="message">Message (optionnel):</label>
+          <textarea
+            id="message"
+            name="message"
+            value={data.message}
             onChange={handleChange}
-            required
-          >
-            <option value="">-- Sélectionnez votre sexe --</option>
-            <option value="Masculin">Masculin</option>
-            <option value="Féminin">Féminin</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="profession">Profession:</label>
-          <input
-            type="text"
-            id="profession"
-            name="profession"
-            value={data.profession}
-            onChange={handleChange}
-            required
-          />
+          ></textarea>
         </div>
         <button type="submit" className="reservation-button">
-          Réserver
+          S'inscrire
         </button>
       </form>
     </div>

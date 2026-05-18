@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../components/Url';
-import { getAuthHeaders } from '../utils/auth';
-import '../styles/MembershipSuccess.css';
+import { API_BASE_URL } from '../Url';
+import { getAuthHeaders } from '../../utils/auth';
+import '@/styles/MembershipSuccess.css';
 
 const MembershipSuccess = () => {
     const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import React from "react";
-import NewspaperReview from "./NewspaperReview";
+import NewspaperReview from "./reviews/NewspaperReview";
 import "../styles/JounalView.css";
 
 function JournalsView() {

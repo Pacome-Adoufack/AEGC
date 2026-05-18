@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/Header.css";
+import "@/styles/Header.css";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
-import { getAuthHeaders } from "../utils/auth";
-import { API_BASE_URL } from "./Url";
+import { getAuthHeaders } from "@/utils/auth";
+import { API_BASE_URL } from "../Url";
 
-import logo from "../assets/logo.png";
+import logo from "@/assets/logo.png";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
@@ -99,7 +99,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
     return null;
   };
 
-  const membershipBadge = getMembershipBadge();
+  const _membershipBadge = getMembershipBadge();
 
   return (
     <>

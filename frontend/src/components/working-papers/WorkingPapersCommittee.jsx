@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { API_BASE_URL } from "./Url";
-import { getAuthToken } from "../utils/auth";
-import "../styles/committee.css";
+import { API_BASE_URL } from "../Url";
+import { getAuthToken } from "../../utils/auth";
+import "@/styles/committee.css";
 
 const emptyForm = {
     fullName: "",

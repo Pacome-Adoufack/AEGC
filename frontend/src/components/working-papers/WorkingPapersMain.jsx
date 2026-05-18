@@ -2,7 +2,7 @@ import { useState } from "react";
 import WorkingPapersList from "./WorkingPapersList";
 import WorkingPapersHistory from "./WorkingPapersHistory";
 import WorkingPapersCommittee from "./WorkingPapersCommittee";
-import "../styles/wp-base.css";
+import "@/styles/wp-base.css";
 
 function WorkingPapersMain() {
     const [activeTab, setActiveTab] = useState("papers"); // papers | history | committee

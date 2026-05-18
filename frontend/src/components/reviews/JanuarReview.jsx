@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import NewspaperReview from "./NewspaperReview";
-import "../styles/JanuaryReview.css"; 
+import "@/styles/JanuaryReview.css";
 
 function JanuarReview() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,7 +14,7 @@ function JanuarReview() {
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfWERCc5vyeR7GnmY3C6Wi3uqjmYLdmNe9Cg&s"
               alt="Journal AEGC"
-              // className="review-image"
+            // className="review-image"
             />
             <div className="review-title-section">
               <h1 className="review-title">AEGC Review</h1>

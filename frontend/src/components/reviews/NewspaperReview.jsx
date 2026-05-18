@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/Newspaper.css";
+import "@/styles/Newspaper.css";
 
 function NewspaperReview() {
   return (

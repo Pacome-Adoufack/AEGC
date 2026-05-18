@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../components/Url";
-import "../styles/MesFormationsReservees.css";
+import { API_BASE_URL } from "../Url";
+import "@/styles/MesFormationsReservees.css";
 
 const MesFormationsReservees = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const MesFormationsReservees = () => {
         console.log("Reservations fetched:", data);
       })
       .catch((err) => console.error(err));
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="reservations-container">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "./Url";
 import ConfirmDialog from "./common/ConfirmDialog";
-import WorkingPapersCommittee from "./WorkingPapersCommittee";
+import WorkingPapersCommittee from "./working-papers/WorkingPapersCommittee";
 import "../styles/DevDashboard.css";
 
 export default function DevDashboard() {

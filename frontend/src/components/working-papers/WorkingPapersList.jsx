@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "./Url";
-import "../styles/wp-base.css";
-import "../styles/wp-list.css";
-import "../styles/wp-components.css";
+import { API_BASE_URL } from "../Url";
+import "@/styles/wp-base.css";
+import "@/styles/wp-list.css";
+import "@/styles/wp-components.css";
 
 function WorkingPapersList({ embedded = false }) {
     const [workingPapers, setWorkingPapers] = useState([]);

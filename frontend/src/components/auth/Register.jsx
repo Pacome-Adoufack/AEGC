@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Register.css";
+import "@/styles/Register.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { API_BASE_URL } from "../components/Url";
+import { API_BASE_URL } from "../Url";
 
 export default function Register() {
   const [data, setData] = useState({
@@ -18,7 +18,7 @@ export default function Register() {
   });
 
   const [countries, setCountries] = useState([]);
-  const [phoneCode, setPhoneCode] = useState("");
+  const [_phoneCode, setPhoneCode] = useState("");
   const [messageType, setMessageType] = useState("");
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -91,7 +91,7 @@ export default function Register() {
           });
         return res.json();
       })
-      .then((data) => {
+      .then(() => {
         setMessageType("success");
         setMessage("Enregistrement réussi!");
         setTimeout(() => navigate("/login"), 2000);

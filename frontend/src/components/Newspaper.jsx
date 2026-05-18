@@ -1,6 +1,6 @@
 import React from "react";
 import "../styles/Newspaper.css";
-import NewspaperReview from "./NewspaperReview";
+import NewspaperReview from "./reviews/NewspaperReview";
 
 function Newspaper() {
   return (

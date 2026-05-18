@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "./Url";
-import "../styles/wp-base.css";
-import "../styles/wp-detail.css";
-import "../styles/wp-components.css";
+import { API_BASE_URL } from "../Url";
+import "@/styles/wp-base.css";
+import "@/styles/wp-detail.css";
+import "@/styles/wp-components.css";
 
 const PDF_MAX_SIZE_MB = Number(import.meta.env.VITE_PDF_MAX_SIZE_MB) || 10;
 

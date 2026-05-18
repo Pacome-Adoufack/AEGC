@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/ResetPassword.css";
+import "@/styles/ResetPassword.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { API_BASE_URL } from "../components/Url";
+import { API_BASE_URL } from "../Url";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -10,9 +10,9 @@ export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [_error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [tokenValid, setTokenValid] = useState(false);
+  const [_tokenValid, setTokenValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function ResetPassword() {
       if (!response.ok) {
         setError(
           data.error ||
-            "Le mot de passe n'a pas pu être réinitialisé. Essayez à nouveau."
+          "Le mot de passe n'a pas pu être réinitialisé. Essayez à nouveau."
         );
         setLoading(false);
         return;
@@ -60,6 +60,7 @@ export default function ResetPassword() {
       setSuccess(true);
       setLoading(false);
     } catch (err) {
+      console.error(err);
       setError("Une erreur s'est produite. Veuillez réessayer.");
       setLoading(false);
     }

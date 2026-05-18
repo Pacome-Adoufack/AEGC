@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../components/Url";
+import { API_BASE_URL } from "../Url";
 
 const MesActivitesReservees = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const MesActivitesReservees = () => {
         setReservations(data);
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [navigate]);
 
 
   return (

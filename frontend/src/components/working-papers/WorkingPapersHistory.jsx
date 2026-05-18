@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "./Url";
-import "../styles/wp-base.css";
-import "../styles/wp-history.css";
-import "../styles/wp-components.css";
+import { API_BASE_URL } from "../Url";
+import "@/styles/wp-base.css";
+import "@/styles/wp-history.css";
+import "@/styles/wp-components.css";
 
 function WorkingPapersHistory({ embedded = false }) {
     const [publications, setPublications] = useState([]);
