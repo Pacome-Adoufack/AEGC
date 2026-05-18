@@ -133,7 +133,7 @@ export default function AnnouncementsTab({ token, setMessage, openConfirm }) {
                             <div key={a._id} className="announcement-card">
                                 <div className="announcement-card-top">
                                     <span className="announcement-tag">{a.category}</span>
-                                    <span className={`badge-status ${a.isPublished ? 'paid' : 'pending'}`}>
+                                    <span className={`badge-status ${a.isPublished ? 'published' : 'pending'}`}>
                                         {a.isPublished ? 'Publié' : 'Brouillon'}
                                     </span>
                                 </div>

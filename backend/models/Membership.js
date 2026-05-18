@@ -24,32 +24,13 @@ const MembershipSchema = new mongoose.Schema(
 
     submissionStatus: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "approved", "rejected", "revoked"],
       default: "pending",
     },
     submissionMethod: {
       type: String,
-      enum: [
-        "bank_transfer",
-        "orange_money",
-        "mtn_momo",
-        "manual_form",
-        "email",
-        "online",
-      ],
-      default: "bank_transfer",
-    },
-    proofOfPaymentUrl: {
-      type: String,
-      default: null,
-    },
-    membershipFormUrl: {
-      type: String,
-      default: null,
-    },
-    membershipFormData: {
-      type: mongoose.Schema.Types.Mixed,
-      default: null,
+      enum: ["bank_transfer", "orange_money", "mtn_momo", "manual_form", "email"],
+      default: "email",
     },
     rejectionReason: {
       type: String,

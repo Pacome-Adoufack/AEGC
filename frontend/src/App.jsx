@@ -1,169 +1,172 @@
-import React from "react";
+import React, { lazy, Suspense, useState, useEffect } from "react";
 import "./styles/App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastProvider } from "./components/common/Toast.jsx";
-import { useState, useEffect } from "react";
-import Home from "./components/pages/Home.jsx";
-import About from "./components/pages/About.jsx";
-import Committees from "./components/pages/Committees.jsx";
 import Header from "./components/common/Header.jsx";
 import Footer from "./components/common/Footer.jsx";
-import Newspaper from "./components/pages/Newspaper.jsx";
-import Activity from "./components/pages/Activity.jsx";
-import Research from "./components/pages/Research.jsx";
-import Register from "./components/auth/Register.jsx";
-import Login from "./components/auth/Login.jsx";
-import ForgotPassword from "./components/auth/ForgotPassword.jsx";
-import ResetPassword from "./components/auth/ResetPassword.jsx";
-import Reservation from "./components/reservations/Reservation.jsx";
-import JournalsView from "./components/pages/JournalsView.jsx";
-import Review from "./components/reviews/Review.jsx";
-import JanuarReview from "./components/reviews/JanuarReview.jsx";
-import MaiReview from "./components/reviews/MaiReview.jsx";
-import DecemberReview from "./components/reviews/DecemberReview.jsx";
-import Programmation from "./components/pages/Programmation.jsx";
-import Contact from "./components/pages/Contact.jsx";
-import Subscribe from "./components/pages/Subscribe.jsx";
-import Seminar from "./components/pages/Seminar.jsx";
-import Picture from "./components/pages/Picture.jsx";
-import OrgChart from "./components/pages/OrgChart.jsx";
-import Ethics from "./components/pages/Ethics.jsx";
-import Release from "./components/pages/Release.jsx";
-import AllAnnouncements from "./components/pages/AllAnnouncements.jsx";
-import Faq from "./components/pages/Faq.jsx";
-import President from "./components/members/President.jsx";
-import VicePresident from "./components/members/VicePresident.jsx";
-import SecretaireGeneral from "./components/members/SecretaireGeneral.jsx";
-import Tresorier from "./components/members/Tresorier.jsx";
-import ResponsableGrh from "./components/members/ResponsableGrh.jsx";
-import RelationExterieure from "./components/members/RelationExterieure.jsx";
-import CommunicationOne from "./components/members/CommunicationOne.jsx";
-import CommunicationTwo from "./components/members/CommunicationTwo.jsx";
-import CommissaireCompte from "./components/members/CommissaireCompte.jsx";
-import Projet from "./components/members/Projet.jsx";
-import Administrative from "./components/members/Administrative.jsx";
-import ConseillerOne from "./components/members/ConseillerOne.jsx";
-import ConseillerTwo from "./components/members/ConseillerTwo.jsx";
-import Images from "./components/pages/Images.jsx";
-import Development from "./components/pages/Development.jsx";
-import SeminarHome from "./components/pages/SeminarHome.jsx";
-import CenseurOne from "./components/members/CenseurOne.jsx";
-import CenseurTwo from "./components/members/CenseurTwo.jsx";
-import Formation from "./components/pages/Formation.jsx";
-import ReservationFormation from "./components/reservations/ReservationFormation.jsx";
-import FormationsCard from "./components/pages/FormationsCard.jsx";
-import { Bourse } from "./components/pages/Bourse.jsx";
-import Price from "./components/pages/Price.jsx";
-import UserProfile from "./components/pages/UserProfile.jsx";
-import InfoPersonelle from "./components/pages/InfoPersonelle.jsx";
-import MesFormationsReservees from "./components/membership/MesFormationsReservees.jsx";
-import MesActivitesReservees from "./components/membership/MesActivitesReservees.jsx";
-import DevDashboard from "./components/pages/DevDashboard.jsx";
-import AdminDashboard from "./components/pages/AdminDashboard.jsx";
-import MembershipPayment from "./components/membership/MembershipPayment.jsx";
-import MembershipSuccess from "./components/membership/MembershipSuccess.jsx";
-import WorkingPapersMain from "./components/working-papers/WorkingPapersMain.jsx";
-import WorkingPaperDetail from "./components/working-papers/WorkingPaperDetail.jsx";
-import SubmissionForm from "./components/pages/SubmissionForm.jsx";
-import MySubmissions from "./components/pages/MySubmissions.jsx";
-import AdminWorkingPapers from "./components/pages/AdminWorkingPapers.jsx";
-import SubmissionResubmit from "./components/pages/SubmissionResubmit.jsx";
+
+// Pages
+const Home = lazy(() => import("./components/pages/Home.jsx"));
+const About = lazy(() => import("./components/pages/About.jsx"));
+const Committees = lazy(() => import("./components/pages/Committees.jsx"));
+const Newspaper = lazy(() => import("./components/pages/Newspaper.jsx"));
+const Activity = lazy(() => import("./components/pages/Activity.jsx"));
+const Research = lazy(() => import("./components/pages/Research.jsx"));
+const JournalsView = lazy(() => import("./components/pages/JournalsView.jsx"));
+const Programmation = lazy(() => import("./components/pages/Programmation.jsx"));
+const Contact = lazy(() => import("./components/pages/Contact.jsx"));
+const Subscribe = lazy(() => import("./components/pages/Subscribe.jsx"));
+const Seminar = lazy(() => import("./components/pages/Seminar.jsx"));
+const Picture = lazy(() => import("./components/pages/Picture.jsx"));
+const Images = lazy(() => import("./components/pages/Images.jsx"));
+const OrgChart = lazy(() => import("./components/pages/OrgChart.jsx"));
+const Ethics = lazy(() => import("./components/pages/Ethics.jsx"));
+const Release = lazy(() => import("./components/pages/Release.jsx"));
+const AllAnnouncements = lazy(() => import("./components/pages/AllAnnouncements.jsx"));
+const Faq = lazy(() => import("./components/pages/Faq.jsx"));
+const Development = lazy(() => import("./components/pages/Development.jsx"));
+const SeminarHome = lazy(() => import("./components/pages/SeminarHome.jsx"));
+const Formation = lazy(() => import("./components/pages/Formation.jsx"));
+const FormationsCard = lazy(() => import("./components/pages/FormationsCard.jsx"));
+const Price = lazy(() => import("./components/pages/Price.jsx"));
+const UserProfile = lazy(() => import("./components/pages/UserProfile.jsx"));
+const InfoPersonelle = lazy(() => import("./components/pages/InfoPersonelle.jsx"));
+const DevDashboard = lazy(() => import("./components/pages/DevDashboard.jsx"));
+const AdminDashboard = lazy(() => import("./components/pages/AdminDashboard.jsx"));
+const SubmissionForm = lazy(() => import("./components/pages/SubmissionForm.jsx"));
+const MySubmissions = lazy(() => import("./components/pages/MySubmissions.jsx"));
+const AdminWorkingPapers = lazy(() => import("./components/pages/AdminWorkingPapers.jsx"));
+const SubmissionResubmit = lazy(() => import("./components/pages/SubmissionResubmit.jsx"));
+
+// Bourse (named export)
+const BourseModule = lazy(() => import("./components/pages/Bourse.jsx").then((m) => ({ default: m.Bourse })));
+
+// Auth
+const Register = lazy(() => import("./components/auth/Register.jsx"));
+const Login = lazy(() => import("./components/auth/Login.jsx"));
+const ForgotPassword = lazy(() => import("./components/auth/ForgotPassword.jsx"));
+const ResetPassword = lazy(() => import("./components/auth/ResetPassword.jsx"));
+
+// Reservations
+const Reservation = lazy(() => import("./components/reservations/Reservation.jsx"));
+const ReservationFormation = lazy(() => import("./components/reservations/ReservationFormation.jsx"));
+
+// Reviews
+const Review = lazy(() => import("./components/reviews/Review.jsx"));
+const JanuarReview = lazy(() => import("./components/reviews/JanuarReview.jsx"));
+const MaiReview = lazy(() => import("./components/reviews/MaiReview.jsx"));
+const DecemberReview = lazy(() => import("./components/reviews/DecemberReview.jsx"));
+
+// Membership
+const MesFormationsReservees = lazy(() => import("./components/membership/MesFormationsReservees.jsx"));
+const MesActivitesReservees = lazy(() => import("./components/membership/MesActivitesReservees.jsx"));
+const MembershipPayment = lazy(() => import("./components/membership/MembershipPayment.jsx"));
+const MembershipSuccess = lazy(() => import("./components/membership/MembershipSuccess.jsx"));
+
+// Working papers
+const WorkingPapersMain = lazy(() => import("./components/working-papers/WorkingPapersMain.jsx"));
+const WorkingPaperDetail = lazy(() => import("./components/working-papers/WorkingPaperDetail.jsx"));
+
+// Members
+const President = lazy(() => import("./components/members/President.jsx"));
+const VicePresident = lazy(() => import("./components/members/VicePresident.jsx"));
+const SecretaireGeneral = lazy(() => import("./components/members/SecretaireGeneral.jsx"));
+const Tresorier = lazy(() => import("./components/members/Tresorier.jsx"));
+const ResponsableGrh = lazy(() => import("./components/members/ResponsableGrh.jsx"));
+const RelationExterieure = lazy(() => import("./components/members/RelationExterieure.jsx"));
+const CommunicationOne = lazy(() => import("./components/members/CommunicationOne.jsx"));
+const CommunicationTwo = lazy(() => import("./components/members/CommunicationTwo.jsx"));
+const CommissaireCompte = lazy(() => import("./components/members/CommissaireCompte.jsx"));
+const Projet = lazy(() => import("./components/members/Projet.jsx"));
+const Administrative = lazy(() => import("./components/members/Administrative.jsx"));
+const ConseillerOne = lazy(() => import("./components/members/ConseillerOne.jsx"));
+const ConseillerTwo = lazy(() => import("./components/members/ConseillerTwo.jsx"));
+const CenseurOne = lazy(() => import("./components/members/CenseurOne.jsx"));
+const CenseurTwo = lazy(() => import("./components/members/CenseurTwo.jsx"));
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const getToken = () => {
-    return localStorage.getItem("token") || sessionStorage.getItem("token");
-  };
-
 
   useEffect(() => {
-    if (getToken()) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    setIsLoggedIn(!!token);
   }, []);
-
 
   return (
     <ToastProvider>
       <div className="app-layout">
         <Router>
-          {" "}
-          {/* <== Manquait aussi ! */}
           <div className="app-container">
             <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-            <Routes>
-              <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn} />} />
-              <Route
-                path="/login"
-                element={<Login setIsLoggedIn={setIsLoggedIn} />}
-              />
-
-              <Route path="/home" element={<Home isLoggedIn={isLoggedIn} />} />
-              <Route path="/newspaper" element={<Newspaper />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgotpassword" element={<ForgotPassword />} />
-              <Route path="/passwort-reset/:token" element={<ResetPassword />} />
-              <Route path="/committees" element={<Committees />} />
-              <Route path="/activity" element={<Activity />} />
-              <Route path="/research" element={<Research />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/reservation/:activityId" element={<Reservation />} />
-              <Route path="/journal view" element={<JournalsView />} />
-              <Route path="/review" element={<Review />} />
-              <Route path="/review/:janvier" element={<JanuarReview />} />
-              <Route path="/review/:mai" element={<MaiReview />} />
-              <Route path="/review/:décembre" element={<DecemberReview />} />
-              <Route path="/programmation" element={<Programmation />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/subscribe" element={<Subscribe />} />
-              <Route path="/seminaire" element={<Seminar />} />
-              <Route path="/picture" element={<Picture />} />
-              <Route path="/images" element={<Images />} />
-              <Route path="/organigrame" element={<OrgChart />} />
-              <Route path="/ethique" element={<Ethics />} />
-              <Route path="/communiqué" element={<Release />} />
-              <Route path="/actualites" element={<AllAnnouncements />} />
-              <Route path="/questionnaire" element={<Faq />} />
-              <Route path="/president" element={<President />} />
-              <Route path="/vice president" element={<VicePresident />} />
-              <Route path="/secretaire general" element={<SecretaireGeneral />} />
-              <Route path="/tresorier" element={<Tresorier />} />
-              <Route path="/responsable GRH" element={<ResponsableGrh />} />
-              <Route path="/relations exterieures" element={<RelationExterieure />} />
-              <Route path="/communication one" element={<CommunicationOne />} />
-              <Route path="/communication two" element={<CommunicationTwo />} />
-              <Route path="/commissaire aux comptes" element={<CommissaireCompte />} />
-              <Route path="/charges des projets" element={<Projet />} />
-              <Route path="/censeur one" element={<CenseurOne />} />
-              <Route path="/censeur two" element={<CenseurTwo />} />
-              <Route path="/responsable des affaires administratives et diplomatiques" element={<Administrative />} />
-              <Route path="/conseiller one" element={<ConseillerOne />} />
-              <Route path="/conseiller two" element={<ConseillerTwo />} />
-              <Route path="/development" element={<Development />} />
-              <Route path="/webinaire" element={<SeminarHome />} />
-              <Route path="/formations" element={<Formation />} />
-              <Route path="/price" element={<Price />} />
-              <Route path="/bourse" element={<Bourse />} />
-              <Route path="/userprofile" element={<UserProfile />} />
-              <Route path="/formations-details/:formationId" element={<FormationsCard />} />
-              <Route path="/inscription-formation/:formationId" element={<ReservationFormation />} />
-              <Route path="/informations personnelles" element={<InfoPersonelle />} />
-              <Route path="/appercu des formations" element={<MesFormationsReservees />} />
-              <Route path="/appercu des webinaires" element={<MesActivitesReservees />} />
-              <Route path="/dev-dashboard" element={<DevDashboard />} />
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              <Route path="/membership/payment" element={<MembershipPayment />} />
-              <Route path="/membership/success" element={<MembershipSuccess />} />
-              <Route path="/working-papers" element={<WorkingPapersMain />} />
-              <Route path="/working-papers/:id" element={<WorkingPaperDetail />} />
-              <Route path="/working-papers/:id/submit" element={<SubmissionForm />} />
-              <Route path="/my-submissions" element={<MySubmissions />} />
-              <Route path="/my-submissions/:id/resubmit" element={<SubmissionResubmit />} />
-              <Route path="/admin/working-papers" element={<AdminWorkingPapers />} />
-              <Route path="/dispatcher/working-papers" element={<AdminWorkingPapers />} />
-            </Routes>
+            <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center" }}>Chargement...</div>}>
+              <Routes>
+                <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn} />} />
+                <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+                <Route path="/home" element={<Home isLoggedIn={isLoggedIn} />} />
+                <Route path="/newspaper" element={<Newspaper />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgotpassword" element={<ForgotPassword />} />
+                <Route path="/passwort-reset/:token" element={<ResetPassword />} />
+                <Route path="/committees" element={<Committees />} />
+                <Route path="/activity" element={<Activity />} />
+                <Route path="/research" element={<Research />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/reservation/:activityId" element={<Reservation />} />
+                <Route path="/journal view" element={<JournalsView />} />
+                <Route path="/review" element={<Review />} />
+                <Route path="/review/:janvier" element={<JanuarReview />} />
+                <Route path="/review/:mai" element={<MaiReview />} />
+                <Route path="/review/:décembre" element={<DecemberReview />} />
+                <Route path="/programmation" element={<Programmation />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/subscribe" element={<Subscribe />} />
+                <Route path="/seminaire" element={<Seminar />} />
+                <Route path="/picture" element={<Picture />} />
+                <Route path="/images" element={<Images />} />
+                <Route path="/organigrame" element={<OrgChart />} />
+                <Route path="/ethique" element={<Ethics />} />
+                <Route path="/communiqué" element={<Release />} />
+                <Route path="/actualites" element={<AllAnnouncements />} />
+                <Route path="/questionnaire" element={<Faq />} />
+                <Route path="/president" element={<President />} />
+                <Route path="/vice president" element={<VicePresident />} />
+                <Route path="/secretaire general" element={<SecretaireGeneral />} />
+                <Route path="/tresorier" element={<Tresorier />} />
+                <Route path="/responsable GRH" element={<ResponsableGrh />} />
+                <Route path="/relations exterieures" element={<RelationExterieure />} />
+                <Route path="/communication one" element={<CommunicationOne />} />
+                <Route path="/communication two" element={<CommunicationTwo />} />
+                <Route path="/commissaire aux comptes" element={<CommissaireCompte />} />
+                <Route path="/charges des projets" element={<Projet />} />
+                <Route path="/censeur one" element={<CenseurOne />} />
+                <Route path="/censeur two" element={<CenseurTwo />} />
+                <Route path="/responsable des affaires administratives et diplomatiques" element={<Administrative />} />
+                <Route path="/conseiller one" element={<ConseillerOne />} />
+                <Route path="/conseiller two" element={<ConseillerTwo />} />
+                <Route path="/development" element={<Development />} />
+                <Route path="/webinaire" element={<SeminarHome />} />
+                <Route path="/formations" element={<Formation />} />
+                <Route path="/price" element={<Price />} />
+                <Route path="/bourse" element={<BourseModule />} />
+                <Route path="/userprofile" element={<UserProfile />} />
+                <Route path="/formations-details/:formationId" element={<FormationsCard />} />
+                <Route path="/inscription-formation/:formationId" element={<ReservationFormation />} />
+                <Route path="/informations personnelles" element={<InfoPersonelle />} />
+                <Route path="/appercu des formations" element={<MesFormationsReservees />} />
+                <Route path="/appercu des webinaires" element={<MesActivitesReservees />} />
+                <Route path="/dev-dashboard" element={<DevDashboard />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                <Route path="/membership/payment" element={<MembershipPayment />} />
+                <Route path="/membership/success" element={<MembershipSuccess />} />
+                <Route path="/working-papers" element={<WorkingPapersMain />} />
+                <Route path="/working-papers/:id" element={<WorkingPaperDetail />} />
+                <Route path="/working-papers/:id/submit" element={<SubmissionForm />} />
+                <Route path="/my-submissions" element={<MySubmissions />} />
+                <Route path="/my-submissions/:id/resubmit" element={<SubmissionResubmit />} />
+                <Route path="/admin/working-papers" element={<AdminWorkingPapers />} />
+                <Route path="/dispatcher/working-papers" element={<AdminWorkingPapers />} />
+              </Routes>
+            </Suspense>
           </div>
         </Router>
         <Footer />

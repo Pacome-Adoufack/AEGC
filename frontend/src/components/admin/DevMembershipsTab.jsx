@@ -105,6 +105,7 @@ export default function DevMembershipsTab({ token, setMessage, setActiveTab }) {
                                 status === "approved" && expired ? "⚠ Expiré"
                                 : status === "approved" ? "✓ Approuvé"
                                 : status === "pending" ? "⏳ En attente"
+                                : status === "revoked" ? "🛑 Révoqué"
                                 : status === "rejected" || status === "cancelled" ? "✗ Rejeté"
                                 : status || "-";
 

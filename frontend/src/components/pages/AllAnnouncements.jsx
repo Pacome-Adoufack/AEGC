@@ -25,7 +25,7 @@ const AllAnnouncements = () => {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/announcements`);
+        const response = await fetch(`${API_BASE_URL}/api/announcements?limit=20`);
         const result = await response.json();
         if (result.success) setAnnouncements(result.data || []);
       } catch (error) {

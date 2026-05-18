@@ -50,7 +50,7 @@ const MembershipSuccess = () => {
             <div className="membership-success-container">
                 <div className="membership-success-card">
                     <div className="loading-spinner"></div>
-                    <h2>Vérification du paiement...</h2>
+                    <h2>Chargement...</h2>
                     <p>Veuillez patienter quelques instants.</p>
                 </div>
             </div>

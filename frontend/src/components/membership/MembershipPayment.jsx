@@ -274,8 +274,6 @@ const MembershipPayment = () => {
                     <p>Pour la version complète du formulaire et des conditions, téléchargez le fichier Word fourni ci‑dessous.</p>
                 </div>
 
-                {error && <div className="error-message">{error}</div>}
-
                 <div className="manual-payment-info">
                     <h4>Instructions de paiement manuel</h4>
                     <ul>

@@ -956,97 +956,6 @@ router.post(
   },
 );
 
-const activateMembershipHandler = async (req, res) => {
-  try {
-    // Simplification: n'exiger que l'email. Les autres champs sont facultatifs.
-    const { email, currency, notes } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ error: "email requis" });
-    }
-
-    // Vérifier que l'utilisateur existe
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res
-        .status(404)
-        .json({ error: "Utilisateur non trouvé avec cet email" });
-    }
-
-    // Empêcher l'activation si le membre est déjà actif
-    const currentMembership = user.currentMembership
-      ? await Membership.findById(user.currentMembership)
-      : null;
-    const isAlreadyActive =
-      user.membershipStatus === "active" &&
-      currentMembership &&
-      typeof currentMembership.isActive === "function" &&
-      currentMembership.isActive();
-
-    if (isAlreadyActive) {
-      return res.status(409).json({
-        error: "Abonnement déjà actif",
-        message: "Ce membre a déjà un abonnement actif.",
-      });
-    }
-
-    // Choisir une devise par défaut si non précisée (XAF)
-    const chosenCurrency =
-      currency && ["EUR", "USD", "XAF"].includes(currency) ? currency : "XAF";
-    let amount = 10000;
-    if (chosenCurrency === "EUR") amount = 16;
-    if (chosenCurrency === "USD") amount = 18;
-
-    const paymentNumber = await Membership.generatePaymentNumber();
-
-    const membership = new Membership({
-      user: user._id,
-      amount,
-      currency: chosenCurrency,
-      submissionStatus: "approved",
-      submissionMethod: "manual_form",
-      paymentNumber,
-      startDate: new Date(),
-      approvedBy: req.user.id,
-      approvedAt: new Date(),
-      notes: notes || "Activation manuelle par admin",
-    });
-
-    membership.calculateEndDate();
-    await membership.save();
-
-    // Mettre à jour l'utilisateur
-    user.membershipStatus = "active";
-    user.currentMembership = membership._id;
-    await user.save();
-
-    res.json({
-      success: true,
-      message: "Utilisateur trouvé et abonnement activé",
-      membership: await Membership.findById(membership._id)
-        .populate("user", "firstName name email membershipStatus")
-        .populate("approvedBy", "firstName name"),
-    });
-  } catch (error) {
-    console.error("Erreur activation membership:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-router.post(
-  "/memberships/activate",
-  authMiddleware,
-  requireRole(["admin", "dev"]),
-  activateMembershipHandler,
-);
-
-// Alias pour couvrir les appels qui utilisent /api/memberships/activate
-router.post(
-  "/api/memberships/activate",
-  authMiddleware,
-  requireRole(["admin", "dev"]),
-  activateMembershipHandler,
-);
 
 // Modifier un membership (ADMIN/DEV)
 router.put(
@@ -1055,26 +964,14 @@ router.put(
   requireRole(["admin", "dev"]),
   async (req, res) => {
     try {
-      const { submissionStatus, paymentStatus, notes, endDate } = req.body;
+      const { submissionStatus, notes, endDate } = req.body;
 
       const membership = await Membership.findById(req.params.id);
       if (!membership) {
         return res.status(404).json({ error: "Membership non trouvé" });
       }
 
-      // Mettre à jour les champs
-      const normalizedSubmissionStatus =
-        submissionStatus ||
-        (paymentStatus === "paid"
-          ? "approved"
-          : paymentStatus === "pending"
-            ? "pending"
-            : paymentStatus === "cancelled"
-              ? "rejected"
-              : null);
-
-      if (normalizedSubmissionStatus)
-        membership.submissionStatus = normalizedSubmissionStatus;
+      if (submissionStatus) membership.submissionStatus = submissionStatus;
       // Allow admin to set amount/currency/years when updating
       if (req.body.amount !== undefined && !isNaN(Number(req.body.amount)))
         membership.amount = Number(req.body.amount);
@@ -1100,7 +997,7 @@ router.put(
         });
       } else if (!membership.isActive()) {
         await User.findByIdAndUpdate(membership.user, {
-          membershipStatus: "expired",
+          membershipStatus: "none",
           currentMembership: null,
         });
       }

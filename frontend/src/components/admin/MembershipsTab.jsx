@@ -15,10 +15,19 @@ const formatDateSafe = (d) => {
 
 const AMOUNT_OPTIONS = [27, 35, 50, 70, 100];
 
+const METHOD_LABELS = {
+    bank_transfer: '🏦 Virement',
+    orange_money: '🟠 Orange Money',
+    mtn_momo: '🟡 MTN MoMo',
+    manual_form: '📄 Formulaire',
+    email: '📧 Email',
+};
+
 export default function MembershipsTab({ token, setMessage, setActiveTab }) {
     const [memberships, setMemberships] = useState([]);
     const [pendingMemberships, setPendingMemberships] = useState([]);
     const [membershipStats, setMembershipStats] = useState(null);
+    const [innerTab, setInnerTab] = useState('actives');
 
     const [selectedPending, setSelectedPending] = useState(null);
     const [showApproveModal, setShowApproveModal] = useState(false);
@@ -42,6 +51,9 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
     const [activateCurrency, setActivateCurrency] = useState('XAF');
     const [activateAmountOption, setActivateAmountOption] = useState('');
     const [activateCustomAmount, setActivateCustomAmount] = useState('');
+
+    const [historyFilter, setHistoryFilter] = useState('approved');
+    const [historySearch, setHistorySearch] = useState('');
 
     useEffect(() => {
         fetch(`${API_BASE_URL}/memberships`, { headers: { Authorization: `Bearer ${token}` } })
@@ -120,7 +132,7 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
             const res = await fetch(`${API_BASE_URL}/memberships/${selectedRevoke._id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ submissionStatus: 'rejected', notes: 'Révocation par admin' }),
+                body: JSON.stringify({ submissionStatus: 'revoked', notes: 'Révocation par admin' }),
             });
             const data = await res.json();
             if (data.success) {
@@ -153,6 +165,8 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                 setSelectedEmail('');
                 setActivateYears(1);
                 setActivateAmount('');
+                setActivateAmountOption('');
+                setActivateCustomAmount('');
                 setActivateCurrency('XAF');
                 setActiveTab("overview");
                 setTimeout(() => setActiveTab("memberships"), 100);
@@ -172,7 +186,44 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
         setTimeout(() => setMessage(''), 3000);
     };
 
-    const approved = memberships.filter((m) => m.submissionStatus === 'approved');
+    const activeMemberships = memberships.filter((m) => m.submissionStatus === 'approved');
+
+    const historySorted = [...memberships]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .filter((m) => {
+            if (historyFilter !== 'all' && m.submissionStatus !== historyFilter) return false;
+            if (historySearch) {
+                const q = historySearch.toLowerCase();
+                return (
+                    `${m.user?.firstName} ${m.user?.name}`.toLowerCase().includes(q) ||
+                    (m.user?.email || '').toLowerCase().includes(q) ||
+                    (m.paymentNumber || '').toLowerCase().includes(q)
+                );
+            }
+            return true;
+        });
+
+    const historyStatusLabel = (m) => {
+        const s = m.submissionStatus;
+        const expired = s === 'approved' && m.endDate && new Date(m.endDate) <= new Date();
+        if (expired) return { label: '⚠ Expiré', cls: 'expired' };
+        if (s === 'approved') return { label: '✓ Approuvé', cls: 'approved' };
+        if (s === 'pending') return { label: '⏳ En attente', cls: 'pending' };
+        if (s === 'revoked') return { label: '🛑 Révoqué', cls: 'revoked' };
+        if (s === 'rejected') return { label: '✗ Rejeté', cls: 'rejected' };
+        return { label: s, cls: '' };
+    };
+
+    const openActivateModal = () => {
+        setSelectedEmail('');
+        setActivateFeedback('');
+        setActivateYears(1);
+        setActivateAmount('');
+        setActivateAmountOption('');
+        setActivateCustomAmount('');
+        setActivateCurrency('XAF');
+        setShowActivateModal(true);
+    };
 
     return (
         <div className="memberships-section">
@@ -187,80 +238,175 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                 </div>
             )}
 
-            <div className="membership-actions">
-                <button className="btn-activate" onClick={() => { setShowActivateModal(true); setSelectedEmail(''); setActivateFeedback(''); setActivateYears(1); setActivateAmount(''); setActivateCurrency('XAF'); }}>
-                    ➕ Activer une cotisation manuellement
+            <div className="inner-tabs-bar">
+                <div className="inner-tabs-list">
+                    <button
+                        className={`inner-tab${innerTab === 'actives' ? ' active' : ''}`}
+                        onClick={() => setInnerTab('actives')}
+                    >
+                        Cotisations actives
+                        <span className="inner-tab-count">{activeMemberships.length}</span>
+                    </button>
+                    <button
+                        className={`inner-tab${innerTab === 'pending' ? ' active' : ''}`}
+                        onClick={() => setInnerTab('pending')}
+                    >
+                        En attente
+                        {pendingMemberships.length > 0 && (
+                            <span className="inner-tab-badge">{pendingMemberships.length}</span>
+                        )}
+                    </button>
+                    <button
+                        className={`inner-tab${innerTab === 'history' ? ' active' : ''}`}
+                        onClick={() => setInnerTab('history')}
+                    >
+                        Historique
+                    </button>
+                </div>
+                <button className="btn-activate" onClick={openActivateModal}>
+                    ➕ Activer
                 </button>
             </div>
 
-            {/* Liste des cotisations */}
-            <div className="memberships-table">
-                <h3>Liste des cotisations ({approved.length})</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Membre</th><th>Email</th><th>Statut</th><th>Montant</th>
-                            <th>N° Paiement</th><th>Date début</th><th>Date fin</th><th>Méthode</th><th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {approved.map((m) => (
-                            <tr key={m._id}>
-                                <td>{m.user?.firstName} {m.user?.name}</td>
-                                <td>{m.user?.email}</td>
-                                <td><span className="badge-status approved">✓ Approuvé</span></td>
-                                <td>{m.amount} {m.currency}</td>
-                                <td>{m.paymentNumber}</td>
-                                <td>{m.startDate ? new Date(m.startDate).toLocaleDateString('fr-FR') : '-'}</td>
-                                <td>{m.endDate ? formatDateSafe(m.endDate) : '-'}</td>
-                                <td>
-                                    {m.submissionMethod === 'bank_transfer' && '🏦 Virement'}
-                                    {m.submissionMethod === 'orange_money' && '🟠 Orange Money'}
-                                    {m.submissionMethod === 'mtn_momo' && '🟡 MTN MoMo'}
-                                    {m.submissionMethod === 'manual_form' && '📄 Formulaire'}
-                                </td>
-                                <td>
-                                    <button className="btn-revoke" onClick={() => { setSelectedRevoke(m); setShowRevokeConfirm(true); }}>
-                                        🛑 Révoquer
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Soumissions en attente */}
-            <div className="pending-submissions" style={{ marginTop: '2rem' }}>
-                <h3>Soumissions en attente ({pendingMemberships.length})</h3>
-                {pendingMemberships.length === 0 && <p>Aucune soumission en attente.</p>}
-                {pendingMemberships.length > 0 && (
-                    <table>
-                        <thead>
-                            <tr><th>Membre</th><th>Email</th><th>N° Paiement</th><th>Méthode</th><th>Date</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody>
-                            {pendingMemberships.map((m) => (
-                                <tr key={m._id}>
-                                    <td>{m.user?.firstName} {m.user?.name}</td>
-                                    <td>{m.user?.email}</td>
-                                    <td>{m.paymentNumber}</td>
-                                    <td>{m.submissionMethod}</td>
-                                    <td>{new Date(m.createdAt).toLocaleDateString()}</td>
-                                    <td className="action-buttons">
-                                        <button className="btn-approve" onClick={() => { setSelectedPending(m); setApproveYears(1); setApproveAmount(m.amount || ''); setApproveCurrency(m.currency || 'XAF'); setShowApproveModal(true); }}>
-                                            ✓ Approuver
-                                        </button>
-                                        <button className="btn-reject" onClick={() => { setSelectedPending(m); setRejectReason(''); setShowRejectModal(true); }}>
-                                            ✗ Rejeter
-                                        </button>
-                                    </td>
+            {/* Onglet : Cotisations actives */}
+            {innerTab === 'actives' && (
+                <div className="memberships-table">
+                    {activeMemberships.length === 0 ? (
+                        <p className="empty-state">Aucune cotisation active.</p>
+                    ) : (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Membre</th><th>Email</th><th>Montant</th>
+                                    <th>N° Paiement</th><th>Date début</th><th>Date fin</th><th>Méthode</th><th></th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
-            </div>
+                            </thead>
+                            <tbody>
+                                {activeMemberships.map((m) => (
+                                    <tr key={m._id}>
+                                        <td>{m.user?.firstName} {m.user?.name}</td>
+                                        <td>{m.user?.email}</td>
+                                        <td>{m.amount} {m.currency}</td>
+                                        <td>{m.paymentNumber}</td>
+                                        <td>{formatDateSafe(m.startDate)}</td>
+                                        <td>{formatDateSafe(m.endDate)}</td>
+                                        <td>{METHOD_LABELS[m.submissionMethod] || '-'}</td>
+                                        <td>
+                                            <button className="btn-revoke" onClick={() => { setSelectedRevoke(m); setShowRevokeConfirm(true); }}>
+                                                🛑 Révoquer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
+
+            {/* Onglet : En attente */}
+            {innerTab === 'pending' && (
+                <div className="memberships-table">
+                    {pendingMemberships.length === 0 ? (
+                        <p className="empty-state">Aucune soumission en attente.</p>
+                    ) : (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Membre</th><th>Email</th><th>N° Paiement</th>
+                                    <th>Méthode</th><th>Date</th><th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pendingMemberships.map((m) => (
+                                    <tr key={m._id}>
+                                        <td>{m.user?.firstName} {m.user?.name}</td>
+                                        <td>{m.user?.email}</td>
+                                        <td>{m.paymentNumber}</td>
+                                        <td>{METHOD_LABELS[m.submissionMethod] || m.submissionMethod || '-'}</td>
+                                        <td>{formatDateSafe(m.createdAt)}</td>
+                                        <td className="action-buttons">
+                                            <button className="btn-approve" onClick={() => {
+                                                setSelectedPending(m);
+                                                setApproveYears(1);
+                                                setApproveAmount(m.amount || '');
+                                                setApproveAmountOption('');
+                                                setApproveCustomAmount('');
+                                                setApproveCurrency(m.currency || 'XAF');
+                                                setShowApproveModal(true);
+                                            }}>
+                                                ✓ Approuver
+                                            </button>
+                                            <button className="btn-reject" onClick={() => {
+                                                setSelectedPending(m);
+                                                setRejectReason('');
+                                                setShowRejectModal(true);
+                                            }}>
+                                                ✗ Rejeter
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
+
+            {/* Onglet : Historique */}
+            {innerTab === 'history' && (
+                <div className="memberships-table">
+                    <div className="history-controls">
+                        <input
+                            type="text"
+                            className="history-search"
+                            placeholder="Rechercher membre, email, N° paiement..."
+                            value={historySearch}
+                            onChange={(e) => setHistorySearch(e.target.value)}
+                        />
+                        <select
+                            className="history-filter"
+                            value={historyFilter}
+                            onChange={(e) => setHistoryFilter(e.target.value)}
+                        >
+                            <option value="all">Tous les statuts</option>
+                            <option value="approved">Approuvé</option>
+                            <option value="pending">En attente</option>
+                            <option value="rejected">Rejeté</option>
+                            <option value="revoked">Révoqué</option>
+                        </select>
+                    </div>
+                    {historySorted.length === 0 ? (
+                        <p className="empty-state">Aucune entrée.</p>
+                    ) : (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Membre</th><th>Email</th><th>Statut</th><th>Montant</th>
+                                    <th>N° Paiement</th><th>Date soumission</th><th>Date fin</th><th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {historySorted.map((m) => {
+                                    const { label, cls } = historyStatusLabel(m);
+                                    return (
+                                        <tr key={m._id}>
+                                            <td>{m.user?.firstName} {m.user?.name}</td>
+                                            <td>{m.user?.email}</td>
+                                            <td><span className={`badge-status ${cls}`}>{label}</span></td>
+                                            <td>{m.amount ? `${m.amount} ${m.currency}` : '-'}</td>
+                                            <td>{m.paymentNumber}</td>
+                                            <td>{formatDateSafe(m.createdAt)}</td>
+                                            <td>{m.endDate ? formatDateSafe(m.endDate) : '-'}</td>
+                                            <td className="notes-cell">{m.notes || m.rejectionReason || '-'}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
 
             {/* Modale approbation */}
             {showApproveModal && (
@@ -268,7 +414,7 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>Approuver la soumission</h3>
                         <p>Approuver la soumission de {selectedPending?.user?.email} :</p>
-                        <div style={{ display: 'grid', gap: '0.5rem' }}>
+                        <div className="modal-form">
                             <label>Nombre d'années</label>
                             <input type="number" min={1} value={approveYears} onChange={(e) => setApproveYears(Number(e.target.value))} />
                             <label>Montant</label>
@@ -289,7 +435,7 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                                 <option value="XAF">XAF</option><option value="USD">USD</option><option value="EUR">EUR</option>
                             </select>
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                        <div className="modal-actions">
                             <button className="btn-confirm" onClick={handleApprove}>Approuver</button>
                             <button className="btn-cancel" onClick={() => { setShowApproveModal(false); setSelectedPending(null); }}>Annuler</button>
                         </div>
@@ -303,8 +449,13 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>Rejeter la soumission</h3>
                         <p>Motif du rejet pour {selectedPending?.user?.email} :</p>
-                        <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={4} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #ccc' }} />
-                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                        <textarea
+                            className="reject-textarea"
+                            value={rejectReason}
+                            onChange={(e) => setRejectReason(e.target.value)}
+                            rows={4}
+                        />
+                        <div className="modal-actions">
                             <button className="btn-reject" onClick={handleReject}>Confirmer le rejet</button>
                             <button className="btn-cancel" onClick={() => { setShowRejectModal(false); setSelectedPending(null); }}>Annuler</button>
                         </div>
@@ -350,7 +501,7 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                             <select value={activateCurrency} onChange={(e) => setActivateCurrency(e.target.value)}>
                                 <option value="XAF">XAF</option><option value="USD">USD</option><option value="EUR">EUR</option>
                             </select>
-                            {activateFeedback && <div className="inline-feedback" style={{ marginTop: '0.75rem' }}>{activateFeedback}</div>}
+                            {activateFeedback && <div className="inline-feedback">{activateFeedback}</div>}
                             <div className="modal-actions">
                                 <button className="btn-confirm" onClick={handleActivate}>Activer</button>
                                 <button className="btn-cancel" onClick={() => { setShowActivateModal(false); setSelectedEmail(''); setActivateFeedback(''); }}>Annuler</button>
