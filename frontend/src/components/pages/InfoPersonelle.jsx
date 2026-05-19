@@ -11,6 +11,10 @@ const InfoPersonelle = () => {
   const [membership, setMembership] = useState(null);
   const [membershipStatus, setMembershipStatus] = useState('none');
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editBuffer, setEditBuffer] = useState(storedUser);
 
   useEffect(() => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -25,24 +29,18 @@ const InfoPersonelle = () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/membership/my-membership`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-
       const data = await response.json();
 
       if (data.membership) {
         setMembership(data.membership);
-
         const statusField = data.membership.submissionStatus || data.membership.paymentStatus;
         let status = 'none';
-
         if (statusField === 'pending') status = 'pending';
         else if (statusField === 'rejected' || statusField === 'cancelled') status = 'rejected';
         else if (statusField === 'approved') status = data.isActive ? 'active' : 'expired';
         else status = data.isActive ? 'active' : 'none';
-
         setMembershipStatus(status);
       } else {
         setMembershipStatus('none');
@@ -55,179 +53,189 @@ const InfoPersonelle = () => {
   };
 
   const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    setEditBuffer({ ...editBuffer, [e.target.name]: e.target.value });
   };
 
-  const getMembershipBadge = () => {
-    switch (membershipStatus) {
-      case 'active':
-        return { color: '#28a745', text: 'Actif', icon: '✓' };
-      case 'expired':
-        return { color: '#dc3545', text: 'Expiré', icon: '⚠' };
-      case 'pending':
-        return { color: '#ffc107', text: "En attente", icon: '⏳' };
-      case 'rejected':
-        return { color: '#6c757d', text: 'Rejeté', icon: '✗' };
-      case 'none':
-        return { color: '#6c757d', text: 'Non membre', icon: '○' };
-      default:
-        return { color: '#6c757d', text: 'Non membre', icon: '○' };
+  const handleEdit = () => {
+    setEditBuffer({ ...user });
+    setSaveMsg('');
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setEditBuffer({ ...user });
+    setSaveMsg('');
+    setIsEditing(false);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setSaveMsg('');
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editBuffer),
+      });
+      if (!response.ok) throw new Error('Erreur serveur');
+      setUser(editBuffer);
+      localStorage.setItem('user', JSON.stringify(editBuffer));
+      setSaveMsg('Modifications enregistrées.');
+      setIsEditing(false);
+    } catch (err) {
+      setSaveMsg('Erreur lors de la sauvegarde.');
+    } finally {
+      setSaving(false);
     }
   };
 
-  const badge = getMembershipBadge();
-  const formatDateSafe = (d) => {
-    if (!d) return null;
-    const t = new Date(d);
-    if (isNaN(t.getTime())) return null;
-    return t.toLocaleDateString('fr-FR');
+  const BADGE_CONFIG = {
+    active:   { cls: 'badge--active',   text: 'Actif',       icon: '✓' },
+    expired:  { cls: 'badge--expired',  text: 'Expiré',      icon: '⚠' },
+    pending:  { cls: 'badge--pending',  text: 'En attente',  icon: '⏳' },
+    rejected: { cls: 'badge--rejected', text: 'Rejeté',      icon: '✗' },
+    none:     { cls: 'badge--none',     text: 'Non membre',  icon: '–' },
   };
 
-  const activeUntil = formatDateSafe(membership && membership.endDate);
+  const badge = BADGE_CONFIG[membershipStatus] || BADGE_CONFIG.none;
+
+  const formatDate = (d) => {
+    if (!d) return '-';
+    const t = new Date(d);
+    return isNaN(t.getTime()) ? '-' : t.toLocaleDateString('fr-FR');
+  };
 
   return (
-    <div className="info-container">
-      <h2>Information Personnelle</h2>
-      <h4>Mon Profil</h4>
+    <div className="ip-container">
+      <h1 className="ip-page-title">Mon Profil</h1>
 
-      {/* Section Membership */}
-      <div className="membership-section">
-        <div className="membership-header">
-          <h3>Statut de Cotisation</h3>
-          <div className="membership-badge" style={{ backgroundColor: badge.color }}>
-            <span className="badge-icon">{badge.icon}</span>
-            <span className="badge-text">{badge.text}</span>
-          </div>
+      {/* Statut de cotisation */}
+      <div className="ip-card">
+        <div className="ip-card-header">
+          <h2 className="ip-card-title">Statut de cotisation</h2>
+          <span className={`ip-badge ${badge.cls}`}>
+            {badge.icon} {badge.text}
+          </span>
         </div>
 
         {loading ? (
-          <p>Chargement...</p>
+          <p className="ip-loading">Chargement…</p>
         ) : membership && membershipStatus === 'active' ? (
-          <div className="membership-info-card">
-            <div className="membership-active-note">
+          <div className="ip-membership-active">
+            <div className="ip-membership-notice ip-membership-notice--green">
               <strong>Adhésion validée</strong>
-              <span>Votre statut est actif jusqu'au {activeUntil}.</span>
+              <span>Votre statut est actif jusqu'au {formatDate(membership.endDate)}.</span>
             </div>
-            <div className="membership-info-row">
-              <span className="info-label">Numéro de paiement:</span>
-              <span className="info-value">{membership.paymentNumber}</span>
-            </div>
-            <div className="membership-info-row">
-              <span className="info-label">Montant payé:</span>
-              <span className="info-value">{membership.amount} {membership.currency}</span>
-            </div>
-            <div className="membership-info-row">
-              <span className="info-label">Date de début:</span>
-              <span className="info-value">{formatDateSafe(membership && membership.startDate) || '-'}</span>
-            </div>
-            <div className="membership-info-row">
-              <span className="info-label">Date de fin:</span>
-              <span className="info-value">{formatDateSafe(membership && membership.endDate) || '-'}</span>
+            <div className="ip-info-grid">
+              <span>Numéro de paiement</span><strong>{membership.paymentNumber}</strong>
+              <span>Montant</span><strong>{membership.amount} {membership.currency}</strong>
+              <span>Début</span><strong>{formatDate(membership.startDate)}</strong>
+              <span>Fin</span><strong>{formatDate(membership.endDate)}</strong>
             </div>
           </div>
         ) : membership && membershipStatus === 'expired' ? (
-          <div className="membership-expired-card">
-            <p className="expired-message">Votre cotisation a expiré le {formatDateSafe(membership && membership.endDate) || '-'}</p>
-            <button
-              className="renew-button"
-              onClick={() => navigate('/membership/payment')}
-            >
+          <div className="ip-membership-state">
+            <p className="ip-state-msg ip-state-msg--red">Votre cotisation a expiré le {formatDate(membership.endDate)}.</p>
+            <button className="ip-btn ip-btn--red" onClick={() => navigate('/membership/payment')}>
               Renouveler ma cotisation
             </button>
           </div>
         ) : membership && membershipStatus === 'pending' ? (
-          <div className="membership-pending-card">
-            <p className="pending-message">Votre demande d'adhésion est en attente de validation par l'administrateur.</p>
+          <div className="ip-membership-state">
+            <p className="ip-state-msg">Votre demande est en attente de validation par l'administrateur.</p>
           </div>
         ) : membership && membershipStatus === 'rejected' ? (
-          <div className="membership-rejected-card">
-            <p className="rejected-message">Votre demande d'adhésion a été rejetée.</p>
-            {membership.rejectionReason && <p className="rejected-reason">Motif: {membership.rejectionReason}</p>}
-            <button
-              className="resubmit-button"
-              onClick={() => navigate('/membership/payment', { state: { resubmit: true } })}
-            >
+          <div className="ip-membership-state">
+            <p className="ip-state-msg ip-state-msg--red">Votre demande d'adhésion a été rejetée.</p>
+            {membership.rejectionReason && (
+              <p className="ip-rejection-reason">Motif : {membership.rejectionReason}</p>
+            )}
+            <button className="ip-btn ip-btn--blue" onClick={() => navigate('/membership/payment', { state: { resubmit: true } })}>
               Resoumettre ma demande
             </button>
           </div>
         ) : (
-          <div className="membership-none-card">
-            <p className="none-message">Vous n'avez pas encore de cotisation active.</p>
-            <button
-              className="subscribe-button"
-              onClick={() => navigate('/membership/payment', { state: { resubmit: false } })}
-            >
+          <div className="ip-membership-state">
+            <p className="ip-state-msg">Vous n'avez pas encore de cotisation active.</p>
+            <button className="ip-btn ip-btn--green" onClick={() => navigate('/membership/payment')}>
               Souscrire à la cotisation annuelle
             </button>
           </div>
         )}
       </div>
 
-      {/* Section Informations personnelles */}
-      <div className="info-form">
-        <label>Nom:</label>
-        <input
-          type="text"
-          name="name"
-          value={user.name}
-          onChange={handleChange}
-        />
+      {/* Informations personnelles */}
+      <div className="ip-card">
+        <div className="ip-card-header">
+          <h2 className="ip-card-title">Informations personnelles</h2>
+          {!isEditing && (
+            <button type="button" className="ip-btn ip-btn--outline" onClick={handleEdit}>
+              ✏ Modifier
+            </button>
+          )}
+        </div>
 
-        <label>Prénom:</label>
-        <input
-          type="text"
-          name="firstName"
-          value={user.firstName}
-          onChange={handleChange}
-        />
+        {saveMsg && !isEditing && (
+          <p className={`ip-save-msg ${saveMsg.includes('Erreur') ? 'ip-save-msg--error' : 'ip-save-msg--ok'}`}>
+            {saveMsg}
+          </p>
+        )}
 
-        <label>Email:</label>
-        <input
-          type="text"
-          name="email"
-          value={user.email}
-          onChange={handleChange}
-        />
-
-        <label>Pays:</label>
-        <input
-          type="text"
-          name="country"
-          value={user.country}
-          onChange={handleChange}
-        />
-
-        <label>Ville:</label>
-        <input
-          type="text"
-          name="city"
-          value={user.city}
-          onChange={handleChange}
-        />
-
-        <label>Numéro de téléphone:</label>
-        <input
-          type="text"
-          name="telefonNummer"
-          value={user.telefonNummer}
-          onChange={handleChange}
-        />
-
-        <label>Sexe:</label>
-        <input
-          type="text"
-          name="gender"
-          value={user.gender}
-          onChange={handleChange}
-        />
-
-        <label>Université / Profession:</label>
-        <input
-          type="text"
-          name="university"
-          value={user.university}
-          onChange={handleChange}
-        />
+        {isEditing ? (
+          <form className="ip-form" onSubmit={handleSave}>
+            <div className="ip-form-grid">
+              {[
+                { label: 'Nom', name: 'name', type: 'text' },
+                { label: 'Prénom', name: 'firstName', type: 'text' },
+                { label: 'Email', name: 'email', type: 'email' },
+                { label: 'Pays', name: 'country', type: 'text' },
+                { label: 'Ville', name: 'city', type: 'text' },
+                { label: 'Téléphone', name: 'telefonNummer', type: 'text' },
+                { label: 'Sexe', name: 'gender', type: 'text' },
+                { label: 'Université / Profession', name: 'university', type: 'text' },
+              ].map(({ label, name, type }) => (
+                <div className="ip-field" key={name}>
+                  <label>{label}</label>
+                  <input type={type} name={name} value={editBuffer?.[name] || ''} onChange={handleChange} />
+                </div>
+              ))}
+            </div>
+            <div className="ip-form-footer">
+              {saveMsg && (
+                <span className={`ip-save-msg ${saveMsg.includes('Erreur') ? 'ip-save-msg--error' : 'ip-save-msg--ok'}`}>
+                  {saveMsg}
+                </span>
+              )}
+              <button type="button" className="ip-btn ip-btn--ghost" onClick={handleCancel}>Annuler</button>
+              <button type="submit" className="ip-btn ip-btn--blue" disabled={saving}>
+                {saving ? 'Enregistrement…' : 'Enregistrer'}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="ip-form-grid ip-form-grid--readonly">
+            {[
+              { label: 'Nom', value: user?.name },
+              { label: 'Prénom', value: user?.firstName },
+              { label: 'Email', value: user?.email },
+              { label: 'Pays', value: user?.country },
+              { label: 'Ville', value: user?.city },
+              { label: 'Téléphone', value: user?.telefonNummer },
+              { label: 'Sexe', value: user?.gender },
+              { label: 'Université / Profession', value: user?.university },
+            ].map(({ label, value }) => (
+              <div className="ip-field" key={label}>
+                <label>{label}</label>
+                <span className="ip-field-value">{value || '—'}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

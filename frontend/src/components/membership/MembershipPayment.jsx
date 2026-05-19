@@ -1,10 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '../../hooks/useToast.js';
 import { API_BASE_URL } from '../Url';
 import { getAuthToken, getAuthHeaders } from '../../utils/auth';
 import '@/styles/MembershipPayment.css';
+
+const formatDateSafe = (d) => {
+    if (!d) return '-';
+    const t = new Date(d);
+    return isNaN(t.getTime()) ? '-' : t.toLocaleDateString('fr-FR');
+};
+
+const PRICING = [
+    { label: 'Étudiant national', price: '27 USD', icon: '🎓' },
+    { label: 'Étudiant étranger', price: '35 USD', icon: '🎓' },
+    { label: 'Enseignant-Chercheur / Professionnel (National)', price: '50 USD', icon: '👨‍🏫' },
+    { label: 'Enseignant-Chercheur / Professionnel (Étranger - pays à revenus faibles)', price: '50 USD', icon: '👨‍🏫' },
+    { label: 'Enseignant-Chercheur / Professionnel (Étranger - pays à revenu élevé)', price: '100 USD', icon: '👨‍💼' },
+];
+
+const ADVANTAGES = [
+    {
+        title: 'Étudiants',
+        icon: '🎓',
+        items: ['Participation gratuite aux activités', 'Mentorat', 'Prix de recherche', 'Publication dans les bulletins'],
+    },
+    {
+        title: 'Enseignants',
+        icon: '👨‍🏫',
+        items: ['Réduction de 80% sur les conférences', 'Bourses de recherche', 'Publication gratuite ou à tarif réduit', 'Participation aux comités scientifiques'],
+    },
+    {
+        title: 'Professionnels',
+        icon: '👨‍💼',
+        items: ['Réduction de 80% sur les événements', 'Accès aux réseaux partenaires', 'Conférencier invité', 'Promotion de leurs entreprises via l\'AEGC'],
+    },
+];
 
 const MembershipPayment = () => {
     const toast = useToast();
@@ -14,25 +45,18 @@ const MembershipPayment = () => {
     const [error, setError] = useState('');
     const [currentMembership, setCurrentMembership] = useState(null);
     const [isActive, setIsActive] = useState(false);
+    const [paymentTab, setPaymentTab] = useState('bank');
     const navigate = useNavigate();
     const location = useLocation();
     const resubmit = !!location?.state?.resubmit;
-    const formatDateSafe = (d) => {
-        if (!d) return '-';
-        const t = new Date(d);
-        if (isNaN(t.getTime())) return '-';
-        return t.toLocaleDateString('fr-FR');
-    };
 
     useEffect(() => {
-        // Si c'est une resoumission, on n'interroge PAS l'API pour éviter de remettre la soumission rejetée
         if (!resubmit) {
             fetchCurrentMembership();
         } else {
             setCurrentMembership(null);
             setEmailConfirmation(false);
         }
-
         fetchPaymentInfo();
     }, [resubmit]);
 
@@ -49,11 +73,9 @@ const MembershipPayment = () => {
     const fetchCurrentMembership = async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/membership/my-membership`, {
-                headers: getAuthHeaders()
+                headers: getAuthHeaders(),
             });
-
             const data = await response.json();
-
             if (data.membership) {
                 setCurrentMembership(data.membership);
                 setIsActive(data.isActive);
@@ -66,16 +88,13 @@ const MembershipPayment = () => {
     const handlePayment = async () => {
         setLoading(true);
         setError('');
-
         try {
             const token = getAuthToken();
-
             if (!token) {
                 setError('Vous devez être connecté pour souscrire.');
                 setLoading(false);
                 return;
             }
-
             if (!emailConfirmation) {
                 setError('Veuillez confirmer que vous avez envoyé la preuve et le formulaire par email.');
                 setLoading(false);
@@ -85,25 +104,17 @@ const MembershipPayment = () => {
             const formData = new FormData();
             formData.append('currency', 'XAF');
             formData.append('category', 'standard');
-            // submissionMethod is no longer used (email-only workflow)
 
             const response = await fetch(`${API_BASE_URL}/api/membership/submit`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData,
             });
-
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Erreur lors de la soumission');
-            }
+            if (!response.ok) throw new Error(data.message || 'Erreur lors de la soumission');
 
             toast.success(data.message || 'Soumission reçue. En attente de validation.');
             navigate('/membership/success');
-
         } catch (err) {
             console.error('Erreur paiement:', err);
             setError(err.message || 'Une erreur est survenue');
@@ -111,222 +122,222 @@ const MembershipPayment = () => {
         }
     };
 
-    // Legacy verify functions removed: manual submission flow used instead
-
-    if (isActive && currentMembership) {
-        return (
-            <div className="membership-payment-container">
-                <div className="membership-active-card">
-                    <h2>✅ Cotisation Active</h2>
-                    <p>Votre cotisation annuelle est active.</p>
-                    <div className="membership-info">
-                        <p><strong>Montant:</strong> {currentMembership.amount} {currentMembership.currency}</p>
-                        <p><strong>Date de début:</strong> {formatDateSafe(currentMembership.startDate)}</p>
-                        <p><strong>Date de fin:</strong> {formatDateSafe(currentMembership.endDate)}</p>
-                        <p><strong>Numéro de paiement:</strong> {currentMembership.paymentNumber}</p>
-                    </div>
-                    <button onClick={() => navigate('/informations personnelles')} className="back-button">
-                        Retour au profil
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    // Si une soumission existe mais est en attente, montrer l'état en attente
-    if (currentMembership && currentMembership.submissionStatus === 'pending') {
-        return (
-            <div className="membership-payment-container">
-                <div className="membership-pending-card">
-                    <h2>⏳ Soumission en attente</h2>
-                    <p>Votre demande d'adhésion a été reçue et est en attente de validation par un administrateur.</p>
-                    <div className="membership-info">
-                        <p><strong>Numéro de soumission:</strong> {currentMembership.paymentNumber || '-'}</p>
-                        {/* submissionMethod removed — workflow email-only */}
-                        <p><strong>Soumis le:</strong> {formatDateSafe(currentMembership.createdAt)}</p>
-                    </div>
-                    <button onClick={() => navigate('/informations personnelles')} className="back-button">
-                        Retour au profil
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    // Si la soumission a été rejetée, permettre la resoumission
-    if (currentMembership && currentMembership.submissionStatus === 'rejected') {
-        return (
-            <div className="membership-payment-container">
-                <div className="membership-rejected-card">
-                    <h2>✗ Demande rejetée</h2>
-                    <p>Votre demande d'adhésion a été rejetée par l'administrateur.</p>
-                    {currentMembership.rejectionReason && (
-                        <p><strong>Motif:</strong> {currentMembership.rejectionReason}</p>
-                    )}
-                    <div className="membership-info">
-                        <p><strong>Numéro de soumission:</strong> {currentMembership.paymentNumber || '-'}</p>
-                        <p><strong>Soumis le:</strong> {formatDateSafe(currentMembership.createdAt)}</p>
-                    </div>
-                    <div style={{ marginTop: '1rem' }}>
-                        <button
-                            className="primary-button"
-                            onClick={() => {
-                                // allow user to start a fresh submission
-                                setCurrentMembership(null);
-                                setEmailConfirmation(false);
-                            }}
-                        >
-                            Resoumettre ma demande
-                        </button>
-                        <button onClick={() => navigate('/informations personnelles')} className="back-button" style={{ marginLeft: '0.5rem' }}>
-                            Voir mon profil
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    const defaultPaymentInfo = {
+    const p = {
         iban: paymentInfo?.iban || 'CM21 10005 00021 00000062141-02',
         bankAccount: paymentInfo?.bankAccount || 'Afriland First Bank - Cameroun',
         accountNumber: paymentInfo?.accountNumber || '10005 00021 00000062141 02',
         swift: paymentInfo?.swift || 'CCEICMCX',
         accountHolder: paymentInfo?.accountHolder || 'ASSOCIATION DES ECONOMISTES ET GESTIONNAIRES DU CAMEROUN (AEGC)',
         address: paymentInfo?.address || 'Yaoundé, Cameroun',
-        website: paymentInfo?.website || 'www.aegc-web.com',
         orangeNumber: paymentInfo?.orangeNumber || '+237698905007',
         mtnNumber: paymentInfo?.mtnNumber || '+237651659996',
         mobileHolder: paymentInfo?.mobileHolder || 'Dr Zeh Inès Pérolde',
-        adminEmail: paymentInfo?.adminEmail || 'aegc.admi@gmail.com'
+        adminEmail: paymentInfo?.adminEmail || 'aegc.admi@gmail.com',
     };
 
-    const pricingRows = [
-        ['Étudiant national', '27 USD'],
-        ['Étudiant étranger', '35 USD'],
-        ['Enseignant‑Chercheur / Professionnel (National - sur le territoire)', '50 USD'],
-        ['Enseignant‑Chercheur / Professionnel (Étranger - pays à revenu élevé)', '100 USD'],
-        ['Enseignant‑Chercheur / Professionnel (Étranger - pays à revenus faibles)', '50 USD']
-    ];
-
-    const advantagesByProfile = [
-        {
-            title: 'Étudiants',
-            items: [
-                'Participation gratuite aux activités',
-                'Mentorat',
-                'Prix de recherche',
-                'Publication dans les bulletins'
-            ]
-        },
-        {
-            title: 'Enseignants',
-            items: [
-                'Réduction de 80% sur les conférences',
-                'Bourses de recherche',
-                'Publication gratuite ou à tarif réduit',
-                'Participation aux comités scientifiques'
-            ]
-        },
-        {
-            title: 'Professionnels',
-            items: [
-                'Réduction de 80% sur les événements',
-                'Accès aux réseaux partenaires',
-                'Conférencier invité',
-                'Promotion de leurs entreprises via l\'AEGC'
-            ]
-        }
-    ];
-
-    return (
-        <div className="membership-payment-container">
-            <div className="membership-payment-card">
-                <h1>Cotisation Annuelle AEGC</h1>
-                <p className="membership-description">
-                    Devenez membre de l'Association des Économistes et Gestionnaires du Cameroun
-                    et bénéficiez d'avantages exclusifs pendant 1 an.
-                </p>
-
-                <div className="manual-payment-info">
-                    <h4>Tarifs</h4>
-                    <p>Les tarifs varient selon la catégorie et l'origine. Référence actuelle :</p>
-                    <ul>
-                        {pricingRows.map(([label, price]) => (
-                            <li key={label}><strong>{label}:</strong> {price}</li>
-                        ))}
-                    </ul>
+    // --- États intermédiaires ---
+    if (isActive && currentMembership) {
+        return (
+            <div className="mp-container">
+                <div className="mp-card mp-state-card">
+                    <div className="mp-state-icon">✅</div>
+                    <h2>Cotisation Active</h2>
+                    <p>Votre cotisation annuelle est en cours de validité.</p>
+                    <div className="mp-info-grid">
+                        <span>Montant</span><strong>{currentMembership.amount} {currentMembership.currency}</strong>
+                        <span>Date de début</span><strong>{formatDateSafe(currentMembership.startDate)}</strong>
+                        <span>Date de fin</span><strong>{formatDateSafe(currentMembership.endDate)}</strong>
+                        <span>N° de paiement</span><strong>{currentMembership.paymentNumber}</strong>
+                    </div>
+                    <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">Retour au profil</button>
                 </div>
+            </div>
+        );
+    }
 
-                <div className="membership-benefits">
-                    <h4>Avantages (par profil)</h4>
-                    {advantagesByProfile.map((profile) => (
-                        <div key={profile.title} style={{ marginBottom: '0.75rem' }}>
-                            <strong>{profile.title}</strong>
-                            <ul>
-                                {profile.items.map((item) => (
-                                    <li key={item}>{item}</li>
-                                ))}
-                            </ul>
+    if (currentMembership && currentMembership.submissionStatus === 'pending') {
+        return (
+            <div className="mp-container">
+                <div className="mp-card mp-state-card">
+                    <div className="mp-state-icon">⏳</div>
+                    <h2>Demande en attente</h2>
+                    <p>Votre demande d'adhésion a été reçue et est en cours de validation par un administrateur.</p>
+                    <div className="mp-info-grid">
+                        <span>N° de soumission</span><strong>{currentMembership.paymentNumber || '-'}</strong>
+                        <span>Soumis le</span><strong>{formatDateSafe(currentMembership.createdAt)}</strong>
+                    </div>
+                    <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">Retour au profil</button>
+                </div>
+            </div>
+        );
+    }
+
+    if (currentMembership && currentMembership.submissionStatus === 'rejected') {
+        return (
+            <div className="mp-container">
+                <div className="mp-card mp-state-card">
+                    <div className="mp-state-icon mp-state-icon--rejected">✗</div>
+                    <h2>Demande rejetée</h2>
+                    <p>Votre demande d'adhésion a été rejetée par l'administrateur.</p>
+                    {currentMembership.rejectionReason && (
+                        <div className="mp-rejection-reason">
+                            <strong>Motif :</strong> {currentMembership.rejectionReason}
                         </div>
-                    ))}
+                    )}
+                    <div className="mp-info-grid">
+                        <span>N° de soumission</span><strong>{currentMembership.paymentNumber || '-'}</strong>
+                        <span>Soumis le</span><strong>{formatDateSafe(currentMembership.createdAt)}</strong>
+                    </div>
+                    <div className="mp-state-actions">
+                        <button className="mp-btn-primary" onClick={() => { setCurrentMembership(null); setEmailConfirmation(false); }}>
+                            Resoumettre ma demande
+                        </button>
+                        <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">Voir mon profil</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-                    <p>Pour la version complète du formulaire et des conditions, téléchargez le fichier Word fourni ci‑dessous.</p>
+    // --- Page principale ---
+    return (
+        <div className="mp-container">
+            <div className="mp-card">
+
+                {/* En-tête */}
+                <div className="mp-header">
+                    <h1>Cotisation Annuelle AEGC</h1>
+                    <p>Rejoignez l'Association des Économistes et Gestionnaires du Cameroun et accédez à des avantages exclusifs pendant 1 an.</p>
                 </div>
 
-                <div className="manual-payment-info">
-                    <h4>Instructions de paiement manuel</h4>
-                    <ul>
-                        <li><strong>IBAN:</strong> {defaultPaymentInfo.iban}</li>
-                        <li><strong>Compte bancaire:</strong> {defaultPaymentInfo.bankAccount}</li>
-                        <li><strong>Numéro de compte:</strong> {defaultPaymentInfo.accountNumber}</li>
-                        <li><strong>Code SWIFT:</strong> {defaultPaymentInfo.swift}</li>
-                        <li><strong>Titulaire du compte:</strong> {defaultPaymentInfo.accountHolder}</li>
-                        <li><strong>Adresse:</strong> {defaultPaymentInfo.address}</li>
-                        <li><strong>Site web:</strong> {defaultPaymentInfo.website}</li>
-                        <li><strong>Orange Money (compte):</strong> {defaultPaymentInfo.orangeNumber}</li>
-                        <li><strong>MTN MoMo (compte):</strong> {defaultPaymentInfo.mtnNumber || 'Non communiqué'}</li>
-                        <li><strong>Titulaire des comptes mobile:</strong> {defaultPaymentInfo.mobileHolder}</li>
-                        <li><strong>Envoyez la preuve à:</strong> {defaultPaymentInfo.adminEmail}</li>
-                    </ul>
-                    {!paymentInfo && <small>Coordonnées par défaut affichées — configurez `PAYMENT_INFO_*` dans le backend pour les remplacer</small>}
-
-                    <div className="file-inputs">
-                        <p>
-                            Merci d'effectuer le paiement puis d'envoyer la preuve de paiement et le formulaire rempli
-                            par email à <strong>{paymentInfo?.adminEmail || 'aegc.admi@gmail.com'}</strong>.
-                        </p>
-
-                        <a className="download-form-link" href="/pdf/Formulaire_Adhesion_AEGC_2026.docx" target="_blank" rel="noreferrer" download>Télécharger le formulaire d'adhésion (Word)</a>
-
-                        <label style={{ display: 'block', marginTop: '0.8rem' }}>
-                            <input
-                                type="checkbox"
-                                checked={emailConfirmation}
-                                onChange={(e) => setEmailConfirmation(e.target.checked)}
-                            />{' '}
-                            J'ai envoyé la preuve de paiement et le formulaire par email.
-                        </label>
+                {/* Étapes */}
+                <div className="mp-steps">
+                    <div className="mp-step">
+                        <div className="mp-step-num">1</div>
+                        <span>Effectuez votre paiement</span>
+                    </div>
+                    <div className="mp-step-sep" />
+                    <div className="mp-step">
+                        <div className="mp-step-num">2</div>
+                        <span>Envoyez la preuve par email</span>
+                    </div>
+                    <div className="mp-step-sep" />
+                    <div className="mp-step">
+                        <div className="mp-step-num">3</div>
+                        <span>Soumettez votre demande ici</span>
                     </div>
                 </div>
 
-                <button
-                    onClick={handlePayment}
-                    disabled={loading}
-                    className="payment-button"
-                >
-                    {loading ? 'Traitement...' : 'Soumettre ma demande d\'adhésion'}
-                </button>
-
-                {error && (
-                    <div className="inline-form-message" role="alert" style={{ marginTop: '1rem' }}>
-                        {error}
+                {/* Tarifs */}
+                <section className="mp-section">
+                    <h2 className="mp-section-title">Tarifs selon votre profil</h2>
+                    <div className="mp-pricing-grid">
+                        {PRICING.map(({ label, price, icon }) => (
+                            <div className="mp-pricing-card" key={label}>
+                                <span className="mp-pricing-icon">{icon}</span>
+                                <span className="mp-pricing-label">{label}</span>
+                                <span className="mp-pricing-price">{price}</span>
+                            </div>
+                        ))}
                     </div>
-                )}
+                </section>
 
-                <p className="payment-info">
-                    La preuve de paiement est envoyée par email ; un administrateur validera votre adhésion après vérification.
-                </p>
+                {/* Avantages */}
+                <section className="mp-section">
+                    <h2 className="mp-section-title">Avantages par profil</h2>
+                    <div className="mp-advantages-grid">
+                        {ADVANTAGES.map(({ title, icon, items }) => (
+                            <div className="mp-advantage-card" key={title}>
+                                <div className="mp-advantage-title">{icon} {title}</div>
+                                <ul>
+                                    {items.map((item) => <li key={item}>{item}</li>)}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Méthodes de paiement */}
+                <section className="mp-section">
+                    <h2 className="mp-section-title">Instructions de paiement</h2>
+                    <div className="mp-tabs">
+                        <button className={`mp-tab${paymentTab === 'bank' ? ' active' : ''}`} onClick={() => setPaymentTab('bank')}>🏦 Virement bancaire</button>
+                        <button className={`mp-tab${paymentTab === 'orange' ? ' active' : ''}`} onClick={() => setPaymentTab('orange')}>🟠 Orange Money</button>
+                        <button className={`mp-tab${paymentTab === 'mtn' ? ' active' : ''}`} onClick={() => setPaymentTab('mtn')}>🟡 MTN MoMo</button>
+                    </div>
+
+                    <div className="mp-tab-content">
+                        {paymentTab === 'bank' && (
+                            <div className="mp-bank-grid">
+                                <span>IBAN</span><strong>{p.iban}</strong>
+                                <span>Banque</span><strong>{p.bankAccount}</strong>
+                                <span>N° de compte</span><strong>{p.accountNumber}</strong>
+                                <span>Code SWIFT</span><strong>{p.swift}</strong>
+                                <span>Titulaire</span><strong>{p.accountHolder}</strong>
+                                <span>Adresse</span><strong>{p.address}</strong>
+                            </div>
+                        )}
+                        {paymentTab === 'orange' && (
+                            <div className="mp-mobile-money orange">
+                                <div className="mp-mm-number">{p.orangeNumber}</div>
+                                <div className="mp-mm-label">Numéro Orange Money</div>
+                                <div className="mp-mm-holder">Titulaire : <strong>{p.mobileHolder}</strong></div>
+                            </div>
+                        )}
+                        {paymentTab === 'mtn' && (
+                            <div className="mp-mobile-money mtn">
+                                <div className="mp-mm-number">{p.mtnNumber}</div>
+                                <div className="mp-mm-label">Numéro MTN MoMo</div>
+                                <div className="mp-mm-holder">Titulaire : <strong>{p.mobileHolder}</strong></div>
+                            </div>
+                        )}
+                    </div>
+                </section>
+
+                {/* Formulaire + confirmation */}
+                <section className="mp-section mp-confirm-section">
+                    <h2 className="mp-section-title">Finaliser votre demande</h2>
+                    <p className="mp-confirm-text">
+                        Après votre paiement, envoyez la preuve et le formulaire rempli à{' '}
+                        <a href={`mailto:${p.adminEmail}`} className="mp-email-link">{p.adminEmail}</a>.
+                    </p>
+
+                    <a
+                        className="mp-download-btn"
+                        href="/pdf/Formulaire_Adhesion_AEGC_2026.docx"
+                        target="_blank"
+                        rel="noreferrer"
+                        download
+                    >
+                        ⬇ Télécharger le formulaire d'adhésion (Word)
+                    </a>
+
+                    <label className="mp-checkbox-label">
+                        <input
+                            type="checkbox"
+                            checked={emailConfirmation}
+                            onChange={(e) => setEmailConfirmation(e.target.checked)}
+                        />
+                        <span>J'ai effectué mon paiement et envoyé la preuve avec le formulaire à {p.adminEmail}.</span>
+                    </label>
+
+                    {error && (
+                        <div className="mp-error" role="alert">{error}</div>
+                    )}
+
+                    <button
+                        onClick={handlePayment}
+                        disabled={loading}
+                        className="mp-submit-btn"
+                    >
+                        {loading ? 'Traitement en cours…' : 'Soumettre ma demande d\'adhésion'}
+                    </button>
+
+                    <p className="mp-footer-note">
+                        Un administrateur vérifiera votre paiement et activera votre adhésion sous quelques jours.
+                    </p>
+                </section>
+
             </div>
         </div>
     );
