@@ -104,7 +104,7 @@ const Home = () => {
           {/* Header au-dessus des deux colonnes */}
           <div className="section-header">
             <h2>Actualités AEGC</h2>
-            <Link to="/communiqué" className="section-link">Toutes les actualités →</Link>
+            <Link to="/actualites" className="section-link">Toutes les actualités →</Link>
           </div>
 
           <div className="dual-layout">

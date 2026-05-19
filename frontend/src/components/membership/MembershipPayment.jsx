@@ -101,14 +101,13 @@ const MembershipPayment = () => {
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('currency', 'XAF');
-            formData.append('category', 'standard');
-
             const response = await fetch(`${API_BASE_URL}/api/membership/submit`, {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${token}` },
-                body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ currency: 'XAF', category: 'standard' }),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Erreur lors de la soumission');
