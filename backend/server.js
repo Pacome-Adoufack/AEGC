@@ -10,9 +10,16 @@ import devRoutes from "./routes/dev.routes.js";
 import activityRoutes from "./routes/activity.routes.js";
 import formationRoutes from "./routes/formation.routes.js";
 import reservationRoutes from "./routes/reservation.routes.js";
-import adminRoutes from "./routes/admin.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
-import workingPaperRoutes from "./routes/workingPaper.routes.js";
+import faqRoutes from "./routes/faq.routes.js";
+import mediaRoutes from "./routes/media.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
+import subscribeRoutes from "./routes/subscribe.routes.js";
+import announcementRoutes from "./routes/announcement.routes.js";
+import membershipAdminRoutes from "./routes/membership.admin.routes.js";
+import wpPublicRoutes from "./routes/workingPaper.public.routes.js";
+import wpUserRoutes from "./routes/workingPaper.user.routes.js";
+import wpAdminRoutes from "./routes/workingPaper.admin.routes.js";
 import committeeRoutes from "./routes/committee.routes.js";
 
 const app = express();
@@ -77,14 +84,21 @@ app.use("/reservation", reservationRoutes);
 // Routes Membership (cotisations annuelles) - /api/membership/*
 app.use("/api/membership", membershipRoutes);
 
-// Routes Working Papers (soumissions académiques) - /api/*
-app.use("/api", workingPaperRoutes);
+// Routes Working Papers — public, utilisateur, admin
+app.use("/api", wpPublicRoutes);
+app.use("/api", wpUserRoutes);
+app.use("/api", wpAdminRoutes);
 
 // Routes Comité scientifique - /api/*
 app.use("/api", committeeRoutes);
 
-// Routes Admin (FAQ, Images, Contacts, Subscribe) - /*
-app.use("/", adminRoutes);
+// Routes Admin (domaines séparés)
+app.use("/", faqRoutes);
+app.use("/", mediaRoutes);
+app.use("/", contactRoutes);
+app.use("/", subscribeRoutes);
+app.use("/", announcementRoutes);
+app.use("/", membershipAdminRoutes);
 
 // ============================================
 // ROUTE DE TEST
