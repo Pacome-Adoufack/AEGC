@@ -27,6 +27,7 @@ router.get("/users", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const search = req.query.search || "";
+    const roleFilter = req.query.role || "";
     const skip = (page - 1) * limit;
 
     // Construction du filtre de recherche
@@ -40,6 +41,9 @@ router.get("/users", async (req, res) => {
           { university: { $regex: search, $options: "i" } },
         ],
       };
+    }
+    if (roleFilter) {
+      searchFilter.role = roleFilter;
     }
 
     // Compter le total

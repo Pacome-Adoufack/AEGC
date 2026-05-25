@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { API_BASE_URL } from "../Url";
 import ConfirmDialog from "../common/ConfirmDialog";
 import MembershipsTab from "../admin/MembershipsTab";
@@ -7,7 +7,9 @@ import AnnouncementsTab from "../admin/AnnouncementsTab";
 import "../../styles/AdminDashboard.css";
 
 export default function AdminDashboard() {
-    const [activeTab, setActiveTab] = useState("overview");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = searchParams.get("tab") || "overview";
+    const setActiveTab = (tab) => setSearchParams({ tab });
     const [reservations, setReservations] = useState(null);
     const [contacts, setContacts] = useState([]);
     const [subscribers, setSubscribers] = useState([]);

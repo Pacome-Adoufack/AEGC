@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { API_BASE_URL } from "../Url";
 import WorkingPapersCommittee from "../working-papers/WorkingPapersCommittee";
 import DevUsersTab from "../admin/DevUsersTab";
@@ -8,7 +8,9 @@ import "../../styles/DevDashboard.css";
 
 export default function DevDashboard() {
     const [stats, setStats] = useState(null);
-    const [activeTab, setActiveTab] = useState("overview");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = searchParams.get("tab") || "overview";
+    const setActiveTab = (tab) => setSearchParams({ tab });
     const [message, setMessage] = useState("");
 
     const navigate = useNavigate();

@@ -43,6 +43,9 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
     const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
     const [selectedRevoke, setSelectedRevoke] = useState(null);
 
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [selectedDelete, setSelectedDelete] = useState(null);
+
     const [showActivateModal, setShowActivateModal] = useState(false);
     const [selectedEmail, setSelectedEmail] = useState('');
     const [activateFeedback, setActivateFeedback] = useState('');
@@ -124,6 +127,27 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
         }
         setShowRejectModal(false);
         setSelectedPending(null);
+        setTimeout(() => setMessage(''), 3000);
+    };
+
+    const handleDelete = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/memberships/${selectedDelete._id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.success) {
+                setMessage('Enregistrement supprimé');
+                setMemberships((p) => p.filter((m) => m._id !== selectedDelete._id));
+            } else {
+                setMessage('Erreur: ' + (data.error || data.message));
+            }
+        } catch (err) {
+            setMessage('Erreur: ' + err.message);
+        }
+        setShowDeleteConfirm(false);
+        setSelectedDelete(null);
         setTimeout(() => setMessage(''), 3000);
     };
 
@@ -383,7 +407,7 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                             <thead>
                                 <tr>
                                     <th>Membre</th><th>Email</th><th>Statut</th><th>Montant</th>
-                                    <th>N° Paiement</th><th>Date soumission</th><th>Date fin</th><th>Notes</th>
+                                    <th>N° Paiement</th><th>Date soumission</th><th>Date fin</th><th>Notes</th><th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -399,6 +423,13 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                                             <td>{formatDateSafe(m.createdAt)}</td>
                                             <td>{m.endDate ? formatDateSafe(m.endDate) : '-'}</td>
                                             <td className="notes-cell">{m.notes || m.rejectionReason || '-'}</td>
+                                            <td>
+                                                <button
+                                                    className="btn-delete-small"
+                                                    onClick={() => { setSelectedDelete(m); setShowDeleteConfirm(true); }}
+                                                    title="Supprimer"
+                                                >🗑</button>
+                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -472,6 +503,18 @@ export default function MembershipsTab({ token, setMessage, setActiveTab }) {
                 cancelText="Annuler"
                 onClose={() => { setShowRevokeConfirm(false); setSelectedRevoke(null); }}
                 onConfirm={handleRevoke}
+            />
+
+            {/* Confirmation suppression */}
+            <ConfirmDialog
+                isOpen={showDeleteConfirm}
+                title="Supprimer l'enregistrement"
+                message={`Supprimer définitivement la cotisation de ${selectedDelete?.user?.email || ''} ? Cette action est irréversible.`}
+                confirmText="Supprimer"
+                cancelText="Annuler"
+                type="danger"
+                onClose={() => { setShowDeleteConfirm(false); setSelectedDelete(null); }}
+                onConfirm={handleDelete}
             />
 
             {/* Modale activation manuelle */}

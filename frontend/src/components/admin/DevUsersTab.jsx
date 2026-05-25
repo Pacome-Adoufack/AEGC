@@ -9,6 +9,7 @@ export default function DevUsersTab({ token, setMessage }) {
     const [totalPages, setTotalPages] = useState(1);
     const [totalUsers, setTotalUsers] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
+    const [roleFilter, setRoleFilter] = useState("");
     const usersPerPage = 20;
     const [confirmState, setConfirmState] = useState({ isOpen: false, title: "", message: "", onConfirm: null, type: "danger" });
 
@@ -17,6 +18,7 @@ export default function DevUsersTab({ token, setMessage }) {
 
     const loadUsers = () => {
         const params = new URLSearchParams({ page: currentPage, limit: usersPerPage, search: searchQuery });
+        if (roleFilter) params.append("role", roleFilter);
         fetch(`${API_BASE_URL}/dev/users?${params}`, { headers: { Authorization: `Bearer ${token}` } })
             .then((r) => r.json())
             .then((data) => {
@@ -27,10 +29,15 @@ export default function DevUsersTab({ token, setMessage }) {
             .catch(console.error);
     };
 
-    useEffect(() => { loadUsers(); }, [currentPage, searchQuery]);
+    useEffect(() => { loadUsers(); }, [currentPage, searchQuery, roleFilter]);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
+        setCurrentPage(1);
+    };
+
+    const handleRoleFilterChange = (e) => {
+        setRoleFilter(e.target.value);
         setCurrentPage(1);
     };
 
@@ -125,6 +132,13 @@ export default function DevUsersTab({ token, setMessage }) {
                         className="search-input"
                     />
                 </div>
+                <select className="role-filter-select" value={roleFilter} onChange={handleRoleFilterChange}>
+                    <option value="">Tous les rôles</option>
+                    <option value="user">👤 User</option>
+                    <option value="admin">👨‍💼 Admin</option>
+                    <option value="dispatcher">🧭 Gestionnaire</option>
+                    <option value="dev">👨‍💻 Dev</option>
+                </select>
                 <div className="users-info">
                     <span className="users-count">
                         {totalUsers} utilisateur{totalUsers > 1 ? "s" : ""} trouvé{totalUsers > 1 ? "s" : ""}
