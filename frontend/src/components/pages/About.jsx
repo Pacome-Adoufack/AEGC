@@ -44,6 +44,13 @@ const About = () => {
           </div>
         </section>
       </div>
+
+      <p className="about-dev-credit">
+        Site développé par{' '}
+        <a href="https://landry-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer">
+          Landry Atikeng
+        </a>
+      </p>
     </div>
   );
 };

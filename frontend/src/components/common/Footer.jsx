@@ -104,7 +104,7 @@ function Footer() {
           <a href="/ethique">Ethique</a>
           <a href="/contact">Contact</a>
         </div>
-        <p className="footer-credit">Made with <span className="footer-heart">&#9829;</span> by Landry</p>
+        <p className="footer-credit">Made with <span className="footer-heart">&#9829;</span> by <a href="https://landry-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="footer-credit-link">Landry</a></p>
       </div>
     </footer>
   );

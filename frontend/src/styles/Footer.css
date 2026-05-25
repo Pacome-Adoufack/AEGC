@@ -225,6 +225,18 @@
   margin: 0;
 }
 
+.footer-credit-link {
+  color: #e2e8f0;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-credit-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .footer-heart {
   color: #7db539;
   font-size: 14px;

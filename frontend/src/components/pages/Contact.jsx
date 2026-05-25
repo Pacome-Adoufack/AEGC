@@ -169,6 +169,13 @@ export default function Contact() {
       </a>
     ))}
   </div> */}
+
+  <p className="contact-dev-credit">
+    Site développé par{' '}
+    <a href="https://landry-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer">
+      Landry Atikeng
+    </a>
+  </p>
 </div>
 
   );
