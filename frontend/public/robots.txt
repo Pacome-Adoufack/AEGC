@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Bloquer les pages privées/admin
+Disallow: /admin-dashboard
+Disallow: /dev-dashboard
+Disallow: /userprofile
+Disallow: /informations personnelles
+Disallow: /appercu des formations
+Disallow: /appercu des webinaires
+Disallow: /my-submissions
+Disallow: /login
+Disallow: /register
+Disallow: /forgotpassword
+Disallow: /passwort-reset/
+Disallow: /membership/success
+Disallow: /dispatcher/
+
+# Sitemap
+Sitemap: https://aegc-web.com/sitemap.xml

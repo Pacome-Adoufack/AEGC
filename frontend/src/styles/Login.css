@@ -1,135 +1,230 @@
-/* Container principal */
-.login-container {
+.lg-page {
+  min-height: 80vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin-top: 80px;
-  margin-bottom: -30px;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: #f5f7fa;
 }
 
-/* Formulaire */
-.login-form {
-  background-color: #ffffff;
-  padding: 2.5rem 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.lg-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2.75rem;
+}
+
+/* Header */
+.lg-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.lg-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  margin-bottom: 0.75rem;
+}
+
+.lg-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a2e1a;
+  margin: 0 0 0.35rem;
+}
+
+.lg-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Message feedback */
+.lg-message {
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  animation: lg-fade-in 0.3s ease;
+}
+
+.lg-message--success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.lg-message--error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Form */
+.lg-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  position: relative;
+  gap: 1.1rem;
 }
 
-/* Titre */
-.login-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 1rem;
-  color: #333;
+.lg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
-/* Labels */
-.login-form label {
-  font-weight: 500;
-  color: #444;
+.lg-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Champs de saisie */
-.login-form input {
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  transition: all 0.2s ease-in-out;
-}
-
-/* .login-form input:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-} */
-
-/* Bouton de connexion */
-.login-button {
-  padding: 0.8rem;
-  font-size: 1rem;
+.lg-label {
+  font-size: 0.82rem;
   font-weight: 600;
-  background-color: #259B2E;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-/* .login-button:hover {
-  background-color: #0056b3;
-} */
-
-/* Messages */
-.login-message {
-  padding: 0.8rem;
-  border-radius: 0.5rem;
-  text-align: center;
+.lg-forgot {
+  font-size: 0.82rem;
+  color: #28a745;
   font-weight: 500;
-  margin-top: 0.5rem;
-}
-
-.login-message.success {
-  background-color: #259B2E;
-  color: white;
-}
-
-.login-message.error {
-  background-color: #e74c3c;
-  color: white;
-}
-
-/* Lien mot de passe oublié */
-.forgot-password {
-  margin-left: auto;
-  margin-top: 15px;
-  background: none;
-  border: none;
-  color: #3b82f6;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.3s ease;
-  text-decoration: underline;
-}
-
-.forgot-password:hover {
-  color: #2563eb;
   text-decoration: none;
 }
 
-.input-wrapper {
-  position: relative;
+.lg-forgot:hover {
+  text-decoration: underline;
+}
+
+.lg-input {
   width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1a202c;
+  background: #f8fafc;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
-.input-wrapper input {
-  width: 87%;
-  padding-right: 2.5rem; /* espace pour le bouton */
+.lg-input::placeholder {
+  color: #c1cad4;
 }
 
-.show-password-btn {
+.lg-input:focus {
+  outline: none;
+  border-color: #28a745;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.12);
+}
+
+/* Mot de passe */
+.lg-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.lg-password-wrapper .lg-input {
+  padding-right: 2.8rem;
+}
+
+.lg-eye-btn {
   position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  background: none;
+  right: 0.75rem;
+  background: transparent;
   border: none;
-  font-size: 1.1rem;
-  color: #666;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.lg-eye-btn:hover {
+  color: #28a745;
+}
+
+/* Se souvenir de moi */
+.lg-remember {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lg-remember input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #28a745;
   cursor: pointer;
 }
 
-.show-password-btn:hover {
-  color: #007bff;
+/* Bouton submit */
+.lg-submit {
+  width: 100%;
+  padding: 0.85rem;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  transition: background 0.2s, transform 0.15s;
 }
 
+.lg-submit:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.lg-submit:active {
+  transform: translateY(0);
+}
+
+/* Lien inscription */
+.lg-register-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.lg-register-link a {
+  color: #28a745;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lg-register-link a:hover {
+  text-decoration: underline;
+}
+
+/* Animation */
+@keyframes lg-fade-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .lg-card {
+    padding: 2rem 1.25rem;
+  }
+}

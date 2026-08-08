@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Page principale -->
+  <url>
+    <loc>https://aegc-web.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- À propos -->
+  <url>
+    <loc>https://aegc-web.com/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Adhésion -->
+  <url>
+    <loc>https://aegc-web.com/membership/payment</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Actualités -->
+  <url>
+    <loc>https://aegc-web.com/actualites</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Working Papers -->
+  <url>
+    <loc>https://aegc-web.com/working-papers</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Revues -->
+  <url>
+    <loc>https://aegc-web.com/review</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Formations -->
+  <url>
+    <loc>https://aegc-web.com/formations</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Webinaires -->
+  <url>
+    <loc>https://aegc-web.com/webinaire</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Séminaires -->
+  <url>
+    <loc>https://aegc-web.com/seminaire</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Activités -->
+  <url>
+    <loc>https://aegc-web.com/activity</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Recherche -->
+  <url>
+    <loc>https://aegc-web.com/research</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Bourse -->
+  <url>
+    <loc>https://aegc-web.com/bourse</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Comités -->
+  <url>
+    <loc>https://aegc-web.com/committees</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Organigramme -->
+  <url>
+    <loc>https://aegc-web.com/organigrame</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Éthique -->
+  <url>
+    <loc>https://aegc-web.com/ethique</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- FAQ -->
+  <url>
+    <loc>https://aegc-web.com/questionnaire</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Tarifs -->
+  <url>
+    <loc>https://aegc-web.com/price</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://aegc-web.com/contact</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Newsletter -->
+  <url>
+    <loc>https://aegc-web.com/subscribe</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Photos -->
+  <url>
+    <loc>https://aegc-web.com/picture</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Journal -->
+  <url>
+    <loc>https://aegc-web.com/newspaper</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>

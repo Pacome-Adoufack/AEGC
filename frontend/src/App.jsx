@@ -18,10 +18,8 @@ const Contact = lazy(() => import("./components/pages/Contact.jsx"));
 const Subscribe = lazy(() => import("./components/pages/Subscribe.jsx"));
 const Seminar = lazy(() => import("./components/pages/Seminar.jsx"));
 const Picture = lazy(() => import("./components/pages/Picture.jsx"));
-const Images = lazy(() => import("./components/pages/Images.jsx"));
 const OrgChart = lazy(() => import("./components/pages/OrgChart.jsx"));
 const Ethics = lazy(() => import("./components/pages/Ethics.jsx"));
-const Release = lazy(() => import("./components/pages/Release.jsx"));
 const AllAnnouncements = lazy(() => import("./components/pages/AllAnnouncements.jsx"));
 const Faq = lazy(() => import("./components/pages/Faq.jsx"));
 const Development = lazy(() => import("./components/pages/Development.jsx"));
@@ -122,10 +120,8 @@ function App() {
                 <Route path="/subscribe" element={<Subscribe />} />
                 <Route path="/seminaire" element={<Seminar />} />
                 <Route path="/picture" element={<Picture />} />
-                <Route path="/images" element={<Images />} />
                 <Route path="/organigrame" element={<OrgChart />} />
                 <Route path="/ethique" element={<Ethics />} />
-                <Route path="/communiqué" element={<Release />} />
                 <Route path="/actualites" element={<AllAnnouncements />} />
                 <Route path="/questionnaire" element={<Faq />} />
                 <Route path="/president" element={<President />} />

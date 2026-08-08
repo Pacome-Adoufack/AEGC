@@ -21,6 +21,7 @@ import wpPublicRoutes from "./routes/workingPaper.public.routes.js";
 import wpUserRoutes from "./routes/workingPaper.user.routes.js";
 import wpAdminRoutes from "./routes/workingPaper.admin.routes.js";
 import committeeRoutes from "./routes/committee.routes.js";
+import repecRoutes from "./routes/repec.routes.js";
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -91,6 +92,9 @@ app.use("/api", wpAdminRoutes);
 
 // Routes Comité scientifique - /api/*
 app.use("/api", committeeRoutes);
+
+// Routes RePEC — accès public pour indexation
+app.use("/", repecRoutes);
 
 // Routes Admin (domaines séparés)
 app.use("/", faqRoutes);

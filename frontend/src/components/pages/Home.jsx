@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import "../../styles/Home.css";
 import logo from "../../assets/logo.png";
 import Seminar from "./Seminar";
-import Release from "./Release";
-import Images from "./Images";
 import firstImage from "../../assets/firstImage.png";
 import video from "../../assets/video.mp4";
 import { API_BASE_URL } from "../Url";
@@ -181,16 +179,6 @@ const Home = () => {
           </div>
         </div>
       )}
-
-      {/* Communiqués */}
-      <section className="home-section bg-white">
-        <Release />
-      </section>
-
-      {/* Galerie — loin en bas */}
-      <section className="home-section bg-light-gray">
-        <Images />
-      </section>
 
       {/* Newsletter */}
       <section className="newsletter-section">
