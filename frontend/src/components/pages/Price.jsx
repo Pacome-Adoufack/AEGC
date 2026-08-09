@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/Release.css"; // On réutilise le même style
+import "../../styles/Price.css";
 import logo from "../../assets/logo.png";
 
 const priceFiles = [
