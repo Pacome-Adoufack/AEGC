@@ -146,13 +146,13 @@ function SubmissionForm() {
 
             // Vérifier les champs requis
             if (!formData.articleTitle || !formData.abstract || !pdfFile) {
-                setError("Veuillez remplir tous les champs obligatoires");
+                toast.error("Veuillez remplir tous les champs obligatoires");
                 return;
             }
 
             // Vérifier qu'au moins un auteur est renseigné
             if (!authors[0].name || !authors[0].email) {
-                setError("Veuillez renseigner au moins un auteur");
+                toast.error("Veuillez renseigner au moins un auteur");
                 return;
             }
 
@@ -197,7 +197,22 @@ function SubmissionForm() {
                 return;
             }
 
-            const data = await response.json();
+            // Le proxy peut rejeter l'envoi avant d'atteindre l'API (413) et
+            // répondre en HTML : ne jamais parser du JSON à l'aveugle.
+            if (response.status === 413) {
+                throw new Error(
+                    `Le document est trop volumineux pour être envoyé (maximum ${PDF_MAX_SIZE_MB} MB). Essayez de compresser votre PDF.`
+                );
+            }
+
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                throw new Error(
+                    `Le serveur a renvoyé une réponse inattendue (code ${response.status}). Votre document n'a pas été enregistré.`
+                );
+            }
 
             if (!response.ok) {
                 throw new Error(data.error || "Erreur lors de la soumission");
@@ -208,10 +223,7 @@ function SubmissionForm() {
                 navigate("/my-submissions");
             }, 2000);
         } catch (err) {
-            // Ne pas afficher d'erreur si on a déjà redirigé
-            if (err.message !== "Failed to fetch") {
-                setError(err.message);
-            }
+            toast.error(err.message || "Erreur lors de la soumission");
         } finally {
             setSubmitting(false);
         }

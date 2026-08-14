@@ -136,7 +136,22 @@ function SubmissionResubmit() {
                 body: formData,
             });
 
-            const data = await response.json();
+            // Le proxy peut rejeter l'envoi avant d'atteindre l'API (413) et
+            // répondre en HTML : ne jamais parser du JSON à l'aveugle.
+            if (response.status === 413) {
+                throw new Error(
+                    `Le document est trop volumineux pour être envoyé (maximum ${PDF_MAX_SIZE_MB} MB). Essayez de compresser votre PDF.`
+                );
+            }
+
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                throw new Error(
+                    `Le serveur a renvoyé une réponse inattendue (code ${response.status}). Votre document n'a pas été enregistré.`
+                );
+            }
 
             if (!response.ok) {
                 throw new Error(data.error || "Erreur lors de la resoumission");
@@ -145,7 +160,7 @@ function SubmissionResubmit() {
             toast.success("Nouvelle version envoyée avec succès");
             navigate("/my-submissions");
         } catch (submitError) {
-            setError(submitError.message);
+            toast.error(submitError.message || "Erreur lors de la resoumission");
         } finally {
             setSubmitting(false);
         }

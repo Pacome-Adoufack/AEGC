@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../hooks/useToast.js";
+import ConfirmDialog from "../common/ConfirmDialog";
 import { API_BASE_URL } from "../Url";
 import { getAuthToken } from "../../utils/auth";
 import "../../styles/wp-base.css";
@@ -23,6 +25,7 @@ function MySubmissions() {
     const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null, type: 'danger' });
     const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => setConfirmState({ isOpen: true, title, message, onConfirm, type });
     const navigate = useNavigate();
+    const toast = useToast();
 
     useEffect(() => {
         const token = getAuthToken();
