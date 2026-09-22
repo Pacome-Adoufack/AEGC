@@ -1,0 +1,18 @@
+/* Thème du site public AEGC : une seule source pour la police et les couleurs.
+   Les couleurs viennent du logo (bleu #1860a8, vert #189030) : le bleu est la
+   couleur d'accent unique (liens, boutons) ; le vert reste réservé au logo. */
+:root {
+  --font-sans: "Source Sans 3 Variable", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --aegc-blue: #1a5fa6;
+  --aegc-blue-hover: #144d88;
+  --aegc-blue-soft: #eaf1f9;
+  --aegc-green: #1f8f3a;
+
+  --aegc-ink: #14212e;
+  --aegc-text: #3b4856;
+  --aegc-muted: #6a7684;
+  --aegc-line: #e1e7ee;
+  --aegc-surface: #f5f7fa;
+  --aegc-tint: #f0f5fb;
+}

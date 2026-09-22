@@ -1,110 +1,107 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "../../styles/Picture.css";
-
-// Structure des images avec métadonnées (année)
-const images = [
-  {
-    src: "https://www.exordo.com/hubfs/Imported_Blog_Media/Resized-image-4.jpg",
-    year: 2025,
-    title: "Événement d'été",
-  },
-  {
-    src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-4gWHd92vku_iKTC4ZzCMAz5J_C6wvzIFcw&s",
-    year: 2025,
-    title: "Réunion d'équipe",
-  },
-  {
-    src: "https://www.cio.com/wp-content/uploads/2025/03/217732-0-86829000-1742807934-shutterstock_2347235209.jpg?quality=50&strip=all&w=1024",
-    year: 2025,
-    title: "Conférence",
-  },
-  {
-    src: "https://www.mon-evenement.net/wp-content/uploads/2017/05/conference.jpg",
-    year: 2024,
-    title: "Projet Alpha",
-  },
-  {
-    src: "https://www.undp.org/sites/g/files/zskgke326/files/2022-12/UNDPAfrica_AEC_Closing%20Diginitaries%20Group%20Photo.jpg",
-    year: 2024,
-    title: "Lancement produit",
-  },
-  {
-    src: "https://express.converia.de/custom/media/conrad_25/Gruppenfoto_druck_ok_.jpg",
-    year: 2023,
-    title: "Atelier créatif",
-  },
-  {
-    src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxqlsEbwqsBygsIShg9tyNt2e9vxqyPc4VVA&s",
-    year: 2023,
-    title: "Formation",
-  },
-  {
-    src: "https://images.squarespace-cdn.com/content/v1/5f075d33e4ac9c3b05ca695e/1608135598073-SP8USL4632R82D136QQO/19264733_690328184505668_6606660888089315828_o.jpg",
-    year: 2023,
-    title: "Équipe en action",
-  },
-];
+import { API_BASE_URL } from "../Url";
+import PhotoLightbox from "../common/PhotoLightbox";
+import { formatPhotoDate, galleryImageUrl, photoYear } from "../../utils/gallery";
 
 function Picture() {
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [selectedYear, setSelectedYear] = useState("all");
-  const [hoveredImage, setHoveredImage] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
+  const [openIndex, setOpenIndex] = useState(null);
 
-  // Extraire les années uniques pour les filtres
-  const years = ["all", ...new Set(images.map((img) => String(img.year)))];
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/gallery?limit=500`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) setPhotos(result.data || []);
+        else setLoadError(true);
+      })
+      .catch(() => setLoadError(true))
+      .finally(() => setLoading(false));
+  }, []);
 
+  // Années présentes, de la plus récente à la plus ancienne
+  const years = useMemo(
+    () => [...new Set(photos.map(photoYear))].sort((a, b) => b - a),
+    [photos],
+  );
 
-  // Filtrer les images selon l'année sélectionnée
-  const filteredImages =
-    selectedYear === "all"
-      ? images
-      : images.filter((img) => img.year === Number(selectedYear));
+  // L'API renvoie l'ordre d'ajout (utile pour l'accueil) ; ici, archive classée
+  // par date d'événement, la plus récente d'abord.
+  const filteredPhotos = useMemo(() => {
+    const photoTime = (photo) => new Date(photo.eventDate || photo.createdAt).getTime();
+    const inYear = selectedYear === "all" ? photos : photos.filter((photo) => photoYear(photo) === selectedYear);
+    return [...inYear].sort((a, b) => photoTime(b) - photoTime(a));
+  }, [photos, selectedYear]);
+
+  const closeLightbox = useCallback(() => setOpenIndex(null), []);
 
   return (
     <div className="gallery-container">
       <h1 className="gallery-title">Galerie Photos</h1>
 
-      {/* Filtres par année */}
-      <div className="year-filters">
-  {years.map((year) => (
-    <button
-      key={year}
-      onClick={() => setSelectedYear(year === "all" ? "all" : Number(year))}
-      className={`year-filter ${
-        selectedYear === (year === "all" ? "all" : Number(year)) ? "active" : ""
-      }`}
-    >
-      {year === "all" ? "Toutes les années" : year}
-    </button>
-  ))}
-</div>
-
-
-      {/* Galerie d'images */}
-      <div className="masonry-gallery">
-        {filteredImages.map((image, index) => (
-          <div
-            key={index}
-            className="gallery-item"
-            onMouseEnter={() => setHoveredImage(index)}
-            onMouseLeave={() => setHoveredImage(null)}
-          >
-            <img
-              src={image.src}
-              alt={image.title}
-              className="gallery-image"
-              loading="lazy"
-            />
-            <div
-              className={`image-overlay ${
-                hoveredImage === index ? "visible" : ""
-              }`}
-            >
-              <h3>{image.title}</h3>
-              <p>{image.year}</p>
+      {loading ? (
+        <p className="gallery-state">Chargement des photos…</p>
+      ) : loadError ? (
+        <p className="gallery-state">La galerie est momentanément indisponible. Réessayez dans quelques instants.</p>
+      ) : photos.length === 0 ? (
+        <p className="gallery-state">Aucune photo pour le moment.</p>
+      ) : (
+        <>
+          {years.length > 1 && (
+            <div className="year-filters">
+              {["all", ...years].map((year) => (
+                <button
+                  key={year}
+                  onClick={() => setSelectedYear(year)}
+                  className={`year-filter ${selectedYear === year ? "active" : ""}`}
+                >
+                  {year === "all" ? "Toutes les années" : year}
+                </button>
+              ))}
             </div>
+          )}
+
+          <div className="masonry-gallery">
+            {filteredPhotos.map((photo, index) => (
+              <button
+                key={photo._id}
+                type="button"
+                className="gallery-item"
+                onClick={() => setOpenIndex(index)}
+                onMouseEnter={() => setHoveredId(photo._id)}
+                onMouseLeave={() => setHoveredId(null)}
+                aria-label={`Agrandir : ${photo.title}`}
+              >
+                <img
+                  src={galleryImageUrl(photo, "thumb")}
+                  alt={photo.title}
+                  width={photo.thumbWidth}
+                  height={photo.thumbHeight}
+                  className="gallery-image"
+                  loading="lazy"
+                />
+                <div className={`image-overlay ${hoveredId === photo._id ? "visible" : ""}`}>
+                  <h3>{photo.title}</h3>
+                  <p>{formatPhotoDate(photo) || photoYear(photo)}</p>
+                </div>
+              </button>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
+
+      {openIndex !== null && (
+        <PhotoLightbox
+          photos={filteredPhotos}
+          index={openIndex}
+          onClose={closeLightbox}
+          onNavigate={setOpenIndex}
+        />
+      )}
     </div>
   );
 }

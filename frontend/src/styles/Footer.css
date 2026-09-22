@@ -2,13 +2,13 @@
 .footer {
   background-color: #0d1b2a;
   color: #e2e8f0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* ===== Barre superieure coloree ===== */
 .footer-top-bar {
   height: 4px;
-  background: linear-gradient(90deg, #0084ff 0%, #7db539 100%);
+  background: linear-gradient(90deg, var(--aegc-blue) 0%, var(--aegc-green) 100%);
 }
 
 /* ===== Corps du footer ===== */
@@ -50,7 +50,7 @@
   gap: 8px;
   margin-top: 6px;
   padding: 8px 18px;
-  background-color: #0084ff;
+  background-color: var(--aegc-blue);
   color: white !important;
   border-radius: 6px;
   font-size: 14px;
@@ -108,7 +108,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background-color: #0084ff;
+  background-color: var(--aegc-blue);
   flex-shrink: 0;
   transition: background-color 0.2s;
 }

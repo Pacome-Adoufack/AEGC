@@ -23,11 +23,12 @@ const METHOD_LABELS = {
     email: '📧 Email',
 };
 
-export default function MembershipsTab({ token, setMessage, setActiveTab }) {
+// initialTab : liste ouverte au chargement ('pending' depuis le bouton « Valider » de l'accueil admin).
+export default function MembershipsTab({ token, setMessage, setActiveTab, initialTab = 'actives' }) {
     const [memberships, setMemberships] = useState([]);
     const [pendingMemberships, setPendingMemberships] = useState([]);
     const [membershipStats, setMembershipStats] = useState(null);
-    const [innerTab, setInnerTab] = useState('actives');
+    const [innerTab, setInnerTab] = useState(initialTab);
 
     const [selectedPending, setSelectedPending] = useState(null);
     const [showApproveModal, setShowApproveModal] = useState(false);

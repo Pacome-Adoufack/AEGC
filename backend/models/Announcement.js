@@ -46,6 +46,16 @@ const announcementSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    // Pièces jointes (PDF, images). storedPath est relatif au dossier uploads.
+    attachments: [
+      {
+        originalName: { type: String, required: true, trim: true },
+        storedPath: { type: String, required: true },
+        mimetype: { type: String, required: true },
+        size: { type: Number },
+        kind: { type: String, enum: ["image", "pdf"], required: true },
+      },
+    ],
   },
   {
     timestamps: true,

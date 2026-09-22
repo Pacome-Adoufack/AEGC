@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/AllAnnouncements.css";
 import { API_BASE_URL } from "../Url";
+import AnnouncementBody from "../common/AnnouncementBody";
+import {
+  attachmentUrl,
+  categoryLabel,
+  firstImageAttachment,
+  hasMoreToRead,
+} from "../../utils/announcements";
 
 function formatDateDisplay(dateValue) {
   if (!dateValue) return null;
@@ -61,23 +68,39 @@ const AllAnnouncements = () => {
           <p className="ann-empty">Aucune actualité pour le moment.</p>
         ) : (
           <div className="ann-grid">
-            {announcements.map((item) => (
-              <article
-                key={item._id}
-                className="ann-card"
-                onClick={() => openModal(item)}
-              >
-                <div className="ann-card-meta">
-                  <span className="ann-chip">{item.category}</span>
-                  <span className="ann-date">
-                    {formatDateDisplay(item.publishedAt || item.createdAt) || ""}
-                  </span>
-                </div>
-                <h2 className="ann-card-title">{item.title}</h2>
-                <p className="ann-card-summary">{item.summary}</p>
-                <span className="ann-read-more">Lire la suite →</span>
-              </article>
-            ))}
+            {announcements.map((item) => {
+              const readable = hasMoreToRead(item);
+              const cover = firstImageAttachment(item);
+              const pdfCount = (item.attachments || []).filter((a) => a.kind === "pdf").length;
+              return (
+                <article
+                  key={item._id}
+                  className={`ann-card ${readable ? "" : "ann-card--static"} ${cover ? "ann-card--with-cover" : ""}`}
+                  onClick={readable ? () => openModal(item) : undefined}
+                >
+                  {cover && (
+                    <div className="ann-card-cover">
+                      <img src={attachmentUrl(cover)} alt="" loading="lazy" />
+                    </div>
+                  )}
+                  <div className="ann-card-body">
+                    <div className="ann-card-meta">
+                      <span className="ann-chip">{categoryLabel(item.category)}</span>
+                      <span className="ann-date">
+                        {formatDateDisplay(item.publishedAt || item.createdAt) || ""}
+                      </span>
+                    </div>
+                    <h2 className="ann-card-title">{item.title}</h2>
+                    <p className="ann-card-summary">{item.summary}</p>
+                    {readable && (
+                      <span className="ann-read-more">
+                        {pdfCount > 0 ? `Lire la suite · ${pdfCount} PDF →` : "Lire la suite →"}
+                      </span>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </div>
@@ -92,7 +115,7 @@ const AllAnnouncements = () => {
           <div className="ann-modal" onClick={(e) => e.stopPropagation()}>
             <button className="ann-close" onClick={closeModal}>✕</button>
             <div className="ann-modal-content">
-              <span className="ann-chip">{modalItem.category}</span>
+              <span className="ann-chip">{categoryLabel(modalItem.category)}</span>
               <h3 className="ann-modal-title">{modalItem.title}</h3>
               <p className="ann-modal-date">
                 {formatDateDisplay(modalItem.publishedAt || modalItem.createdAt)}
@@ -105,11 +128,7 @@ const AllAnnouncements = () => {
                 </p>
               )}
               <div className="ann-modal-body">
-                {modalItem.content ? (
-                  <div dangerouslySetInnerHTML={{ __html: modalItem.content }} />
-                ) : (
-                  <p>{modalItem.summary}</p>
-                )}
+                <AnnouncementBody announcement={modalItem} />
               </div>
             </div>
           </div>

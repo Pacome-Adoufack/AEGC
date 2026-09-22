@@ -1,7 +1,16 @@
 import express from "express";
+import fs from "fs";
+import mongoose from "mongoose";
 import Announcement from "../models/Announcement.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import requireRole from "../middlewares/roleMiddleware.js";
+import {
+  ANNOUNCEMENT_MAX_FILES,
+  uploadAnnouncementFiles,
+  toStoredAttachment,
+  discardUploadedFiles,
+} from "../middlewares/uploadAnnouncementFiles.js";
+import { resolveStoredPath, deleteStoredFiles } from "../utils/uploadStorage.js";
 
 const router = express.Router();
 
@@ -22,6 +31,46 @@ function formatDateOnly(date) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+// Les formulaires multipart transmettent tout en texte : "false" doit rester faux.
+function parseBoolean(value, fallback) {
+  if (typeof value === "boolean") return value;
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return fallback;
+}
+
+function parseIdList(value) {
+  if (!value) return [];
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Forme renvoyée au client : jamais le chemin disque, toujours une URL de l'API.
+function serializeAnnouncement(announcement) {
+  return {
+    ...announcement,
+    publishedAt: formatDateOnly(announcement.publishedAt),
+    expiresAt: formatDateOnly(announcement.expiresAt),
+    attachments: (announcement.attachments || []).map((attachment) => ({
+      _id: attachment._id,
+      originalName: attachment.originalName,
+      mimetype: attachment.mimetype,
+      size: attachment.size,
+      kind: attachment.kind,
+      url: `/api/announcements/${announcement._id}/attachments/${attachment._id}`,
+    })),
+  };
+}
+
+async function findSerialized(id) {
+  const populated = await Announcement.findById(id).populate("author", "firstName name").lean();
+  return populated ? serializeAnnouncement(populated) : null;
+}
+
 // Obtenir les annonces publiées (PUBLIC)
 router.get("/api/announcements", async (req, res) => {
   try {
@@ -37,15 +86,40 @@ router.get("/api/announcements", async (req, res) => {
       .populate("author", "firstName name")
       .lean();
 
-    const mapped = announcements.map((a) => ({
-      ...a,
-      publishedAt: formatDateOnly(a.publishedAt),
-      expiresAt: formatDateOnly(a.expiresAt),
-    }));
-
+    const mapped = announcements.map(serializeAnnouncement);
     res.status(200).json({ success: true, count: mapped.length, data: mapped });
   } catch (error) {
     console.error("Erreur annonces publiques:", error);
+    res.status(500).json({ success: false, error: "Erreur serveur" });
+  }
+});
+
+// Servir une pièce jointe (PUBLIC)
+router.get("/api/announcements/:id/attachments/:attachmentId", async (req, res) => {
+  try {
+    const { id, attachmentId } = req.params;
+    if (!mongoose.isValidObjectId(id) || !mongoose.isValidObjectId(attachmentId)) {
+      return res.status(404).json({ success: false, error: "Fichier introuvable" });
+    }
+
+    const announcement = await Announcement.findById(id).select("attachments").lean();
+    const attachment = announcement?.attachments?.find((a) => String(a._id) === attachmentId);
+    const filePath = resolveStoredPath(attachment?.storedPath);
+
+    if (!attachment || !filePath || !fs.existsSync(filePath)) {
+      return res.status(404).json({ success: false, error: "Fichier introuvable" });
+    }
+
+    res.setHeader("Content-Type", attachment.mimetype);
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename*=UTF-8''${encodeURIComponent(attachment.originalName)}`,
+    );
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error("Erreur pièce jointe annonce:", error);
     res.status(500).json({ success: false, error: "Erreur serveur" });
   }
 });
@@ -58,12 +132,7 @@ router.get("/api/admin/announcements", authMiddleware, requireRole(["admin", "de
       .populate("author", "firstName name")
       .lean();
 
-    const mapped = announcements.map((a) => ({
-      ...a,
-      publishedAt: formatDateOnly(a.publishedAt),
-      expiresAt: formatDateOnly(a.expiresAt),
-    }));
-
+    const mapped = announcements.map(serializeAnnouncement);
     res.status(200).json({ success: true, count: mapped.length, data: mapped });
   } catch (error) {
     console.error("Erreur annonces admin:", error);
@@ -72,106 +141,141 @@ router.get("/api/admin/announcements", authMiddleware, requireRole(["admin", "de
 });
 
 // Créer une annonce (ADMIN/DEV)
-router.post("/api/admin/announcements", authMiddleware, requireRole(["admin", "dev"]), async (req, res) => {
-  try {
-    const { title, summary, content, category, isPublished, publishedAt, expiresAt, isPinned } = req.body;
+router.post(
+  "/api/admin/announcements",
+  authMiddleware,
+  requireRole(["admin", "dev"]),
+  uploadAnnouncementFiles,
+  async (req, res) => {
+    const uploadedFiles = req.files || [];
+    try {
+      const { title, summary, content, category, publishedAt, expiresAt } = req.body;
 
-    if (!title || !summary) {
-      return res.status(400).json({ success: false, error: "Le titre et le résumé sont requis" });
-    }
+      if (!title || !summary) {
+        await discardUploadedFiles(uploadedFiles);
+        return res.status(400).json({ success: false, error: "Le titre et le résumé sont requis" });
+      }
 
-    const shouldPublish = Boolean(isPublished);
-    const publicationDate = shouldPublish
-      ? publishedAt ? toDateOnly(publishedAt) : toDateOnly(new Date())
-      : null;
-    const expiresDate = expiresAt ? toDateOnly(expiresAt) : null;
+      const shouldPublish = parseBoolean(req.body.isPublished, false);
+      const publicationDate = shouldPublish
+        ? publishedAt ? toDateOnly(publishedAt) : toDateOnly(new Date())
+        : null;
+      const expiresDate = expiresAt ? toDateOnly(expiresAt) : null;
 
-    if (expiresDate && publicationDate && expiresDate <= publicationDate) {
-      return res.status(400).json({
+      if (expiresDate && publicationDate && expiresDate <= publicationDate) {
+        await discardUploadedFiles(uploadedFiles);
+        return res.status(400).json({
+          success: false,
+          error: "La date d'expiration doit être après la date de publication",
+        });
+      }
+
+      const announcement = await Announcement.create({
+        title,
+        summary,
+        content,
+        category,
+        isPublished: shouldPublish,
+        publishedAt: publicationDate,
+        expiresAt: expiresDate,
+        isPinned: parseBoolean(req.body.isPinned, false),
+        author: req.user.id,
+        attachments: uploadedFiles.map(toStoredAttachment),
+      });
+
+      const data = await findSerialized(announcement._id);
+      res.status(201).json({ success: true, message: "Annonce créée avec succès", data });
+    } catch (error) {
+      await discardUploadedFiles(uploadedFiles);
+      console.error("Erreur création annonce:", error);
+      const status = error.name === "ValidationError" ? 400 : 500;
+      res.status(status).json({
         success: false,
-        error: "La date d'expiration doit être après la date de publication",
+        error: status === 400 ? error.message : "Erreur serveur",
       });
     }
-
-    const announcement = await Announcement.create({
-      title, summary, content, category,
-      isPublished: shouldPublish,
-      publishedAt: publicationDate,
-      expiresAt: expiresDate,
-      isPinned: Boolean(isPinned),
-      author: req.user.id,
-    });
-
-    const populated = await Announcement.findById(announcement._id)
-      .populate("author", "firstName name")
-      .lean();
-
-    if (populated) {
-      populated.publishedAt = formatDateOnly(populated.publishedAt);
-      populated.expiresAt = formatDateOnly(populated.expiresAt);
-    }
-
-    res.status(201).json({ success: true, message: "Annonce créée avec succès", data: populated });
-  } catch (error) {
-    console.error("Erreur création annonce:", error);
-    res.status(500).json({ success: false, error: "Erreur serveur" });
-  }
-});
+  },
+);
 
 // Modifier une annonce (ADMIN/DEV)
-router.put("/api/admin/announcements/:id", authMiddleware, requireRole(["admin", "dev"]), async (req, res) => {
-  try {
-    const { title, summary, content, category, isPublished, publishedAt, expiresAt, isPinned } = req.body;
-    const current = await Announcement.findById(req.params.id);
+router.put(
+  "/api/admin/announcements/:id",
+  authMiddleware,
+  requireRole(["admin", "dev"]),
+  uploadAnnouncementFiles,
+  async (req, res) => {
+    const uploadedFiles = req.files || [];
+    try {
+      const { title, summary, content, category, publishedAt, expiresAt } = req.body;
+      const current = await Announcement.findById(req.params.id);
 
-    if (!current) return res.status(404).json({ success: false, error: "Annonce non trouvée" });
+      if (!current) {
+        await discardUploadedFiles(uploadedFiles);
+        return res.status(404).json({ success: false, error: "Annonce non trouvée" });
+      }
 
-    const nextIsPublished = typeof isPublished === "boolean" ? isPublished : current.isPublished;
-    const nextPublishedAt = nextIsPublished
-      ? publishedAt
-        ? toDateOnly(publishedAt)
-        : current.publishedAt ? toDateOnly(current.publishedAt) : toDateOnly(new Date())
-      : null;
-    const nextExpiresAt = expiresAt ? toDateOnly(expiresAt) : null;
+      const nextIsPublished = parseBoolean(req.body.isPublished, current.isPublished);
+      const nextPublishedAt = nextIsPublished
+        ? publishedAt
+          ? toDateOnly(publishedAt)
+          : current.publishedAt ? toDateOnly(current.publishedAt) : toDateOnly(new Date())
+        : null;
+      const nextExpiresAt = expiresAt ? toDateOnly(expiresAt) : null;
 
-    if (nextExpiresAt && nextPublishedAt && nextExpiresAt <= nextPublishedAt) {
-      return res.status(400).json({
+      if (nextExpiresAt && nextPublishedAt && nextExpiresAt <= nextPublishedAt) {
+        await discardUploadedFiles(uploadedFiles);
+        return res.status(400).json({
+          success: false,
+          error: "La date d'expiration doit être après la date de publication",
+        });
+      }
+
+      const idsToRemove = new Set(parseIdList(req.body.removeAttachmentIds));
+      const removed = current.attachments.filter((a) => idsToRemove.has(String(a._id)));
+      const kept = current.attachments.filter((a) => !idsToRemove.has(String(a._id)));
+
+      if (kept.length + uploadedFiles.length > ANNOUNCEMENT_MAX_FILES) {
+        await discardUploadedFiles(uploadedFiles);
+        return res.status(400).json({
+          success: false,
+          error: `Maximum ${ANNOUNCEMENT_MAX_FILES} fichiers par annonce`,
+        });
+      }
+
+      current.title = title ?? current.title;
+      current.summary = summary ?? current.summary;
+      current.content = content ?? current.content;
+      current.category = category ?? current.category;
+      current.isPublished = nextIsPublished;
+      current.publishedAt = nextPublishedAt;
+      current.expiresAt = nextExpiresAt;
+      current.isPinned = parseBoolean(req.body.isPinned, current.isPinned);
+      current.attachments = [...kept, ...uploadedFiles.map(toStoredAttachment)];
+      await current.save();
+
+      // Les fichiers retirés ne sont effacés qu'une fois l'enregistrement réussi.
+      await deleteStoredFiles(removed.map((a) => a.storedPath));
+
+      const data = await findSerialized(current._id);
+      res.status(200).json({ success: true, message: "Annonce mise à jour avec succès", data });
+    } catch (error) {
+      await discardUploadedFiles(uploadedFiles);
+      console.error("Erreur modification annonce:", error);
+      const status = error.name === "ValidationError" ? 400 : 500;
+      res.status(status).json({
         success: false,
-        error: "La date d'expiration doit être après la date de publication",
+        error: status === 400 ? error.message : "Erreur serveur",
       });
     }
-
-    current.title = title ?? current.title;
-    current.summary = summary ?? current.summary;
-    current.content = content ?? current.content;
-    current.category = category ?? current.category;
-    current.isPublished = nextIsPublished;
-    current.publishedAt = nextPublishedAt;
-    current.expiresAt = nextExpiresAt;
-    current.isPinned = typeof isPinned === "boolean" ? isPinned : current.isPinned;
-    await current.save();
-
-    const populated = await Announcement.findById(current._id)
-      .populate("author", "firstName name")
-      .lean();
-
-    if (populated) {
-      populated.publishedAt = formatDateOnly(populated.publishedAt);
-      populated.expiresAt = formatDateOnly(populated.expiresAt);
-    }
-
-    res.status(200).json({ success: true, message: "Annonce mise à jour avec succès", data: populated });
-  } catch (error) {
-    console.error("Erreur modification annonce:", error);
-    res.status(500).json({ success: false, error: "Erreur serveur" });
-  }
-});
+  },
+);
 
 // Supprimer une annonce (ADMIN/DEV)
 router.delete("/api/admin/announcements/:id", authMiddleware, requireRole(["admin", "dev"]), async (req, res) => {
   try {
     const announcement = await Announcement.findByIdAndDelete(req.params.id);
     if (!announcement) return res.status(404).json({ success: false, error: "Annonce non trouvée" });
+    await deleteStoredFiles((announcement.attachments || []).map((a) => a.storedPath));
     res.status(200).json({ success: true, message: "Annonce supprimée avec succès" });
   } catch (error) {
     console.error("Erreur suppression annonce:", error);

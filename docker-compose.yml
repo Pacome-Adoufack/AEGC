@@ -30,6 +30,11 @@
         - ./.env
       ports:
       - ${PORT_BACK}:3000
+      # Fichiers uploadés (working papers, pièces jointes des annonces) stockés sur l'hôte :
+      # sans ce montage, chaque redéploiement les efface. Chemin absolu obligatoire,
+      # il est résolu sur le serveur distant (contexte docker aegcdry).
+      volumes:
+        - /home/user00adm/aegc/uploads:/app/uploads
       restart: always
       environment:
         - VIRTUAL_HOST=back.aegc-web.com

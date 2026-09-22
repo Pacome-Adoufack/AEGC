@@ -22,6 +22,7 @@ import wpUserRoutes from "./routes/workingPaper.user.routes.js";
 import wpAdminRoutes from "./routes/workingPaper.admin.routes.js";
 import committeeRoutes from "./routes/committee.routes.js";
 import repecRoutes from "./routes/repec.routes.js";
+import galleryRoutes from "./routes/gallery.routes.js";
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -102,6 +103,7 @@ app.use("/", mediaRoutes);
 app.use("/", contactRoutes);
 app.use("/", subscribeRoutes);
 app.use("/", announcementRoutes);
+app.use("/", galleryRoutes);
 app.use("/", membershipAdminRoutes);
 
 // ============================================

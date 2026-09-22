@@ -6,8 +6,11 @@ import { API_BASE_URL } from "../Url";
 import logo1 from "../../assets/logo1.png";
 import ConfirmDialog from "../common/ConfirmDialog";
 
-const Seminar = () => {
+// onAvailabilityChange(bool) : prévient la page hôte s'il y a des séminaires à
+// afficher, pour qu'elle masque la colonne au lieu d'y montrer un bloc vide.
+const Seminar = ({ onAvailabilityChange }) => {
   const [activities, setActivities] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const [reservations, setReservations] = useState([]);
   const [loadError, setLoadError] = useState("");
   const [now, setNow] = useState(new Date());
@@ -37,9 +40,11 @@ const Seminar = () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/activities`);
         const data = await response.json();
-        setActivities(data);
+        setActivities(Array.isArray(data) ? data : []);
       } catch {
         setLoadError("Impossible de charger les activités.");
+      } finally {
+        setLoaded(true);
       }
     };
     fetchActivities();
@@ -91,6 +96,11 @@ const Seminar = () => {
     const oneWeekAfter = new Date(new Date(activity.date).getTime() + 7 * 24 * 60 * 60 * 1000);
     return now <= oneWeekAfter;
   });
+
+  const hasActivities = visibleActivities.length > 0;
+  useEffect(() => {
+    if (loaded) onAvailabilityChange?.(hasActivities);
+  }, [loaded, hasActivities, onAvailabilityChange]);
 
   return (
     <>

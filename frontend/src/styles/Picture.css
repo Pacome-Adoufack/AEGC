@@ -10,7 +10,7 @@
   margin-bottom: 1.5rem;
   font-size: 1.9rem;
   font-weight: 700;
-  color: #0d1b2a;
+  color: var(--aegc-ink);
 }
 
 /* ===== Year filters ===== */
@@ -35,14 +35,14 @@
 }
 
 .year-filter:hover {
-  background: #f0f7ff;
-  border-color: #0084ff;
-  color: #0084ff;
+  background: var(--aegc-blue-soft);
+  border-color: var(--aegc-blue);
+  color: var(--aegc-blue);
 }
 
 .year-filter.active {
-  background: #0084ff;
-  border-color: #0084ff;
+  background: var(--aegc-blue);
+  border-color: var(--aegc-blue);
   color: white;
 }
 
@@ -112,7 +112,7 @@
 
 .show-more-button {
   padding: 0.65rem 2rem;
-  background: #0084ff;
+  background: var(--aegc-blue);
   color: white;
   border: none;
   border-radius: 8px;
@@ -123,11 +123,35 @@
 }
 
 .show-more-button:hover {
-  background: #0069d9;
+  background: var(--aegc-blue-hover);
   transform: translateY(-2px);
 }
 
 /* ===== Responsive ===== */
+/* Les vignettes sont des boutons (clic = agrandir) : on retire le style de bouton */
+button.gallery-item {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: #eef2f7;
+  font: inherit;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+button.gallery-item:focus-visible {
+  outline: 3px solid var(--aegc-blue);
+  outline-offset: 2px;
+}
+
+.gallery-state {
+  text-align: center;
+  color: #64748b;
+  font-size: 1rem;
+  padding: 48px 0;
+}
+
 @media (max-width: 768px) {
   .gallery-container {
     padding: 36px 20px;

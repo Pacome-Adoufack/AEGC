@@ -1,14 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/Home.css";
-import logo from "../../assets/logo.png";
 import Seminar from "./Seminar";
-import firstImage from "../../assets/firstImage.png";
+import HeroMosaic from "./HeroMosaic";
 import video from "../../assets/video.mp4";
 import { API_BASE_URL } from "../Url";
+import AnnouncementBody from "../common/AnnouncementBody";
+import HomeGallery from "./HomeGallery";
+import HomeIntro from "./HomeIntro";
+import {
+  attachmentUrl,
+  categoryLabel,
+  firstImageAttachment,
+  hasMoreToRead,
+} from "../../utils/announcements";
 
 const Home = () => {
   const [announcements, setAnnouncements] = useState([]);
+  // La colonne séminaires ne s'affiche que s'il y a un séminaire à venir.
+  const [hasSeminars, setHasSeminars] = useState(false);
   const videoRef = useRef(null);
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -58,13 +68,11 @@ const Home = () => {
   return (
     <div className="home-page">
 
-      {/* Hero */}
-      <section
-        className="hero"
-        style={{ backgroundImage: `url(${firstImage})` }}
-      >
-        <div className="hero-overlay">
+      {/* Hero : message à gauche, photo à droite */}
+      <section className="hero">
+        <div className="hero-inner">
           <div className="hero-content">
+            <p className="hero-kicker">Association académique et professionnelle, fondée en 2021</p>
             <h1 className="hero-title">
               Le réseau des économistes et gestionnaires du Cameroun
             </h1>
@@ -75,14 +83,17 @@ const Home = () => {
               <Link to="/membership/payment" className="hero-cta-primary">
                 Devenir membre
               </Link>
-              <button className="hero-play-btn" onClick={handlePlay}>
-                <span className="hero-play-icon">▶</span>
-                Le Film AEGC
+              <button type="button" className="hero-play-btn" onClick={handlePlay}>
+                <span className="hero-play-icon" aria-hidden="true">▶</span>
+                Voir le film
               </button>
             </div>
           </div>
+          <HeroMosaic />
         </div>
       </section>
+
+      <HomeIntro />
 
       {showOverlay && (
         <div className="video-overlay" onClick={handleClose}>
@@ -105,7 +116,7 @@ const Home = () => {
             <Link to="/actualites" className="section-link">Toutes les actualités →</Link>
           </div>
 
-          <div className="dual-layout">
+          <div className={hasSeminars ? "dual-layout" : "dual-layout dual-layout--single"}>
 
             {/* Colonne gauche : Actualités (prioritaire) */}
             <div className="news-column">
@@ -113,29 +124,41 @@ const Home = () => {
               {featuredAnnouncement ? (
                 <>
                   <article className="news-featured">
+                    {firstImageAttachment(featuredAnnouncement) && (
+                      <div className="news-featured-cover">
+                        <img src={attachmentUrl(firstImageAttachment(featuredAnnouncement))} alt="" loading="lazy" />
+                      </div>
+                    )}
                     <div className="news-meta">
-                      <span className="announcement-chip">{featuredAnnouncement.category}</span>
+                      <span className="announcement-chip">{categoryLabel(featuredAnnouncement.category)}</span>
                       <span className="announcement-date">
                         {new Date(featuredAnnouncement.publishedAt || featuredAnnouncement.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                       </span>
                     </div>
                     <h3 className="news-featured-title">{featuredAnnouncement.title}</h3>
                     <p className="news-featured-summary">{featuredAnnouncement.summary}</p>
-                    <button
-                      type="button"
-                      className="news-read-more"
-                      onClick={() => openAnnouncementModal(featuredAnnouncement)}
-                    >
-                      Lire la suite →
-                    </button>
+                    {hasMoreToRead(featuredAnnouncement) && (
+                      <button
+                        type="button"
+                        className="news-read-more"
+                        onClick={() => openAnnouncementModal(featuredAnnouncement)}
+                      >
+                        Lire la suite →
+                      </button>
+                    )}
                   </article>
 
                   {otherAnnouncements.length > 0 && (
                     <div className="news-cards-grid">
                       {otherAnnouncements.map((item) => (
-                        <article key={item._id} className="news-card" onClick={() => openAnnouncementModal(item)} style={{ cursor: 'pointer' }}>
+                        <article
+                          key={item._id}
+                          className="news-card"
+                          onClick={hasMoreToRead(item) ? () => openAnnouncementModal(item) : undefined}
+                          style={{ cursor: hasMoreToRead(item) ? 'pointer' : 'default' }}
+                        >
                           <div className="news-meta">
-                            <span className="announcement-chip">{item.category}</span>
+                            <span className="announcement-chip">{categoryLabel(item.category)}</span>
                             <span className="announcement-date">
                               {new Date(item.publishedAt || item.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
                             </span>
@@ -153,10 +176,12 @@ const Home = () => {
             </div>
 
             {/* Colonne droite : Séminaires */}
-            <aside className="seminar-sidebar">
-              <h2 className="sidebar-title">Prochains Séminaires</h2>
+            {/* Toujours monté pour charger les séminaires, mais masqué s'il n'y en a
+                aucun à venir : pas de bloc vide sur la page d'accueil. */}
+            <aside className="seminar-sidebar" hidden={!hasSeminars}>
+              <h2 className="sidebar-title">Prochains séminaires</h2>
               <div className="seminar-sidebar-inner">
-                <Seminar />
+                <Seminar onAvailabilityChange={setHasSeminars} />
               </div>
             </aside>
 
@@ -173,19 +198,22 @@ const Home = () => {
               <h3 className="announcement-title">{modalItem.title}</h3>
               <p className="announcement-meta">{new Date(modalItem.publishedAt || modalItem.createdAt).toLocaleDateString('fr-FR')}</p>
               <div className="announcement-body">
-                {modalItem.content ? <div dangerouslySetInnerHTML={{ __html: modalItem.content }} /> : <p>{modalItem.summary}</p>}
+                <AnnouncementBody announcement={modalItem} />
               </div>
             </div>
           </div>
         </div>
       )}
 
+      {/* Galerie photos (masquée tant qu'aucune photo n'est publiée) */}
+      <HomeGallery />
+
       {/* Newsletter */}
       <section className="newsletter-section">
         <div className="newsletter-inner">
           <h2>Restez informé-e</h2>
-          <p>Recevez des articles exclusifs sur l'actualité économique.</p>
-          <a href="/subscribe" className="newsletter-btn">S'abonner</a>
+          <p>Recevez les annonces, les appels à contributions et les événements de l'AEGC.</p>
+          <Link to="/subscribe" className="newsletter-btn">S'abonner</Link>
         </div>
       </section>
 

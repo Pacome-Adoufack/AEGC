@@ -132,24 +132,24 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
           )}
         </div>
         <div className={`header_nav ${isMenuOpen ? "open" : ""}`}>
-          <nav className="nav_account">
-            <ul className="nav_list">
-              {!isLoggedIn ? (
-                <>
-                  <li>
-                    <Link to="/register" onClick={() => setIsMenuOpen(false)}>
-                      Créer un compte
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                      Se connecter
-                    </Link>
-                  </li>
-                </>
-              ) : null}
-            </ul>
-          </nav>
+          {/* Liens de compte : à droite du menu sur ordinateur (voir .nav_account),
+              en tête du panneau sur mobile. Absents une fois connecté. */}
+          {!isLoggedIn && (
+            <nav className="nav_account" aria-label="Compte">
+              <ul className="nav_list">
+                <li>
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                    Se connecter
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/register" className="nav-cta" onClick={() => setIsMenuOpen(false)}>
+                    Créer un compte
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          )}
 
           <nav className="nav_main">
             <ul className="nav_list">
@@ -176,7 +176,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                         to={
                           userRole === 'dispatcher'
                             ? '/dispatcher/working-papers'
-                            : '/admin/working-papers'
+                            : '/admin-dashboard?section=working-papers'
                         }
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -266,7 +266,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       <Link to="/bourse" onClick={() => setIsMenuOpen(false)}>
                         AEGC Bourses
                       </Link>
-                      <Link to="/images" onClick={() => setIsMenuOpen(false)}>
+                      <Link to="/picture" onClick={() => setIsMenuOpen(false)}>
                         AEGC Photos
                       </Link>
                     </div>

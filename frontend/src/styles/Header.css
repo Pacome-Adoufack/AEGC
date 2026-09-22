@@ -1,19 +1,22 @@
 ﻿body {
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f7fa;
-  color: #1a202c;
+  font-family: var(--font-sans);
+  background-color: var(--aegc-surface);
+  color: var(--aegc-ink);
 }
 
 /* ===== Header ===== */
+/* Fond blanc : le logo (bleu et vert) garde ses vraies couleurs, ce qui était
+   impossible sur l'ancienne barre bleue où le « AE » se confondait avec le fond. */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0084ff;
+  background-color: #ffffff;
   padding: 0 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid var(--aegc-line);
+  box-shadow: 0 1px 6px rgba(20, 33, 46, 0.05);
   position: sticky;
   top: 0;
   z-index: 9999;
@@ -46,20 +49,42 @@
 
 .hamburger-icon {
   font-size: 26px;
-  color: white;
+  color: var(--aegc-ink);
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .hamburger-icon:hover {
-  color: #36bb6d;
+  color: var(--aegc-blue);
 }
 
 /* ===== Navigation principale ===== */
 .header_nav {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 20px;
+}
+
+/* Liens de compte en bout de menu, séparés par un trait : le menu principal
+   garde un espacement régulier, sans trou au milieu. */
+.nav_account {
+  order: 2;
+  padding-left: 20px;
+  border-left: 1px solid var(--aegc-line);
+}
+
+.nav_list a.nav-cta {
+  border: 1.5px solid var(--aegc-blue);
+  color: var(--aegc-blue);
+  border-radius: 8px;
+  padding: 7px 16px;
+  margin-left: 4px;
+}
+
+.nav_list a.nav-cta:hover,
+.nav_list a.nav-cta:focus-visible {
+  background-color: var(--aegc-blue);
+  color: #ffffff;
 }
 
 /* ===== Listes ===== */
@@ -76,7 +101,7 @@
 .nav_list a,
 .dropdown-button,
 .logout-button {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--aegc-ink);
   text-decoration: none;
   font-weight: 600;
   font-size: 17px;
@@ -98,10 +123,15 @@
 .dropdown-button:focus,
 .logout-button:hover,
 .logout-button:focus {
-  background-color: #36bb6d;
-  color: white;
+  background-color: var(--aegc-blue-soft);
+  color: var(--aegc-blue);
   outline: none;
-  box-shadow: 0 3px 8px rgba(54, 187, 109, 0.35);
+}
+
+.nav_list a:focus-visible,
+.dropdown-button:focus-visible {
+  outline: 2px solid var(--aegc-blue);
+  outline-offset: 2px;
 }
 
 /* ===== Soulignement anime pour les liens simples ===== */
@@ -120,7 +150,7 @@
   left: 12px;
   right: 12px;
   height: 2px;
-  background-color: #36bb6d;
+  background-color: var(--aegc-blue);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.25s ease;
@@ -204,8 +234,8 @@
 
 .dropdown-menu a:hover,
 .dropdown-menu button:hover {
-  background-color: #f0f7ff;
-  color: #0084ff;
+  background-color: var(--aegc-blue-soft);
+  color: var(--aegc-blue);
 }
 
 /* ===== Logout (dans dropdown) ===== */
@@ -229,7 +259,7 @@
 
 /* ===== Nom utilisateur ===== */
 .user {
-  color: white;
+  color: var(--aegc-ink);
   font-size: 14px;
   font-weight: 600;
 }
@@ -260,9 +290,9 @@
 }
 
 .membership-pill.neutral {
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.22);
+  background: var(--aegc-surface);
+  color: var(--aegc-text);
+  border-color: var(--aegc-line);
 }
 
 /* ===== Tablette (max 1048px) ===== */
@@ -272,7 +302,11 @@
   }
 
   .header_nav {
-    gap: 16px;
+    gap: 12px;
+  }
+
+  .nav_account {
+    padding-left: 12px;
   }
 
   .nav_list {
@@ -322,7 +356,7 @@
     right: 0;
     bottom: 0;
     width: min(300px, 82vw);
-    background-color: #0069d9;
+    background-color: var(--aegc-blue-hover);
     flex-direction: column;
     align-items: stretch;
     gap: 0;
@@ -339,9 +373,23 @@
   }
 
   .nav_account {
+    order: 0;
     padding: 0 14px 12px;
+    border-left: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.18);
     margin-bottom: 8px;
+  }
+
+  .nav_list a.nav-cta {
+    border-color: rgba(255, 255, 255, 0.7);
+    color: #ffffff;
+    margin-left: 0;
+    padding: 10px 12px;
+  }
+
+  .nav_list a.nav-cta:hover {
+    background-color: #ffffff;
+    color: var(--aegc-blue-hover);
   }
 
   .nav_list {
@@ -444,8 +492,21 @@
     box-shadow: none !important;
   }
 
+  /* Le panneau mobile reste bleu : textes clairs */
   .user {
     font-size: 14px !important;
+    color: #ffffff;
+  }
+
+  .membership-pill.neutral {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  .nav_list a:focus-visible,
+  .dropdown-button:focus-visible {
+    outline-color: #ffffff;
   }
 
   .membership-pill {

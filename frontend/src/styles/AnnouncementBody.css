@@ -1,0 +1,138 @@
+/* Corps d'une annonce (modales de l'accueil et de /actualites) */
+.annb {
+  font-size: 0.95rem;
+  color: #334155;
+  line-height: 1.7;
+}
+
+/* pre-line : les retours à la ligne simples saisis par l'admin sont conservés.
+   Sélecteurs préfixés par .annb pour primer sur les règles "…-body p" des pages hôtes. */
+.annb .annb-paragraph {
+  margin: 0 0 0.9rem;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.annb-paragraph a {
+  color: var(--aegc-blue-hover);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ===== Images ===== */
+.annb-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.annb-images--single {
+  grid-template-columns: 1fr;
+}
+
+.annb-image-link {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.annb-image-link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
+
+.annb-images:not(.annb-images--single) .annb-image-link img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.annb-image-link:hover img {
+  transform: scale(1.02);
+}
+
+/* ===== Documents PDF ===== */
+.annb-docs {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.annb .annb-docs-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 0 0 0.25rem;
+}
+
+.annb-doc {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  text-decoration: none;
+  color: var(--aegc-ink);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.annb-doc:hover {
+  border-color: var(--aegc-blue-hover);
+  background: #eef5fd;
+}
+
+.annb-doc-icon {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: #dc2626;
+  border-radius: 4px;
+  padding: 0.3rem 0.4rem;
+  letter-spacing: 0.03em;
+}
+
+.annb-doc-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.annb-doc-size {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.annb-doc-open {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--aegc-blue-hover);
+}
+
+@media (max-width: 520px) {
+  .annb-images {
+    grid-template-columns: 1fr;
+  }
+
+  .annb-doc-size {
+    display: none;
+  }
+}

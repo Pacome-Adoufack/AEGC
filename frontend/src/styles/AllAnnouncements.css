@@ -2,13 +2,12 @@
 .all-announcements-page {
   min-height: 100vh;
   background: #f8fafc;
-  font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   color: #1a202c;
 }
 
 /* ===== Hero header ===== */
 .all-announcements-header {
-  background: linear-gradient(135deg, #003d80 0%, #0069d9 100%);
+  background: var(--aegc-blue-hover);
   color: white;
   text-align: center;
   padding: 56px 24px 48px;
@@ -45,7 +44,7 @@
   background: #ffffff;
   border-radius: 12px;
   border: 1px solid #e4ecf0;
-  border-left: 4px solid #0084ff;
+  border-left: 4px solid var(--aegc-blue);
   box-shadow: 0 2px 10px rgba(14, 46, 74, 0.06);
   padding: 1.5rem;
   cursor: pointer;
@@ -60,6 +59,46 @@
   box-shadow: 0 8px 24px rgba(14, 46, 74, 0.12);
 }
 
+.ann-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+/* Carte dont le résumé dit tout : pas de modale, donc pas d'effet cliquable */
+.ann-card--static {
+  cursor: default;
+}
+
+.ann-card--static:hover {
+  transform: none;
+  box-shadow: 0 2px 10px rgba(14, 46, 74, 0.06);
+}
+
+/* Carte avec image jointe : l'image occupe le haut de la carte, bord à bord */
+.ann-card--with-cover {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ann-card--with-cover .ann-card-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.ann-card-cover {
+  aspect-ratio: 16 / 9;
+  background: #eef2f7;
+  overflow: hidden;
+}
+
+.ann-card-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .ann-card-meta {
   display: flex;
   align-items: center;
@@ -68,7 +107,7 @@
 
 .ann-chip {
   background: #e8f1fb;
-  color: #0069d9;
+  color: var(--aegc-blue-hover);
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -86,7 +125,7 @@
 .ann-card-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0d1b2a;
+  color: var(--aegc-ink);
   margin: 0;
   line-height: 1.4;
   display: -webkit-box;
@@ -108,7 +147,7 @@
 }
 
 .ann-read-more {
-  color: #0084ff;
+  color: var(--aegc-blue);
   font-size: 0.85rem;
   font-weight: 600;
   margin-top: 0.25rem;
@@ -175,7 +214,7 @@
 .ann-modal-title {
   font-size: 1.35rem;
   font-weight: 700;
-  color: #0d1b2a;
+  color: var(--aegc-ink);
   margin: 0.75rem 0 0.4rem;
   line-height: 1.4;
 }

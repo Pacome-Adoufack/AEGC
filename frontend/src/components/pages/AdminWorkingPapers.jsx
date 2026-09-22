@@ -12,10 +12,14 @@ import "../../styles/wp-base.css";
 import "../../styles/wp-admin.css";
 import "../../styles/wp-components.css";
 
-function AdminWorkingPapers() {
+// embedded : affiché comme rubrique du dashboard admin (sans le fond pleine page).
+// Seul, sur /dispatcher/working-papers, pour les gestionnaires.
+// initialTab : onglet ouvert au chargement ("submissions" depuis le bouton « Assigner » de l'accueil admin).
+function AdminWorkingPapers({ embedded = false, initialTab = "workingPapers" }) {
+    const containerClass = embedded ? "admin-container admin-container--embedded" : "admin-container";
     const toast = useToast();
     const navigate = useNavigate();
-    const [tab, setTab] = useState("workingPapers");
+    const [tab, setTab] = useState(initialTab);
     const [currentUserRole, setCurrentUserRole] = useState("admin");
     const [workingPapers, setWorkingPapers] = useState([]);
     const [submissions, setSubmissions] = useState([]);
@@ -89,12 +93,12 @@ function AdminWorkingPapers() {
         }
     };
 
-    if (loading) return <div className="admin-container"><p>Chargement...</p></div>;
+    if (loading) return <div className={containerClass}><p>Chargement...</p></div>;
 
     const openWorkingPapers = workingPapers.filter((wp) => wp.status === "ouvert").length;
 
     return (
-        <div className="admin-container">
+        <div className={containerClass}>
             <div className="admin-main">
                 <div className="admin-shell-header">
                     <p className="admin-shell-kicker">{isAdmin ? "Administration" : "Gestionnaire"}</p>

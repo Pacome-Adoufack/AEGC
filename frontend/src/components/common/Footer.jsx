@@ -14,8 +14,8 @@ function Footer() {
           <img src={logo} alt="Logo AEGC" className="footer-logo" />
           <div className="footer-brand-text">
             <p className="footer-tagline">
-              Association des Economistes et Gestionnaires du Cameroun — promouvoir
-              la recherche, l'innovation et le developpement economique.
+              Association des Économistes et Gestionnaires du Cameroun. Nous
+              promouvons la recherche, l'innovation et le développement économique.
             </p>
             <a href="/contact" className="footer-contact-link">
               Nous contacter

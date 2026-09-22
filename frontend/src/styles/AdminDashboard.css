@@ -1262,3 +1262,809 @@
         grid-template-columns: 1fr;
     }
 }
+/* ===== ANNONCES : aides de saisie, pièces jointes, erreurs ===== */
+.ann-field-hint {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0.35rem 0 0;
+    font-size: 0.78rem;
+    color: #94a3b8;
+}
+
+.ann-counter {
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.ann-counter--full {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.ann-attachments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.ann-att-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 0.88rem;
+}
+
+.ann-att-row--new {
+    border-style: dashed;
+    border-color: #28a745;
+    background: #f3fbf5;
+}
+
+.ann-att-row--removed {
+    opacity: 0.55;
+}
+
+.ann-att-row--removed .ann-att-name {
+    text-decoration: line-through;
+}
+
+.ann-att-kind {
+    flex-shrink: 0;
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #ffffff;
+    border-radius: 4px;
+    padding: 0.2rem 0.35rem;
+}
+
+.ann-att-kind--pdf {
+    background: #dc2626;
+}
+
+.ann-att-kind--image {
+    background: #0069d9;
+}
+
+.ann-att-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #1e293b;
+}
+
+a.ann-att-name:hover {
+    color: #0069d9;
+    text-decoration: underline;
+}
+
+.ann-att-size {
+    flex-shrink: 0;
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.ann-att-action {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: #dc2626;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.15rem 0.3rem;
+}
+
+.ann-att-row--removed .ann-att-action {
+    color: #0069d9;
+}
+
+.ann-att-add {
+    align-self: flex-start;
+    background: #ffffff;
+    border: 1.5px dashed #94a3b8;
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.ann-att-add:hover {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.ann-form-error {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    border-radius: 8px;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.announcements-actions button:disabled,
+.ann-form-close:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ===== GALERIE PHOTOS (onglet admin) ===== */
+.gt-header {
+    margin-bottom: 1.25rem;
+}
+
+.gt-subtitle {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0;
+}
+
+.gt-upload {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.gt-upload h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.gt-upload-fields {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+}
+
+.gt-upload label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #475569;
+}
+
+.gt-upload input[type="text"],
+.gt-upload input[type="date"],
+.gt-card-edit input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.85rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #f8fafc;
+}
+
+.gt-upload input:focus,
+.gt-card-edit input:focus {
+    outline: none;
+    border-color: #28a745;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.12);
+}
+
+.gt-hint {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.gt-queue {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 0.5rem;
+}
+
+.gt-queue-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #eef2f7;
+    border: 2px solid transparent;
+}
+
+.gt-queue-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.gt-queue-item--uploading img {
+    opacity: 0.55;
+}
+
+.gt-queue-item--done {
+    border-color: #28a745;
+}
+
+.gt-queue-item--error {
+    border-color: #dc2626;
+}
+
+.gt-queue-badge {
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgba(15, 23, 42, 0.75);
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+}
+
+.gt-queue-badge--done {
+    background: #28a745;
+}
+
+.gt-queue-badge--error {
+    background: #dc2626;
+}
+
+.gt-queue-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.7);
+    color: #ffffff;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+.gt-upload-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.gt-btn-add,
+.gt-btn-publish {
+    border-radius: 8px;
+    padding: 0.65rem 1.1rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.gt-btn-add {
+    background: #ffffff;
+    border: 1.5px dashed #94a3b8;
+    color: #334155;
+}
+
+.gt-btn-add:hover:not(:disabled) {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.gt-btn-publish {
+    background: #28a745;
+    border: none;
+    color: #ffffff;
+}
+
+.gt-btn-publish:hover:not(:disabled) {
+    background: #218838;
+}
+
+.gt-btn-add:disabled,
+.gt-btn-publish:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.gt-error {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.88rem;
+}
+
+.gt-empty {
+    color: #64748b;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.gt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 1rem;
+}
+
+.gt-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.gt-card-img {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: #eef2f7;
+}
+
+.gt-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.gt-card-home {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: #0069d9;
+    border-radius: 4px;
+    padding: 0.15rem 0.4rem;
+}
+
+.gt-card-body,
+.gt-card-edit {
+    padding: 0.7rem 0.8rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+}
+
+.gt-card-title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gt-card-date {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.gt-card-actions {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: auto;
+    padding-top: 0.25rem;
+}
+
+.gt-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #0069d9;
+    cursor: pointer;
+}
+
+.gt-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.gt-link--danger {
+    color: #dc2626;
+}
+
+.gt-link--muted {
+    color: #64748b;
+}
+
+/* Carte « Images » de Gestion Contenu : bouton qui ouvre l'onglet Photos */
+button.btn-manage {
+    border: none;
+    cursor: pointer;
+    font: inherit;
+}
+
+@media (max-width: 768px) {
+    .gt-upload-fields {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== COQUILLE : navigation par rubriques ===== */
+.adm-shell {
+    padding: 1.5rem;
+}
+
+.adm-layout {
+    display: grid;
+    grid-template-columns: 236px minmax(0, 1fr);
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+.adm-nav {
+    position: sticky;
+    top: 96px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 1rem 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.adm-nav-title {
+    margin: 0 0 0.5rem;
+    padding: 0 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+}
+
+.adm-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.7rem 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #334155;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.adm-nav-item:hover {
+    background: #f1f5f9;
+}
+
+.adm-nav-item.active {
+    background: #e8f5ec;
+    color: #1e7e34;
+    font-weight: 600;
+}
+
+.adm-nav-item:focus-visible,
+.adm-subnav button:focus-visible,
+.adm-task-action:focus-visible,
+.adm-quick-card:focus-visible,
+.adm-stat:focus-visible {
+    outline: 3px solid rgba(40, 167, 69, 0.45);
+    outline-offset: 2px;
+}
+
+.adm-nav-icon {
+    width: 1.4rem;
+    text-align: center;
+}
+
+.adm-nav-label {
+    flex: 1;
+    white-space: nowrap;
+}
+
+.adm-badge {
+    min-width: 1.4rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.adm-main {
+    min-width: 0;
+}
+
+.adm-subnav {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    margin-bottom: 1rem;
+    background: #e9eef3;
+    border-radius: 10px;
+}
+
+.adm-subnav button {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+}
+
+.adm-subnav button.active {
+    background: #ffffff;
+    color: #1e7e34;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.adm-panel {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Working papers a ses propres cartes : pas de carte autour */
+.adm-panel--bare {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+.admin-container.admin-container--embedded {
+    min-height: 0;
+    padding: 0;
+    background: none;
+}
+
+.adm-empty {
+    color: #64748b;
+    padding: 1.5rem 0;
+}
+
+/* ===== ACCUEIL ===== */
+.adm-home-hello h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1e293b;
+}
+
+.adm-home-hello p {
+    margin: 0.35rem 0 1.5rem;
+    color: #64748b;
+}
+
+.adm-tasks {
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    background: #fffbeb;
+}
+
+.adm-tasks li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.85rem 1rem;
+}
+
+.adm-tasks li + li {
+    border-top: 1px solid #fde68a;
+}
+
+.adm-task-icon {
+    font-size: 1.1rem;
+}
+
+.adm-task-text {
+    flex: 1;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.adm-task-action {
+    flex-shrink: 0;
+    border: none;
+    border-radius: 8px;
+    background: #28a745;
+    color: #ffffff;
+    padding: 0.5rem 0.95rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.adm-task-action:hover {
+    background: #218838;
+}
+
+.adm-home-heading {
+    margin: 0 0 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+}
+
+.adm-quick {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.adm-quick-card {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.adm-quick-card:hover {
+    border-color: #28a745;
+    background: #f3fbf5;
+}
+
+.adm-quick-icon {
+    font-size: 1.6rem;
+}
+
+.adm-quick-card strong {
+    display: block;
+    color: #1e293b;
+    font-size: 0.98rem;
+}
+
+.adm-quick-card small {
+    display: block;
+    margin-top: 0.15rem;
+    color: #64748b;
+    font-size: 0.83rem;
+}
+
+.adm-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.9rem;
+}
+
+.adm-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1rem 1.1rem;
+    border: none;
+    border-radius: 10px;
+    background: #f5f7fa;
+    text-align: left;
+    cursor: pointer;
+}
+
+.adm-stat:hover {
+    background: #eef2f6;
+}
+
+.adm-stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.adm-stat-value {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* ===== MOBILE : la barre latérale devient une rangée défilante ===== */
+@media (max-width: 900px) {
+    .adm-shell {
+        padding: 1rem;
+    }
+
+    .adm-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+    }
+
+    /* Les 5 rubriques tiennent sur une ligne, icône au-dessus du libellé :
+       aucune pastille « en attente » n'est cachée hors de l'écran. */
+    .adm-nav {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+        grid-auto-flow: column;
+        padding: 0.35rem;
+        gap: 0.2rem;
+    }
+
+    .adm-nav-title {
+        display: none;
+    }
+
+    .adm-nav-item {
+        position: relative;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.2rem;
+        padding: 0.5rem 0.2rem;
+        text-align: center;
+    }
+
+    .adm-nav-icon {
+        width: auto;
+        font-size: 1.15rem;
+    }
+
+    .adm-nav-label {
+        white-space: normal;
+        font-size: 0.72rem;
+        line-height: 1.15;
+    }
+
+    .adm-badge {
+        position: absolute;
+        top: 3px;
+        right: 4px;
+        min-width: 1.1rem;
+        padding: 0 0.3rem;
+        font-size: 0.68rem;
+    }
+
+    .adm-subnav {
+        display: flex;
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    .adm-subnav button {
+        flex: 1 0 auto;
+        white-space: nowrap;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .adm-panel {
+        padding: 1.25rem;
+    }
+
+    .adm-tasks li {
+        flex-wrap: wrap;
+    }
+}
