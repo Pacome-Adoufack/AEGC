@@ -561,9 +561,11 @@
 }
 
 /* ===== Grille des autres articles ===== */
+/* auto-fit, pas auto-fill : les colonnes vides disparaissent au lieu de laisser
+   un trou à droite quand il y a moins d'annonces que de colonnes possibles. */
 .news-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1rem;
 }
 

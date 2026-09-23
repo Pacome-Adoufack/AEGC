@@ -6,6 +6,8 @@ import campusBamenda from "../assets/campus-bamenda.jpg";
 import campusBamendaCentre from "../assets/campus-bamenda-centre.jpg";
 import campusNgaoundere from "../assets/campus-ngaoundere.jpg";
 import campusBuea from "../assets/campus-buea.jpg";
+import campusDschang from "../assets/campus-dschang.jpg";
+import campusLogbessou from "../assets/campus-logbessou.jpg";
 
 // Campus universitaires camerounais affichés en rotation dans le bandeau d'accueil.
 // Toutes ces photos viennent de Wikimedia Commons. Sauf mention CC0, la licence
@@ -68,6 +70,20 @@ export const CAMPUS_PHOTOS = [
     author: "Persont118",
     license: "CC BY-SA 4.0",
     source: "https://commons.wikimedia.org/wiki/File:Uba1a.jpg",
+  },
+  {
+    src: campusDschang,
+    alt: "Portail d'entrée de l'Université de Dschang",
+    author: "Ulrich237",
+    license: "CC BY-SA 4.0",
+    source: "https://commons.wikimedia.org/wiki/File:Entr%C3%A9e_de_l%27Universit%C3%A9_de_Dschang.jpg",
+  },
+  {
+    src: campusLogbessou,
+    alt: "Entrée du campus de Logbessou, Université de Douala",
+    author: "Minette Lontsie",
+    license: "CC BY-SA 4.0",
+    source: "https://commons.wikimedia.org/wiki/File:Universit%C3%A9_de_Douala,_Campus_de_Logbessou.jpg",
   },
 ];
 

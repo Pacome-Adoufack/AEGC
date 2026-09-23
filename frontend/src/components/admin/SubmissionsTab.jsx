@@ -66,14 +66,29 @@ export default function SubmissionsTab({ submissions, managers, isAdmin, isManag
         }
     };
 
+    // Sans cette lecture de la réponse, un 404 ou un 400 passait inaperçu :
+    // l'écran ne bougeait pas et aucun message n'apparaissait.
+    const ensureOk = async (res, fallback) => {
+        let data = {};
+        try {
+            data = await res.json();
+        } catch {
+            // Réponse vide ou page d'erreur HTML : on garde le message par défaut.
+        }
+        if (!res.ok) throw new Error(data.error || data.message || fallback);
+        return data;
+    };
+
     const changeStatus = async (submissionId, status) => {
         try {
             const token = getAuthToken();
-            await fetch(`${API_BASE_URL}/api/admin/submissions/${submissionId}/status`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/submissions/${submissionId}/status`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ status }),
             });
+            await ensureOk(res, "Impossible de changer le statut");
+            toast.success("Statut mis à jour");
             onRefresh();
         } catch (err) {
             toast.error(err.message);
@@ -81,13 +96,16 @@ export default function SubmissionsTab({ submissions, managers, isAdmin, isManag
     };
 
     const assignManager = async (submissionId, dispatcherId) => {
+        if (!dispatcherId) return; // option vide « Assigner à... »
         try {
             const token = getAuthToken();
-            await fetch(`${API_BASE_URL}/api/admin/submissions/${submissionId}/assign`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/submissions/${submissionId}/assign-dispatcher`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ dispatcherId }),
             });
+            await ensureOk(res, "Impossible d'assigner le gestionnaire");
+            toast.success("Gestionnaire assigné");
             onRefresh();
         } catch (err) {
             toast.error(err.message);
@@ -119,16 +137,17 @@ export default function SubmissionsTab({ submissions, managers, isAdmin, isManag
         if (!newComment.trim()) return;
         try {
             const token = getAuthToken();
-            await fetch(`${API_BASE_URL}/api/admin/submissions/${selected._id}/comments`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/submissions/${selected._id}/comments`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ comment: newComment }),
             });
+            await ensureOk(res, "Erreur lors de l'ajout du commentaire");
             setNewComment("");
             await openDetails(selected._id);
             toast.success("Commentaire ajouté !");
-        } catch {
-            toast.error("Erreur lors de l'ajout du commentaire");
+        } catch (err) {
+            toast.error(err.message);
         }
     };
 
@@ -141,17 +160,18 @@ export default function SubmissionsTab({ submissions, managers, isAdmin, isManag
         try {
             const token = getAuthToken();
             const items = revisionItemsText.split("\n").map((i) => i.trim()).filter(Boolean);
-            await fetch(`${API_BASE_URL}/api/admin/submissions/${selected._id}/revision-request`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/submissions/${selected._id}/revision-request`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ summary: revisionSummary, items }),
             });
+            await ensureOk(res, "Erreur lors de l'envoi de l'appréciation");
             setRevisionSummary("");
             setRevisionItemsText("");
             await openDetails(selected._id);
             toast.success("Appréciation envoyée !");
-        } catch {
-            toast.error("Erreur lors de l'envoi de l'appréciation");
+        } catch (err) {
+            toast.error(err.message);
         } finally {
             setRevisionSubmitting(false);
         }

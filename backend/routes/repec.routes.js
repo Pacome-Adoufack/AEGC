@@ -2,12 +2,22 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import Submission from "../models/Submission.js";
+// Charge les variables d'environnement (dont ADMIN_EMAIL) avant leur lecture.
+import "../config/env.js";
 
 const router = express.Router();
 
 const ARCHIVE_CODE = "cxy";
-const BASE_URL = "https://aegc-web.com";
-const MAINTAINER_EMAIL = "aegc.237@gmail.com";
+// Domaine de l'API : c'est lui qui sert les fichiers ReDIF et les PDF.
+// Surtout pas https://aegc-web.com, qui renvoie la page React (HTML) pour toute
+// adresse inconnue : le robot de RePEc lirait du HTML au lieu des métadonnées.
+const BASE_URL = "https://back.aegc-web.com";
+// Site public de l'association, pour les liens destinés aux lecteurs.
+const SITE_URL = "https://aegc-web.com";
+// Adresse de contact publiée à RePEc, qui y enverra ses confirmations et ses
+// alertes. On lit ADMIN_EMAIL directement : config.adminEmail retomberait sinon
+// sur l'adresse du service d'envoi d'e-mails, qui n'a rien à faire ici.
+const MAINTAINER_EMAIL = process.env.ADMIN_EMAIL || "aegc.admi@gmail.com";
 
 // Formate un texte multi-ligne en ReDIF (lignes de continuation avec espace)
 function rediLines(text, indent = " ") {
@@ -33,6 +43,30 @@ async function getAcceptedSubmissions() {
     .populate("submittedBy", "name firstName email")
     .sort({ createdAt: 1 });
 }
+
+// Index de dossier, comme en produirait un serveur de fichiers : le robot de
+// RePEc parcourt l'arborescence de l'archive pour y découvrir les fichiers.
+function directoryIndex(res, title, entries) {
+  const links = entries.map((e) => `<li><a href="${e}">${e}</a></li>`).join("\n");
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(`<html><head><title>Index of ${title}</title></head><body>
+<h1>Index of ${title}</h1>
+<ul>
+${links}
+</ul>
+</body></html>
+`);
+}
+
+// Express ignore la barre oblique finale : ces deux routes répondent donc aussi
+// bien à /repec/cxy qu'à /repec/cxy/.
+router.get(`/repec/${ARCHIVE_CODE}`, (req, res) =>
+  directoryIndex(res, `/repec/${ARCHIVE_CODE}/`, [`${ARCHIVE_CODE}arch.rdf`, "wpaper/"]),
+);
+
+router.get(`/repec/${ARCHIVE_CODE}/wpaper`, (req, res) =>
+  directoryIndex(res, `/repec/${ARCHIVE_CODE}/wpaper/`, ["seri.rdf", "wpaper.rdf"]),
+);
 
 // ─────────────────────────────────────────────
 // GET /repec/cxy/cxyarch.rdf  — Archive metadata
@@ -65,7 +99,7 @@ Maintainer-Email: ${MAINTAINER_EMAIL}
 Maintainer-Name: AEGC Editorial Team
 Type: ReDIF-Paper
 Provider-Name: Association des Economistes et Gestionnaires du Cameroun
-Provider-Homepage: ${BASE_URL}
+Provider-Homepage: ${SITE_URL}
 Description: Working papers series of the AEGC covering economics,
  management and public policy research with a focus on Cameroon
  and sub-Saharan Africa.
