@@ -78,6 +78,8 @@ router.get("/users", async (req, res) => {
         firstName: u.firstName,
         email: u.email,
         role: u.role || "user",
+        gender: u.gender,
+        telefonNummer: u.telefonNummer,
         country: u.country,
         city: u.city,
         university: u.university,
@@ -154,6 +156,73 @@ router.post("/create-user", async (req, res) => {
         firstName: user.firstName,
         email: user.email,
         role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Modifier le profil d'un utilisateur
+// Le rôle et le mot de passe ne passent PAS par ici : le rôle a sa propre
+// route, et un changement de mot de passe doit rester une démarche de
+// l'utilisateur (mot de passe oublié).
+const EDITABLE_FIELDS = [
+  "name",
+  "firstName",
+  "email",
+  "gender",
+  "telefonNummer",
+  "country",
+  "city",
+  "university",
+];
+
+router.patch("/users/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: "Utilisateur non trouvé" });
+
+    const updates = {};
+    for (const field of EDITABLE_FIELDS) {
+      if (req.body[field] === undefined) continue;
+      const value = String(req.body[field]).trim();
+      if (!value) return res.status(400).json({ error: `Le champ « ${field} » ne peut pas être vide` });
+      updates[field] = value;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: "Aucune modification fournie" });
+    }
+
+    // L'adresse sert d'identifiant de connexion : deux comptes ne peuvent pas
+    // la partager, sinon l'un des deux devient inaccessible.
+    if (updates.email && updates.email.toLowerCase() !== user.email?.toLowerCase()) {
+      const taken = await User.findOne({
+        email: updates.email,
+        _id: { $ne: user._id },
+      });
+      if (taken) return res.status(409).json({ error: "Cette adresse est déjà utilisée par un autre compte" });
+    }
+
+    Object.assign(user, updates);
+    await user.save();
+
+    res.json({
+      message: "Profil mis à jour",
+      user: {
+        id: user._id,
+        name: user.name,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+        gender: user.gender,
+        telefonNummer: user.telefonNummer,
+        country: user.country,
+        city: user.city,
+        university: user.university,
       },
     });
   } catch (error) {

@@ -12,6 +12,11 @@ export default function DevUsersTab({ token, setMessage }) {
     const [roleFilter, setRoleFilter] = useState("");
     const usersPerPage = 20;
     const [confirmState, setConfirmState] = useState({ isOpen: false, title: "", message: "", onConfirm: null, type: "danger" });
+    const [editUser, setEditUser] = useState(null);
+    const [savingEdit, setSavingEdit] = useState(false);
+    // L'erreur s'affiche DANS la fenêtre : la bannière de la page est masquée
+    // par le voile de la modale, donc un refus du serveur passait inaperçu.
+    const [editError, setEditError] = useState("");
 
     const openConfirm = ({ title, message, onConfirm, type = "danger" }) =>
         setConfirmState({ isOpen: true, title, message, onConfirm, type });
@@ -88,6 +93,36 @@ export default function DevUsersTab({ token, setMessage }) {
             setMessage("Erreur: " + err.message);
         }
         setTimeout(() => setMessage(""), 3000);
+    };
+
+    const handleEditUser = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const payload = {
+            name: fd.get("name"), firstName: fd.get("firstName"), email: fd.get("email"),
+            gender: fd.get("gender"), telefonNummer: fd.get("telefonNummer"),
+            country: fd.get("country"), city: fd.get("city"), university: fd.get("university"),
+        };
+        setSavingEdit(true);
+        setEditError("");
+        try {
+            const res = await fetch(`${API_BASE_URL}/dev/users/${editUser.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || "Erreur lors de la mise à jour");
+            setMessage(data.message || "Profil mis à jour");
+            setEditUser(null); // succès : on ferme
+            loadUsers();
+            setTimeout(() => setMessage(""), 3000);
+        } catch (err) {
+            // Échec : la fenêtre reste ouverte, avec la raison et la saisie intacte.
+            setEditError(err.message);
+        } finally {
+            setSavingEdit(false);
+        }
     };
 
     const handleDeleteUser = async (userId) => {
@@ -207,6 +242,7 @@ export default function DevUsersTab({ token, setMessage }) {
                                 <td>{user.university}</td>
                                 <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                 <td>
+                                    <button className="btn-edit" title="Modifier le profil" onClick={() => { setEditError(""); setEditUser(user); }}>✏️</button>
                                     <button className="btn-delete" onClick={() => askDeleteUser(user.id)}>🗑️</button>
                                 </td>
                             </tr>
@@ -222,6 +258,72 @@ export default function DevUsersTab({ token, setMessage }) {
                     <span className="pagination-info">Page {currentPage} sur {totalPages}</span>
                     <button className="btn-pagination" onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Suivant ›</button>
                     <button className="btn-pagination" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>Fin »</button>
+                </div>
+            )}
+
+            {editUser && (
+                <div className="dev-modal-overlay" onClick={() => setEditUser(null)}>
+                    <div className="dev-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="dev-modal-header">
+                            <h2>Modifier le profil</h2>
+                            <button className="dev-modal-close" onClick={() => setEditUser(null)}>x</button>
+                        </div>
+                        <div className="dev-modal-body">
+                            {/* Le rôle se change dans le tableau, le mot de passe reste
+                                à la charge de l'utilisateur : ni l'un ni l'autre ici. */}
+                            {editError && <div className="dev-modal-error">{editError}</div>}
+
+                            {/* Champs préremplis : sans libellé, on ne sait plus ce qu'on
+                                modifie une fois le texte d'aide remplacé par la valeur. */}
+                            <form className="create-user-form" onSubmit={handleEditUser}>
+                                <div className="form-grid">
+                                    <label className="dev-field">
+                                        <span>Nom</span>
+                                        <input name="name" defaultValue={editUser.name || ""} required />
+                                    </label>
+                                    <label className="dev-field">
+                                        <span>Prénom</span>
+                                        <input name="firstName" defaultValue={editUser.firstName || ""} required />
+                                    </label>
+                                    <label className="dev-field">
+                                        <span>Email</span>
+                                        <input name="email" type="email" defaultValue={editUser.email || ""} required />
+                                    </label>
+                                    <label className="dev-field">
+                                        <span>Genre</span>
+                                        <select name="gender" defaultValue={editUser.gender || ""} required>
+                                            <option value="">À renseigner</option>
+                                            <option value="Male">Homme</option>
+                                            <option value="Female">Femme</option>
+                                            <option value="Other">Autre</option>
+                                        </select>
+                                    </label>
+                                    <label className="dev-field">
+                                        <span>Téléphone</span>
+                                        <input name="telefonNummer" defaultValue={editUser.telefonNummer || ""} required />
+                                    </label>
+                                    <label className="dev-field">
+                                        <span>Pays</span>
+                                        <input name="country" defaultValue={editUser.country || ""} required />
+                                    </label>
+                                    <label className="dev-field">
+                                        <span>Ville</span>
+                                        <input name="city" defaultValue={editUser.city || ""} required />
+                                    </label>
+                                    <label className="dev-field">
+                                        <span>Université</span>
+                                        <input name="university" defaultValue={editUser.university || ""} required />
+                                    </label>
+                                </div>
+                                <div className="dev-modal-actions">
+                                    <button type="button" className="btn-cancel" onClick={() => setEditUser(null)}>Annuler</button>
+                                    <button type="submit" className="btn-submit" disabled={savingEdit}>
+                                        {savingEdit ? "Enregistrement…" : "Enregistrer"}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             )}
 

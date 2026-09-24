@@ -348,6 +348,131 @@
     background: #c82333;
 }
 
+.btn-edit {
+    background: #e2e8f0;
+    color: #334155;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 0.4rem;
+    transition: background 0.2s;
+}
+
+.btn-edit:hover {
+    background: #cbd5e1;
+}
+
+/* ---- Fenêtre d'édition d'un profil ---- */
+/* Noms de classes propres au tableau de bord Dev : les styles de modale de
+   l'espace admin sont dans une autre feuille, et Vite les réunit toutes dans
+   un seul fichier — réutiliser les mêmes noms créerait des conflits. */
+.dev-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 1000;
+}
+
+.dev-modal {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+}
+
+.dev-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.dev-modal-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.dev-modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+}
+
+.dev-modal-close:hover {
+    color: #0f172a;
+}
+
+.dev-modal-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+/* Dans la fenêtre, le formulaire n'a pas besoin de son fond ni de sa marge. */
+.dev-modal-body .create-user-form {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.dev-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.dev-field span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+    letter-spacing: 0.01em;
+}
+
+.dev-modal-error {
+    margin-bottom: 1rem;
+    padding: 0.7rem 0.85rem;
+    background: #fef2f2;
+    border-left: 3px solid #dc2626;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+    color: #991b1b;
+}
+
+.dev-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+}
+
+.btn-cancel {
+    background: #e2e8f0;
+    color: #334155;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #cbd5e1;
+}
+
 /* TOOLS SECTION */
 .tools-section {
     display: flex;

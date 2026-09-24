@@ -64,6 +64,7 @@ const MembershipSuccess = lazy(() => import("./components/membership/MembershipS
 // Working papers
 const WorkingPapersMain = lazy(() => import("./components/working-papers/WorkingPapersMain.jsx"));
 const WorkingPaperDetail = lazy(() => import("./components/working-papers/WorkingPaperDetail.jsx"));
+const WorkingPapersHistory = lazy(() => import("./components/working-papers/WorkingPapersHistory.jsx"));
 
 // Members
 const President = lazy(() => import("./components/members/President.jsx"));
@@ -155,6 +156,8 @@ function App() {
                 <Route path="/membership/payment" element={<MembershipPayment />} />
                 <Route path="/membership/success" element={<MembershipSuccess />} />
                 <Route path="/working-papers" element={<WorkingPapersMain />} />
+                {/* Avant /:id, sinon « history » serait pris pour un identifiant d'appel. */}
+                <Route path="/working-papers/history" element={<WorkingPapersHistory />} />
                 <Route path="/working-papers/:id" element={<WorkingPaperDetail />} />
                 <Route path="/working-papers/:id/submit" element={<SubmissionForm />} />
                 <Route path="/my-submissions" element={<MySubmissions />} />

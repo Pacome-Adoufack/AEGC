@@ -242,10 +242,22 @@ const submissionSchema = new mongoose.Schema(
       },
     ],
 
-    // Visibilité dans l'historique public
+    // Visibilité dans l'historique public et dans l'archive RePEc.
+    // Le papier n'est réellement diffusé que si son appel l'est aussi
+    // (voir WorkingPaper.resultsPublic) : c'est le verrou de l'appel.
     isPublicInHistory: {
       type: Boolean,
       default: false,
+    },
+    // Traçabilité : un auteur peut contester la diffusion de son texte.
+    publicInHistoryAt: {
+      type: Date,
+      default: null,
+    },
+    publicInHistoryBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
   },
   {

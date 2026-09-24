@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import Submission from "../models/Submission.js";
+import WorkingPaper from "../models/WorkingPaper.js";
 // Charge les variables d'environnement (dont ADMIN_EMAIL) avant leur lecture.
 import "../config/env.js";
 
@@ -36,12 +37,28 @@ function rediDate(date) {
   return `${y}-${m}`;
 }
 
-// Charge les soumissions acceptées et publiques, triées par date de création
+// Charge les soumissions acceptées et publiques, triées par date de création.
+// Double condition : l'appel doit diffuser ses résultats ET le papier doit
+// avoir été coché. Un appel non diffusé masque donc tous ses papiers.
 async function getAcceptedSubmissions() {
-  return Submission.find({ status: "acceptee", isPublicInHistory: true })
+  const openCalls = await WorkingPaper.find({ resultsPublic: true }).select("_id");
+  if (openCalls.length === 0) return [];
+
+  return Submission.find({
+    status: "acceptee",
+    isPublicInHistory: true,
+    workingPaper: { $in: openCalls.map((c) => c._id) },
+  })
     .populate("workingPaper", "title language")
     .populate("submittedBy", "name firstName email")
     .sort({ createdAt: 1 });
+}
+
+// Même règle pour le PDF : sans elle, un lien deviné resterait ouvert.
+async function isSubmissionDiffusable(sub) {
+  if (!sub || sub.status !== "acceptee" || !sub.isPublicInHistory) return false;
+  const call = await WorkingPaper.findById(sub.workingPaper).select("resultsPublic");
+  return Boolean(call?.resultsPublic);
 }
 
 // Index de dossier, comme en produirait un serveur de fichiers : le robot de
@@ -175,10 +192,11 @@ router.get(`/repec/${ARCHIVE_CODE}/wpaper/wpaper.rdf`, async (req, res) => {
 // ─────────────────────────────────────────────
 router.get("/repec/submissions/:id/pdf", async (req, res) => {
   try {
-    const sub = await Submission.findById(req.params.id).select("status isPublicInHistory pdfFile versions");
+    const sub = await Submission.findById(req.params.id)
+      .select("status isPublicInHistory workingPaper pdfFile versions");
 
     if (!sub) return res.status(404).send("Not found");
-    if (sub.status !== "acceptee" || !sub.isPublicInHistory) {
+    if (!(await isSubmissionDiffusable(sub))) {
       return res.status(403).send("Forbidden");
     }
 

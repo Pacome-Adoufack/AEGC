@@ -626,6 +626,187 @@
     cursor: pointer;
 }
 
+/* ---- Diffusion des résultats d'un appel ---- */
+/* Pastille d'état sur la carte de l'appel : l'admin doit voir d'un coup d'oeil
+   si les résultats sont ouverts, sans ouvrir la fenêtre. */
+.diffusion-chip {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.diffusion-chip.on {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.diffusion-chip.off {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.diffusion-modal {
+    max-width: 680px;
+}
+
+.diffusion-call-title {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--aegc-ink, #0f172a);
+}
+
+/* Le verrou de l'appel : mis en avant, car il commande tout le reste. */
+.diffusion-gate {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid;
+    margin-bottom: 1.5rem;
+}
+
+.diffusion-gate.on {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.diffusion-gate.off {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.diffusion-gate-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.diffusion-gate-text strong {
+    font-size: 0.95rem;
+    color: #0f172a;
+}
+
+.diffusion-gate-text span {
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.45;
+}
+
+.diffusion-gate-text .diffusion-date {
+    font-size: 0.78rem;
+    color: #64748b;
+}
+
+.diffusion-gate .btn {
+    flex-shrink: 0;
+}
+
+.diffusion-list-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+.diffusion-list-head h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.diffusion-list-head span {
+    font-size: 0.82rem;
+    color: #64748b;
+}
+
+.diffusion-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.diffusion-list li {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.7rem 0.85rem;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.diffusion-list li.selected {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+/* La case couvre toute la ligne : cliquer sur le titre coche le papier. */
+.diffusion-list .visibility-toggle {
+    align-items: flex-start;
+    gap: 0.7rem;
+    white-space: normal;
+    width: 100%;
+}
+
+.diffusion-list .visibility-toggle input {
+    margin-top: 0.2rem;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.diffusion-paper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.diffusion-paper strong {
+    font-size: 0.9rem;
+    color: #0f172a;
+    line-height: 1.35;
+}
+
+.diffusion-authors {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.diffusion-warning {
+    margin: 1.2rem 0 0;
+    padding: 0.7rem 0.85rem;
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: #78350f;
+    line-height: 1.5;
+}
+
+.admin-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .diffusion-gate {
+        flex-direction: column;
+    }
+
+    .diffusion-gate .btn {
+        width: 100%;
+    }
+}
+
 /* ---- Admin modals ---- */
 .admin-modal-overlay {
     position: fixed;

@@ -57,6 +57,44 @@ router.get("/working-papers/history/public", async (req, res) => {
   }
 });
 
+// Papiers diffusés (PUBLIC)
+// Même règle que l'archive RePEc : l'appel doit diffuser ses résultats ET le
+// papier doit avoir été coché. Ce qui part chez RePEc est donc exactement ce
+// que le site montre, jamais plus.
+router.get("/working-papers/history/papers", async (req, res) => {
+  try {
+    const openCalls = await WorkingPaper.find({ resultsPublic: true }).select("_id title");
+    if (openCalls.length === 0) return res.json([]);
+
+    const submissions = await Submission.find({
+      status: "acceptee",
+      isPublicInHistory: true,
+      workingPaper: { $in: openCalls.map((c) => c._id) },
+    })
+      .select("articleTitle abstract authors keywords jelCodes workingPaper publicInHistoryAt createdAt")
+      .populate("workingPaper", "title")
+      .sort({ publicInHistoryAt: -1, createdAt: -1 });
+
+    // Aucune donnée personnelle au-delà du nom et de l'affiliation : ni courriel
+    // ni identifiant de compte ne sortent d'ici.
+    res.json(
+      submissions.map((s) => ({
+        _id: s._id,
+        articleTitle: s.articleTitle,
+        abstract: s.abstract,
+        authors: (s.authors || []).map((a) => ({ name: a.name, affiliation: a.affiliation })),
+        keywords: s.keywords || [],
+        jelCodes: s.jelCodes || [],
+        callTitle: s.workingPaper?.title || "",
+        publishedAt: s.publicInHistoryAt || s.createdAt,
+        downloadUrl: `/repec/submissions/${s._id}/pdf`,
+      })),
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Télécharger une publication de synthèse (PUBLIC)
 router.get("/publications/:id/download", async (req, res) => {
   try {

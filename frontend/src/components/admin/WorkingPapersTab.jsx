@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { getAuthToken } from "../../utils/auth";
 import { API_BASE_URL } from "../Url";
+import DiffusionModal from "./DiffusionModal";
 import {
     JEL_OPTIONS, JEL_CODE_REGEX,
     normalizeJelCode, buildUsefulLinksFromText, formatDate,
@@ -18,6 +19,7 @@ const TOTAL_STEPS = 3;
 export default function WorkingPapersTab({ workingPapers, isAdmin, toast, openConfirm, onRefresh }) {
     const [showCreate, setShowCreate] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
+    const [diffusionWP, setDiffusionWP] = useState(null);
     const [createStep, setCreateStep] = useState(1);
     const [newWP, setNewWP] = useState(EMPTY_WP);
     const [editWP, setEditWP] = useState({ ...EMPTY_WP, id: "" });
@@ -213,9 +215,15 @@ export default function WorkingPapersTab({ workingPapers, isAdmin, toast, openCo
                                             </span>
                                         </span>
                                         <span className="meta-chip">{wp.submissionsCount} soumission{wp.submissionsCount !== 1 ? "s" : ""}</span>
+                                        <span className="meta-chip">
+                                            <span className={`diffusion-chip ${wp.resultsPublic ? "on" : "off"}`}>
+                                                {wp.resultsPublic ? "Résultats diffusés" : "Résultats non diffusés"}
+                                            </span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="admin-wp-actions">
+                                    <button className="btn btn-secondary btn-small" onClick={() => setDiffusionWP(wp)}>Diffusion</button>
                                     <button className="btn btn-secondary btn-small" onClick={() => startEdit(wp)}>Modifier</button>
                                     <button className="btn btn-danger btn-small" onClick={() => handleDelete(wp)}>Supprimer</button>
                                 </div>
@@ -335,6 +343,15 @@ export default function WorkingPapersTab({ workingPapers, isAdmin, toast, openCo
                         </div>
                     </div>
                 </div>
+            )}
+
+            {diffusionWP && (
+                <DiffusionModal
+                    workingPaper={diffusionWP}
+                    toast={toast}
+                    onClose={() => setDiffusionWP(null)}
+                    onChanged={onRefresh}
+                />
             )}
 
             {isAdmin && (

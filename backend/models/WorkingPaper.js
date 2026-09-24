@@ -57,6 +57,24 @@ const workingPaperSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    // Diffusion des résultats. À ne pas confondre avec `status` (ouvert/clôturé)
+    // qui parle de la date limite de dépôt : l'appel lui-même est visible de
+    // tous dès sa création. Ici, il s'agit d'ouvrir les papiers acceptés au
+    // public et à l'archive RePEc. Tant que c'est `false`, AUCUN papier de cet
+    // appel ne sort, même ceux cochés individuellement.
+    resultsPublic: {
+      type: Boolean,
+      default: false,
+    },
+    resultsPublishedAt: {
+      type: Date,
+      default: null,
+    },
+    resultsPublishedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     contact: {
       email: { type: String, trim: true, default: "" },
       phone: { type: String, trim: true, default: "" },

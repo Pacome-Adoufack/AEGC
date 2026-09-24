@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+﻿import React, { useState, useCallback, useMemo } from "react";
 import "@/styles/Toast.css";
 import { ToastContext, toastIcons } from "@/hooks/ToastContext.js";
 
@@ -19,12 +19,20 @@ export function ToastProvider({ children }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const toast = {
-    success: (msg, duration) => addToast(msg, "success", duration),
-    error: (msg, duration) => addToast(msg, "error", duration),
-    info: (msg, duration) => addToast(msg, "info", duration),
-    warning: (msg, duration) => addToast(msg, "warning", duration),
-  };
+  // useMemo est indispensable ici : sans lui, cet objet change d'identité à
+  // chaque rendu du fournisseur, donc pour TOUS les composants qui appellent
+  // useToast(). Un useEffect qui liste `toast` dans ses dépendances repart
+  // alors en boucle, et comme afficher une notification re-rend le fournisseur,
+  // la boucle s'alimente elle-même (« Maximum update depth exceeded »).
+  const toast = useMemo(
+    () => ({
+      success: (msg, duration) => addToast(msg, "success", duration),
+      error: (msg, duration) => addToast(msg, "error", duration),
+      info: (msg, duration) => addToast(msg, "info", duration),
+      warning: (msg, duration) => addToast(msg, "warning", duration),
+    }),
+    [addToast],
+  );
 
   return (
     <ToastContext.Provider value={toast}>

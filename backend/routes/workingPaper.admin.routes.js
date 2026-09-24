@@ -474,15 +474,93 @@ router.post("/admin/submissions/:id/revision-request", authMiddleware, requireRo
 // Toggle visibilité historique public (ADMIN)
 router.patch("/admin/submissions/:id/visibility", authMiddleware, requireRole(["admin"]), async (req, res) => {
   try {
-    const { isPublicInHistory } = req.body;
-    const submission = await Submission.findByIdAndUpdate(
-      req.params.id,
-      { isPublicInHistory },
-      { new: true },
-    );
-
+    const isPublicInHistory = req.body.isPublicInHistory === true;
+    const submission = await Submission.findById(req.params.id);
     if (!submission) return res.status(404).json({ error: "Soumission non trouvée" });
-    res.json({ message: "Visibilité mise à jour", submission });
+
+    // Un papier refusé ou encore en cours n'a rien à faire dans l'archive.
+    if (isPublicInHistory && submission.status !== "acceptee") {
+      return res.status(400).json({ error: "Seul un papier accepté peut être diffusé" });
+    }
+
+    submission.isPublicInHistory = isPublicInHistory;
+    submission.publicInHistoryAt = isPublicInHistory ? new Date() : null;
+    submission.publicInHistoryBy = isPublicInHistory ? req.user._id : null;
+    await submission.save();
+
+    res.json({
+      message: isPublicInHistory ? "Papier diffusé" : "Papier retiré de la diffusion",
+      submission: { _id: submission._id, isPublicInHistory: submission.isPublicInHistory },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+// Diffusion des résultats d'un appel (ADMIN)
+// Deux décisions distinctes : l'appel ouvre ses résultats (verrou global),
+// puis chaque papier accepté est coché ou non. RePEc ne lit que l'intersection.
+// ─────────────────────────────────────────────
+router.get("/admin/working-papers/:id/diffusion", authMiddleware, requireRole(["admin"]), async (req, res) => {
+  try {
+    const workingPaper = await WorkingPaper.findById(req.params.id)
+      .select("title resultsPublic resultsPublishedAt resultsPublishedBy")
+      .populate("resultsPublishedBy", "name firstName");
+    if (!workingPaper) return res.status(404).json({ error: "Appel non trouvé" });
+
+    const submissions = await Submission.find({
+      workingPaper: workingPaper._id,
+      status: "acceptee",
+    })
+      .select("articleTitle authors isPublicInHistory publicInHistoryAt createdAt")
+      .sort({ createdAt: 1 });
+
+    res.json({
+      workingPaper: {
+        _id: workingPaper._id,
+        title: workingPaper.title,
+        resultsPublic: workingPaper.resultsPublic,
+        resultsPublishedAt: workingPaper.resultsPublishedAt,
+        resultsPublishedBy: workingPaper.resultsPublishedBy,
+      },
+      submissions: submissions.map((s) => ({
+        _id: s._id,
+        articleTitle: s.articleTitle,
+        authors: (s.authors || []).map((a) => a.name),
+        isPublicInHistory: s.isPublicInHistory,
+        publicInHistoryAt: s.publicInHistoryAt,
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.patch("/admin/working-papers/:id/diffusion", authMiddleware, requireRole(["admin"]), async (req, res) => {
+  try {
+    const resultsPublic = req.body.resultsPublic === true;
+    const workingPaper = await WorkingPaper.findById(req.params.id);
+    if (!workingPaper) return res.status(404).json({ error: "Appel non trouvé" });
+
+    workingPaper.resultsPublic = resultsPublic;
+    workingPaper.resultsPublishedAt = resultsPublic ? new Date() : null;
+    workingPaper.resultsPublishedBy = resultsPublic ? req.user._id : null;
+    await workingPaper.save();
+
+    // Les cases des papiers ne sont pas touchées : fermer puis rouvrir un appel
+    // ne fait pas perdre la sélection faite précédemment.
+    const selected = await Submission.countDocuments({
+      workingPaper: workingPaper._id,
+      status: "acceptee",
+      isPublicInHistory: true,
+    });
+
+    res.json({
+      message: resultsPublic ? "Résultats de l'appel diffusés" : "Diffusion de l'appel suspendue",
+      resultsPublic: workingPaper.resultsPublic,
+      selectedCount: selected,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

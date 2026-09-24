@@ -132,6 +132,85 @@
     letter-spacing: 0.01em;
 }
 
+/* ---- Travaux publiés ---- */
+/* Les papiers individuels diffusés par l'administration, c'est-à-dire ce que
+   RePEc moissonne. Volontairement au-dessus des numéros de synthèse. */
+.published-papers {
+    margin-bottom: 2.5rem;
+}
+
+.papers-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.paper-card {
+    background: white;
+    border: 1px solid var(--wp-border);
+    border-radius: var(--wp-radius-lg);
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.paper-card:hover {
+    box-shadow: var(--wp-shadow-md);
+    transform: translateY(-2px);
+}
+
+.paper-card h3 {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--wp-text-dark);
+}
+
+.paper-authors {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--wp-text);
+}
+
+.paper-call {
+    margin: 0;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+}
+
+.paper-abstract {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--wp-text);
+}
+
+.keyword-tag.jel {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.paper-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+}
+
+@media (min-width: 900px) {
+    .papers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 .history-meta {
     display: flex;
     align-items: center;
