@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aegc-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "E:\\AEGC\\Api New\\AEGC\\frontend"],
+      "port": 5173
+    }
+  ]
+}

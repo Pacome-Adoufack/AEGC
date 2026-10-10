@@ -563,10 +563,14 @@
 /* ===== Grille des autres articles ===== */
 /* auto-fit, pas auto-fill : les colonnes vides disparaissent au lieu de laisser
    un trou à droite quand il y a moins d'annonces que de colonnes possibles. */
+/* 320 px de minimum, pas 260 : en dessous, les cartes se tassaient à quatre ou
+   cinq par ligne et devenaient illisibles. Avec trois annonces, on obtient une
+   ligne de trois cartes larges sur grand écran. */
 .news-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1rem;
+  align-items: stretch;
 }
 
 .news-card {
@@ -605,6 +609,34 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Collé en bas : les trois cartes s'alignent quelle que soit la longueur du
+   titre ou du résumé. */
+.news-card-more {
+  margin-top: auto;
+  padding-top: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--aegc-blue);
+}
+
+/* La carte devient un vrai bouton quand elle ouvre une annonce : on retire le
+   style natif, on garde le repère au clavier. */
+button.news-card {
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+button.news-card:focus-visible {
+  outline: 3px solid var(--aegc-blue);
+  outline-offset: 2px;
+}
+
+.news-card--static {
+  cursor: default;
 }
 
 /* ===== Newsletter ===== */

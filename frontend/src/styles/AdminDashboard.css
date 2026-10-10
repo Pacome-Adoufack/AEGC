@@ -930,6 +930,75 @@
     background: #5a6268;
 }
 
+/* ===== PRIX ET LAURÉATS ===== */
+.awards-admin-year {
+    margin-bottom: 1.5rem;
+}
+
+.awards-admin-year h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.awards-admin-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    background: #ffffff;
+}
+
+.awards-admin-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 200px;
+    flex: 1;
+}
+
+.awards-admin-info strong {
+    font-size: 0.9rem;
+    color: #0f172a;
+}
+
+.awards-admin-info span {
+    font-size: 0.82rem;
+    color: #64748b;
+}
+
+.awards-admin-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+/* Pastille d'état, définie ici : la feuille des working papers n'est pas
+   chargée sur cette page. */
+.award-state-chip {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+}
+
+.award-state-chip.on {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.award-state-chip.off {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
 /* ===== ANNOUNCEMENTS ===== */
 
 /* Formulaire */

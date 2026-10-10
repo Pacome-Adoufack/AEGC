@@ -1,94 +1,119 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../Url";
+import AwardCard from "../awards/AwardCard";
+import useSpotlight from "../awards/useSpotlight";
 import "../../styles/Price.css";
-import logo from "../../assets/logo.png";
 
-const priceFiles = [
-  {
-    id: 1,
-    title: "Prix du Meilleur Chercheur AEGC",
-    date: "12/01/2025",
-    description:
-      "Récompense pour les contributions exceptionnelles en économie et gestion.",
-    filename: "prix_meilleur_chercheur_AEGC.pdf",
-    thumbnail: logo,
-  },
-  {
-    id: 2,
-    title: "Prix Jeune Talent AEGC",
-    date: "05/06/2025",
-    description:
-      "Distinction accordée aux jeunes chercheurs prometteurs.",
-    filename: "prix_jeune_talent_AEGC.pdf",
-    thumbnail: logo,
-  },
-  {
-    id: 3,
-    title: "Prix Innovation Scientifique AEGC",
-    date: "21/09/2025",
-    description:
-      "Pour les projets innovants dans la recherche économique.",
-    filename: "prix_innovation_scientifique_AEGC.pdf",
-    thumbnail: logo,
-  },
-];
+export default function Price() {
+    const [years, setYears] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [failed, setFailed] = useState(false);
+    const [openYear, setOpenYear] = useState(null);
 
-const Price = () => {
-  const handleDownload = (filename) => {
-    const fileUrl = `/pdf/${filename}`;
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.setAttribute("download", filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    useEffect(() => {
+        let cancelled = false;
 
-  const handleView = (filename) => {
-    const fileUrl = `/pdf/${filename}`;
-    window.open(fileUrl, "_blank");
-  };
+        (async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/awards`);
+                // Sans ce contrôle, une page d'erreur HTML partait dans JSON.parse
+                // et l'écran restait bloqué sur « Chargement… ».
+                if (!res.ok) throw new Error(`Réponse ${res.status}`);
+                const payload = await res.json();
+                if (cancelled) return;
+                setYears(Array.isArray(payload.data) ? payload.data : []);
+            } catch (error) {
+                console.error("Erreur chargement des prix:", error);
+                if (!cancelled) setFailed(true);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        })();
 
-  return (
-    <div className="release-container">
-      <h1 className="release-title">Les Différents Prix AEGC</h1>
-      <p className="release-subtitle">
-        Découvrez les distinctions et prix décernés par l'association
-      </p>
+        return () => { cancelled = true; };
+    }, []);
 
-      <div className="release-list">
-        {priceFiles.map((item) => (
-          <div key={item.id} className="release-card">
-            <div className="release-thumbnail">
-              <img src={item.thumbnail} alt={`Miniature ${item.title}`} />
-              <div className="pdf-label">PDF</div>
+    // L'édition la plus récente est mise en avant, les autres passent en archive.
+    const [current, ...previous] = years;
+    const { active, pauseProps } = useSpotlight(current?.awards.length || 0);
+
+    if (loading) {
+        return (
+            <div className="awards-page">
+                <p className="awards-state">Chargement…</p>
             </div>
+        );
+    }
 
-            <div className="release-content">
-              <h2>{item.title}</h2>
-              <p className="release-date">Publié le : {item.date}</p>
-              <p className="release-description">{item.description}</p>
+    return (
+        <div className="awards-page">
+            <header className="awards-header">
+                <h1>Les prix de l&apos;AEGC</h1>
+                <p>Distinctions décernées chaque année par l&apos;association</p>
+            </header>
 
-              <div className="release-actions">
-                <button
-                  className="view-button"
-                  onClick={() => handleView(item.filename)}
-                >
-                  Visualiser
-                </button>
+            {failed ? (
+                <p className="awards-state">
+                    Les prix n&apos;ont pas pu être chargés. Réessayez dans un instant.
+                </p>
+            ) : years.length === 0 ? (
+                <p className="awards-state">
+                    Les lauréats seront annoncés prochainement.
+                </p>
+            ) : (
+                <>
+                    <section className="awards-current">
+                        <div className="awards-year-line">
+                            <h2>Édition {current.year}</h2>
+                            <span className="awards-badge">nouveaux lauréats</span>
+                        </div>
 
-                <button
-                  className="download-button"
-                  onClick={() => handleDownload(item.filename)}
-                >
-                  Télécharger
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+                        <div className="awards-grid" {...pauseProps}>
+                            {current.awards.map((award, i) => (
+                                <AwardCard
+                                    key={award._id}
+                                    award={award}
+                                    index={i}
+                                    spotlight={i === active}
+                                />
+                            ))}
+                        </div>
+                    </section>
 
-export default Price;
+                    {previous.length > 0 && (
+                        <section className="awards-archive">
+                            <h2>Éditions précédentes</h2>
+
+                            {previous.map((edition) => {
+                                const open = openYear === edition.year;
+                                return (
+                                    <div key={edition.year} className="awards-edition">
+                                        <button
+                                            className="awards-edition-head"
+                                            aria-expanded={open}
+                                            onClick={() => setOpenYear(open ? null : edition.year)}
+                                        >
+                                            <span className="awards-edition-year">{edition.year}</span>
+                                            <span className="awards-edition-count">
+                                                {edition.awards.length} lauréat{edition.awards.length > 1 ? "s" : ""}
+                                            </span>
+                                            <span className={`awards-chevron ${open ? "open" : ""}`} aria-hidden="true">▾</span>
+                                        </button>
+
+                                        {open && (
+                                            <div className="awards-grid is-archive">
+                                                {edition.awards.map((award, i) => (
+                                                    <AwardCard key={award._id} award={award} index={i} />
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </section>
+                    )}
+                </>
+            )}
+        </div>
+    );
+}

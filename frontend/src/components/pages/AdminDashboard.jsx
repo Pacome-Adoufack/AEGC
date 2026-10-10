@@ -6,6 +6,7 @@ import useAdminSummary from "../admin/useAdminSummary";
 import MembershipsTab from "../admin/MembershipsTab";
 import AnnouncementsTab from "../admin/AnnouncementsTab";
 import GalleryTab from "../admin/GalleryTab";
+import AwardsTab from "../admin/AwardsTab";
 import ContactsPanel from "../admin/ContactsPanel";
 import SubscribersPanel from "../admin/SubscribersPanel";
 import ReservationsPanel from "../admin/ReservationsPanel";
@@ -18,7 +19,11 @@ const SECTIONS = [
     { id: "accueil", label: "Accueil", icon: "🏠" },
     {
         id: "publier", label: "Publier", icon: "📢",
-        sub: [{ id: "annonces", label: "Annonces" }, { id: "photos", label: "Photos" }],
+        sub: [
+            { id: "annonces", label: "Annonces" },
+            { id: "photos", label: "Photos" },
+            { id: "prix", label: "Prix" },
+        ],
     },
     { id: "working-papers", label: "Working papers", icon: "📄", adminOnly: true, badge: "submissionsToAssign" },
     {
@@ -176,6 +181,14 @@ export default function AdminDashboard() {
                                 openConfirm={openConfirm}
                                 startCreating={startCreating}
                                 onStartHandled={clearStartCreating}
+                            />
+                        )}
+
+                        {section.id === "publier" && sub.id === "prix" && (
+                            <AwardsTab
+                                token={token}
+                                setMessage={setMessage}
+                                openConfirm={openConfirm}
                             />
                         )}
 

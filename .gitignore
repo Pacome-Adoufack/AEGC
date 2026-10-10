@@ -29,5 +29,18 @@ Thumbs.db
 backend/images/*
 !backend/images/.gitkeep
 
+# Fichiers déposés par les utilisateurs : travaux non publiés, photos, pièces
+# jointes d'annonces. Ils vivent sur le serveur (montage de l'hôte), jamais
+# dans le dépôt — quatre PDF de soumission s'y étaient retrouvés, sur un dépôt
+# public.
+# Pas de .gitkeep à conserver : chaque middleware crée son dossier au besoin
+# (fs.mkdirSync avec recursive).
+backend/uploads/**
+
+# Copies locales du fichier de configuration (contiennent les secrets)
+.env.prod-backup
+**/.env.prod-backup
+*.env.backup
+
 # Sensitive local docs
 docs/DEV_CREDENTIALS.md

@@ -23,6 +23,7 @@ import wpAdminRoutes from "./routes/workingPaper.admin.routes.js";
 import committeeRoutes from "./routes/committee.routes.js";
 import repecRoutes from "./routes/repec.routes.js";
 import galleryRoutes from "./routes/gallery.routes.js";
+import awardRoutes from "./routes/award.routes.js";
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -104,6 +105,7 @@ app.use("/", contactRoutes);
 app.use("/", subscribeRoutes);
 app.use("/", announcementRoutes);
 app.use("/", galleryRoutes);
+app.use("/", awardRoutes);
 app.use("/", membershipAdminRoutes);
 
 // ============================================

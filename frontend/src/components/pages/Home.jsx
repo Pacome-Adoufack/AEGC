@@ -8,6 +8,7 @@ import { API_BASE_URL } from "../Url";
 import AnnouncementBody from "../common/AnnouncementBody";
 import HomeGallery from "./HomeGallery";
 import HomeIntro from "./HomeIntro";
+import HomeAwards from "../awards/HomeAwards";
 import {
   attachmentUrl,
   categoryLabel,
@@ -51,7 +52,9 @@ const Home = () => {
   }, []);
 
   const featuredAnnouncement = announcements[0] || null;
-  const otherAnnouncements = announcements.slice(1);
+  // Trois cartes seulement : une ligne nette, et chacune assez large pour être
+  // lisible. Le reste est derrière « Toutes les actualités ».
+  const otherAnnouncements = announcements.slice(1, 4);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalItem, setModalItem] = useState(null);
 
@@ -94,6 +97,9 @@ const Home = () => {
       </section>
 
       <HomeIntro />
+
+      {/* Ne rend rien tant qu'aucun lauréat n'est publié pour l'année en cours. */}
+      <HomeAwards />
 
       {showOverlay && (
         <div className="video-overlay" onClick={handleClose}>
@@ -150,23 +156,38 @@ const Home = () => {
 
                   {otherAnnouncements.length > 0 && (
                     <div className="news-cards-grid">
-                      {otherAnnouncements.map((item) => (
-                        <article
-                          key={item._id}
-                          className="news-card"
-                          onClick={hasMoreToRead(item) ? () => openAnnouncementModal(item) : undefined}
-                          style={{ cursor: hasMoreToRead(item) ? 'pointer' : 'default' }}
-                        >
-                          <div className="news-meta">
-                            <span className="announcement-chip">{categoryLabel(item.category)}</span>
-                            <span className="announcement-date">
-                              {new Date(item.publishedAt || item.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
-                            </span>
-                          </div>
-                          <h4 className="news-card-title">{item.title}</h4>
-                          <p className="news-card-summary">{item.summary}</p>
-                        </article>
-                      ))}
+                      {otherAnnouncements.map((item) => {
+                        const readable = hasMoreToRead(item);
+                        const pdfCount = (item.attachments || []).filter((a) => a.kind === "pdf").length;
+
+                        // Un vrai bouton quand la carte ouvre quelque chose :
+                        // l'<article> cliquable d'avant était inatteignable au
+                        // clavier, et rien n'indiquait qu'on pouvait cliquer.
+                        const Tag = readable ? "button" : "article";
+
+                        return (
+                          <Tag
+                            key={item._id}
+                            type={readable ? "button" : undefined}
+                            className={`news-card${readable ? "" : " news-card--static"}`}
+                            onClick={readable ? () => openAnnouncementModal(item) : undefined}
+                          >
+                            <div className="news-meta">
+                              <span className="announcement-chip">{categoryLabel(item.category)}</span>
+                              <span className="announcement-date">
+                                {new Date(item.publishedAt || item.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
+                              </span>
+                            </div>
+                            <h4 className="news-card-title">{item.title}</h4>
+                            <p className="news-card-summary">{item.summary}</p>
+                            {readable && (
+                              <span className="news-card-more">
+                                {pdfCount > 0 ? `Lire la suite · ${pdfCount} PDF →` : "Lire la suite →"}
+                              </span>
+                            )}
+                          </Tag>
+                        );
+                      })}
                     </div>
                   )}
                 </>
