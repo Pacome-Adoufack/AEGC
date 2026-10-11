@@ -131,7 +131,7 @@ const MembershipPayment = () => {
         orangeNumber: paymentInfo?.orangeNumber || '+237698905007',
         mtnNumber: paymentInfo?.mtnNumber || '+237651659996',
         mobileHolder: paymentInfo?.mobileHolder || 'Dr Zeh Inès Pérolde',
-        adminEmail: paymentInfo?.adminEmail || 'aegc.admi@gmail.com',
+        adminEmail: paymentInfo?.adminEmail || 'info@aegc-web.org',
     };
 
     // --- États intermédiaires ---

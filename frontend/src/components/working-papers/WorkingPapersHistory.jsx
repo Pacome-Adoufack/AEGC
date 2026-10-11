@@ -219,7 +219,7 @@ function WorkingPapersHistory({ embedded = false }) {
                 </p>
                 <p>
                     Pour plus d&apos;informations, contactez-nous à{" "}
-                    <a href="mailto:contact@aegc.org">contact@aegc.org</a>
+                    <a href="mailto:info@aegc-web.org">info@aegc-web.org</a>
                 </p>
             </div>
         </div>

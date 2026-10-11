@@ -18,7 +18,7 @@ const SITE_URL = "https://aegc-web.com";
 // Adresse de contact publiée à RePEc, qui y enverra ses confirmations et ses
 // alertes. On lit ADMIN_EMAIL directement : config.adminEmail retomberait sinon
 // sur l'adresse du service d'envoi d'e-mails, qui n'a rien à faire ici.
-const MAINTAINER_EMAIL = process.env.ADMIN_EMAIL || "aegc.admi@gmail.com";
+const MAINTAINER_EMAIL = process.env.ADMIN_EMAIL || "info@aegc-web.org";
 
 // Formate un texte multi-ligne en ReDIF (lignes de continuation avec espace)
 function rediLines(text, indent = " ") {

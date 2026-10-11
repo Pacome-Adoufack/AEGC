@@ -62,6 +62,25 @@
     background: #f8f9fa;
 }
 
+/* Lien externe dans la barre d'onglets : même allure que les onglets, mais
+   repoussé à droite pour qu'on ne le confonde pas avec une section du
+   tableau de bord. */
+.dev-tab-link {
+    margin-left: auto;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #495057;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.dev-tab-link:hover {
+    color: #2c3e50;
+    background: #f8f9fa;
+}
+
 .dev-tabs button.active {
     color: #2c3e50;
     border-bottom-color: #2c3e50;

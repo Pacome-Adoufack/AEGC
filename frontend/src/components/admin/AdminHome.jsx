@@ -79,6 +79,31 @@ export default function AdminHome({ firstName, summary, isAdmin, goTo }) {
                         <small>Galerie « L'AEGC en images »</small>
                     </span>
                 </button>
+                <button type="button" className="adm-quick-card" onClick={() => goTo('publier', 'prix', { nouveau: '1' })}>
+                    <span className="adm-quick-icon" aria-hidden="true">🏆</span>
+                    <span>
+                        <strong>Enregistrer un lauréat</strong>
+                        <small>Prix de l'AEGC, par année</small>
+                    </span>
+                </button>
+            </div>
+
+            <h3 className="adm-home-heading">Mesure d&apos;audience</h3>
+            <div className="adm-quick">
+                {/* Service externe hébergé sur le sous-domaine stats : il a sa
+                    propre authentification, d'où l'ouverture dans un onglet. */}
+                <a
+                    className="adm-quick-card"
+                    href="https://stats.aegc-web.com"
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    <span className="adm-quick-icon" aria-hidden="true">📈</span>
+                    <span>
+                        <strong>Statistiques de visite</strong>
+                        <small>Pages vues et provenance des visiteurs ↗</small>
+                    </span>
+                </a>
             </div>
 
             {stats.length > 0 && (

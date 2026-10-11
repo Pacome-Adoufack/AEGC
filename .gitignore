@@ -40,6 +40,8 @@ backend/uploads/**
 # Copies locales du fichier de configuration (contiennent les secrets)
 .env.prod-backup
 **/.env.prod-backup
+.env.dev-backup
+**/.env.dev-backup
 *.env.backup
 
 # Sensitive local docs

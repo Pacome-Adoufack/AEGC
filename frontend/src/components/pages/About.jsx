@@ -39,7 +39,7 @@ const About = () => {
           <div className="contact-info">
             <p><strong>Téléphone:</strong> +237 697 88 17 82, +33 6 84 21 50 39, +237 655 17 67 94</p>
             <p><strong>Adresse:</strong> Cameroun, Boîte Postale Yaoundé</p>
-            <p><strong>Email:</strong> <a href="mailto:aegc.237@gmail.com">aegc.237@gmail.com</a></p>
+            <p><strong>Email:</strong> <a href="mailto:info@aegc-web.org">info@aegc-web.org</a></p>
             <p><strong>LinkedIn:</strong> <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">Association des Économistes et Gestionnaires du Cameroun</a></p>
           </div>
         </section>

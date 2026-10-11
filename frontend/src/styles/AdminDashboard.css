@@ -2012,6 +2012,13 @@ button.btn-manage {
     background: #f3fbf5;
 }
 
+/* La carte « Statistiques » est un lien externe, pas un bouton : on retire le
+   soulignement et la couleur de lien pour qu'elle reste identique aux autres. */
+a.adm-quick-card {
+    text-decoration: none;
+    color: inherit;
+}
+
 .adm-quick-icon {
     font-size: 1.6rem;
 }

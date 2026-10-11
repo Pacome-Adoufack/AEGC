@@ -45,6 +45,11 @@ export default function DevDashboard() {
                 <button className={activeTab === "tools" ? "active" : ""} onClick={() => setActiveTab("tools")}>🔧 Outils</button>
                 <button className={activeTab === "memberships" ? "active" : ""} onClick={() => setActiveTab("memberships")}>💳 Cotisations</button>
                 <button className={activeTab === "committee" ? "active" : ""} onClick={() => setActiveTab("committee")}>👥 Comité</button>
+                {/* Service externe avec sa propre authentification : un lien,
+                    pas un onglet. */}
+                <a className="dev-tab-link" href="https://stats.aegc-web.com" target="_blank" rel="noreferrer">
+                    📈 Statistiques ↗
+                </a>
             </div>
 
             <div className="dev-content">
