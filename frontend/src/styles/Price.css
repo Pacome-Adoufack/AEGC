@@ -72,14 +72,25 @@
 }
 
 /* ===== Grille ===== */
-/* auto-fit, pas auto-fill : avec deux lauréats seulement, les colonnes vides
+/* auto-fit, pas auto-fill : avec deux prix seulement, les colonnes vides
    disparaissent au lieu de laisser un trou.
-   Hauteur étirée : les couvertures s'alignent d'une carte à l'autre. */
+   align-items: start — chaque carte s'arrête à son contenu. Étirées à la même
+   hauteur, celles qui n'ont qu'un lauréat se retrouvaient avec un grand vide
+   sous le nom. Les couvertures restent alignées, puisqu'elles sont en haut. */
 .awards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.25rem;
-  align-items: stretch;
+  align-items: start;
+  justify-items: center;
+}
+
+/* Plafond de largeur : avec un seul prix publié, la carte s'étirait sur toute
+   la largeur de la page et la photo devenait démesurée. Sans effet quand il y
+   a trois ou quatre cartes, les colonnes étant alors plus étroites. */
+.award-card {
+  width: 100%;
+  max-width: 420px;
 }
 
 /* ===== Carte d'un lauréat ===== */
@@ -122,11 +133,25 @@
   outline-offset: 2px;
 }
 
+/* Un prix peut avoir plusieurs lauréats : les portraits se partagent la
+   couverture, comme sur les affiches de l'association. */
 .award-cover {
   position: relative;
+  display: flex;
   aspect-ratio: 4 / 3;
   background: var(--aegc-tint);
   overflow: hidden;
+}
+
+.award-cover-slot {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.award-cover-slot + .award-cover-slot {
+  border-left: 2px solid #ffffff;
 }
 
 .award-cover img {
@@ -183,6 +208,29 @@
   margin: 0.2rem 0 0;
   font-size: 0.88rem;
   color: var(--aegc-muted);
+}
+
+/* Plusieurs lauréats : une ligne par personne, nom et affiliation groupés. */
+.award-laureates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.award-laureates .award-laureate,
+.award-laureates .award-affiliation {
+  display: block;
+  margin: 0;
+}
+
+.award-laureates .award-laureate {
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--aegc-ink);
 }
 
 .award-citation {

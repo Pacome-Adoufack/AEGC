@@ -483,6 +483,17 @@ router.patch("/admin/submissions/:id/visibility", authMiddleware, requireRole(["
       return res.status(400).json({ error: "Seul un papier accepté peut être diffusé" });
     }
 
+    // Le numéro RePEc n'est attribué qu'une fois, à la première diffusion, et
+    // n'est jamais repris : le handle doit rester stable même si le papier est
+    // retiré plus tard.
+    if (isPublicInHistory && !submission.repecNumber) {
+      const last = await Submission.findOne({ repecNumber: { $ne: null } })
+        .sort({ repecNumber: -1 })
+        .select("repecNumber")
+        .lean();
+      submission.repecNumber = (last?.repecNumber || 0) + 1;
+    }
+
     submission.isPublicInHistory = isPublicInHistory;
     submission.publicInHistoryAt = isPublicInHistory ? new Date() : null;
     submission.publicInHistoryBy = isPublicInHistory ? req.user._id : null;

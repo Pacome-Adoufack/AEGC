@@ -47,6 +47,9 @@ async function getAcceptedSubmissions() {
   return Submission.find({
     status: "acceptee",
     isPublicInHistory: true,
+    // Sans numéro, pas de handle possible : on n'invente pas d'identifiant à
+    // la volée, il serait instable.
+    repecNumber: { $ne: null },
     workingPaper: { $in: openCalls.map((c) => c._id) },
   })
     .populate("workingPaper", "title language")
@@ -78,11 +81,15 @@ ${links}
 // Express ignore la barre oblique finale : ces deux routes répondent donc aussi
 // bien à /repec/cxy qu'à /repec/cxy/.
 router.get(`/repec/${ARCHIVE_CODE}`, (req, res) =>
-  directoryIndex(res, `/repec/${ARCHIVE_CODE}/`, [`${ARCHIVE_CODE}arch.rdf`, "wpaper/"]),
+  directoryIndex(res, `/repec/${ARCHIVE_CODE}/`, [
+    `${ARCHIVE_CODE}arch.rdf`,
+    `${ARCHIVE_CODE}seri.rdf`,
+    "wpaper/",
+  ]),
 );
 
 router.get(`/repec/${ARCHIVE_CODE}/wpaper`, (req, res) =>
-  directoryIndex(res, `/repec/${ARCHIVE_CODE}/wpaper/`, ["seri.rdf", "wpaper.rdf"]),
+  directoryIndex(res, `/repec/${ARCHIVE_CODE}/wpaper/`, ["wpaper.rdf"]),
 );
 
 // ─────────────────────────────────────────────
@@ -106,9 +113,14 @@ Description: This archive collects working papers submitted to and
 });
 
 // ─────────────────────────────────────────────
-// GET /repec/cxy/wpaper/seri.rdf  — Series metadata
+// GET /repec/cxy/cxyseri.rdf  — Series metadata
+// La convention RePEc place ce fichier à la racine de l'archive, à côté de
+// <code>arch.rdf. L'ancienne adresse reste servie pour ne rien casser.
 // ─────────────────────────────────────────────
-router.get(`/repec/${ARCHIVE_CODE}/wpaper/seri.rdf`, (req, res) => {
+router.get([
+  `/repec/${ARCHIVE_CODE}/${ARCHIVE_CODE}seri.rdf`,
+  `/repec/${ARCHIVE_CODE}/wpaper/seri.rdf`,
+], (req, res) => {
   const content = `Template-Type: ReDIF-Series 1.0
 Name: AEGC Working Papers
 Handle: RePEc:${ARCHIVE_CODE}:wpaper
@@ -138,8 +150,10 @@ router.get(`/repec/${ARCHIVE_CODE}/wpaper/wpaper.rdf`, async (req, res) => {
       return res.send("# No published working papers yet\n");
     }
 
-    const blocks = submissions.map((sub, index) => {
-      const num = String(index + 1).padStart(3, "0");
+    const blocks = submissions.map((sub) => {
+      // Le numéro vient de la base, pas du rang dans la liste : retirer un
+      // papier ne doit jamais décaler l'identifiant des suivants.
+      const num = String(sub.repecNumber).padStart(3, "0");
       const handle = `RePEc:${ARCHIVE_CODE}:wpaper:${num}`;
       const pdfUrl = `${BASE_URL}/repec/submissions/${sub._id}/pdf`;
 
@@ -171,6 +185,8 @@ router.get(`/repec/${ARCHIVE_CODE}/wpaper/wpaper.rdf`, async (req, res) => {
         langLine,
         `File-URL: ${pdfUrl}`,
         `File-Format: Application/PDF`,
+        `File-Function: Full text`,
+        `Number: ${num}`,
         `Handle: ${handle}`,
       ].filter(Boolean);
 

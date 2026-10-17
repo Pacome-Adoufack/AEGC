@@ -39,16 +39,36 @@ function serializeAward(award) {
   };
 }
 
-// Regroupe par année décroissante, chaque année triée par rang de catégorie.
+// Regroupe les lauréats d'un même prix : une carte par prix, pouvant porter
+// plusieurs portraits (le Prix du jeune économiste 2026 a deux lauréats).
+function groupByPrize(awards) {
+  const prizes = new Map();
+  for (const award of awards) {
+    const key = award.category;
+    if (!prizes.has(key)) {
+      prizes.set(key, {
+        category: award.category,
+        categoryRank: award.categoryRank || 0,
+        laureates: [],
+      });
+    }
+    prizes.get(key).laureates.push(serializeAward(award));
+  }
+  return [...prizes.values()].sort(
+    (a, b) => a.categoryRank - b.categoryRank || a.category.localeCompare(b.category),
+  );
+}
+
+// Regroupe par année décroissante, puis par prix à l'intérieur de chaque année.
 function groupByYear(awards) {
   const years = new Map();
   for (const award of awards) {
     if (!years.has(award.year)) years.set(award.year, []);
-    years.get(award.year).push(serializeAward(award));
+    years.get(award.year).push(award);
   }
   return [...years.entries()]
     .sort((a, b) => b[0] - a[0])
-    .map(([year, items]) => ({ year, awards: items }));
+    .map(([year, items]) => ({ year, prizes: groupByPrize(items) }));
 }
 
 // ─────────────────────────────────────────────
@@ -77,7 +97,7 @@ router.get("/api/awards/current", async (req, res) => {
     const awards = await Award.find({ isPublished: true, year })
       .sort({ categoryRank: 1, category: 1 })
       .lean();
-    res.status(200).json({ success: true, year, data: awards.map(serializeAward) });
+    res.status(200).json({ success: true, year, data: groupByPrize(awards) });
   } catch (error) {
     console.error("Erreur prix de l'année:", error);
     res.status(500).json({ success: false, error: "Erreur serveur" });
@@ -173,13 +193,6 @@ router.post(
       res.status(201).json({ success: true, data: serializeAward(award.toObject()) });
     } catch (error) {
       await discardAwardFiles(req.files);
-      // L'index unique (catégorie + année) bloque le doublon d'un double envoi.
-      if (error.code === 11000) {
-        return res.status(409).json({
-          success: false,
-          error: "Un lauréat est déjà enregistré pour ce prix et cette année",
-        });
-      }
       console.error("Erreur création prix:", error);
       const status = error.name === "ValidationError" ? 400 : 500;
       res.status(status).json({ success: false, error: status === 400 ? error.message : "Erreur serveur" });
@@ -245,12 +258,6 @@ router.put(
       res.status(200).json({ success: true, data: serializeAward(award.toObject()) });
     } catch (error) {
       await discardAwardFiles(req.files);
-      if (error.code === 11000) {
-        return res.status(409).json({
-          success: false,
-          error: "Un lauréat est déjà enregistré pour ce prix et cette année",
-        });
-      }
       console.error("Erreur modification prix:", error);
       const status = error.name === "ValidationError" ? 400 : 500;
       res.status(status).json({ success: false, error: status === 400 ? error.message : "Erreur serveur" });

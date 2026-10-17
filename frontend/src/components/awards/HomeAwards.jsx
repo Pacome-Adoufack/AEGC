@@ -13,7 +13,7 @@ import "../../styles/Price.css";
  * c'est ce qui évite de laisser « Prix 2026 » affiché en juillet 2027.
  */
 export default function HomeAwards() {
-    const [awards, setAwards] = useState([]);
+    const [prizes, setPrizes] = useState([]);
     const [year, setYear] = useState(null);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function HomeAwards() {
                 if (!res.ok) return;
                 const payload = await res.json();
                 if (cancelled) return;
-                setAwards(Array.isArray(payload.data) ? payload.data : []);
+                setPrizes(Array.isArray(payload.data) ? payload.data : []);
                 setYear(payload.year);
             } catch (error) {
                 console.error("Erreur chargement des lauréats:", error);
@@ -35,9 +35,9 @@ export default function HomeAwards() {
         return () => { cancelled = true; };
     }, []);
 
-    const { active, pauseProps } = useSpotlight(awards.length);
+    const { active, pauseProps } = useSpotlight(prizes.length);
 
-    if (awards.length === 0) return null;
+    if (prizes.length === 0) return null;
 
     return (
         <section className="home-section home-awards">
@@ -48,10 +48,10 @@ export default function HomeAwards() {
                 </div>
 
                 <div className="awards-grid" {...pauseProps}>
-                    {awards.map((award, i) => (
+                    {prizes.map((prize, i) => (
                         <AwardCard
-                            key={award._id}
-                            award={award}
+                            key={prize.category}
+                            prize={prize}
                             index={i}
                             spotlight={i === active}
                             compact

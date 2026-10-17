@@ -35,7 +35,7 @@ export default function Price() {
 
     // L'édition la plus récente est mise en avant, les autres passent en archive.
     const [current, ...previous] = years;
-    const { active, pauseProps } = useSpotlight(current?.awards.length || 0);
+    const { active, pauseProps } = useSpotlight(current?.prizes.length || 0);
 
     if (loading) {
         return (
@@ -69,10 +69,10 @@ export default function Price() {
                         </div>
 
                         <div className="awards-grid" {...pauseProps}>
-                            {current.awards.map((award, i) => (
+                            {current.prizes.map((prize, i) => (
                                 <AwardCard
-                                    key={award._id}
-                                    award={award}
+                                    key={prize.category}
+                                    prize={prize}
                                     index={i}
                                     spotlight={i === active}
                                 />
@@ -95,15 +95,15 @@ export default function Price() {
                                         >
                                             <span className="awards-edition-year">{edition.year}</span>
                                             <span className="awards-edition-count">
-                                                {edition.awards.length} lauréat{edition.awards.length > 1 ? "s" : ""}
+                                                {edition.prizes.length} prix
                                             </span>
                                             <span className={`awards-chevron ${open ? "open" : ""}`} aria-hidden="true">▾</span>
                                         </button>
 
                                         {open && (
                                             <div className="awards-grid is-archive">
-                                                {edition.awards.map((award, i) => (
-                                                    <AwardCard key={award._id} award={award} index={i} />
+                                                {edition.prizes.map((prize, i) => (
+                                                    <AwardCard key={prize.category} prize={prize} index={i} />
                                                 ))}
                                             </div>
                                         )}

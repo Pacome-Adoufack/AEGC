@@ -249,6 +249,14 @@ const submissionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Numéro dans la série RePEc, attribué à la PREMIÈRE diffusion et jamais
+    // réattribué ensuite. Il compose le handle (RePEc:cxy:wpaper:001), qui est
+    // la référence citée publiquement : un papier retiré garde son numéro, et
+    // aucun autre ne peut le reprendre.
+    repecNumber: {
+      type: Number,
+      default: null,
+    },
     // Traçabilité : un auteur peut contester la diffusion de son texte.
     publicInHistoryAt: {
       type: Date,

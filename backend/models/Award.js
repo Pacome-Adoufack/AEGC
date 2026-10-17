@@ -75,10 +75,10 @@ const awardSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-awardSchema.index({ year: -1, categoryRank: 1 });
-// Un seul lauréat par catégorie et par année : bloque le doublon créé par un
-// double envoi du formulaire.
-awardSchema.index({ category: 1, year: 1 }, { unique: true });
+// Un document = un lauréat. Un même prix peut en avoir plusieurs la même année
+// (le Prix du jeune économiste 2026 en compte deux), donc pas d'unicité sur
+// catégorie + année : l'affichage regroupe les lauréats d'un même prix.
+awardSchema.index({ year: -1, categoryRank: 1, category: 1 });
 
 const Award = mongoose.model("Award", awardSchema);
 export default Award;
