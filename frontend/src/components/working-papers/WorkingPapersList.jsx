@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import "@/styles/wp-base.css";
 import "@/styles/wp-list.css";
 import "@/styles/wp-components.css";
 
 function WorkingPapersList({ embedded = false }) {
+    const { t, i18n } = useTranslation();
     const [workingPapers, setWorkingPapers] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
@@ -26,42 +28,30 @@ function WorkingPapersList({ embedded = false }) {
         }
     };
 
-    const isDeadlinePassed = (deadline) => {
-        return new Date() > new Date(deadline);
-    };
+    const isDeadlinePassed = (deadline) => new Date() > new Date(deadline);
+    const formatDate = (date) => new Date(date).toLocaleDateString(
+        i18n.language === "en" ? "en-US" : "fr-FR",
+        { day: "numeric", month: "long", year: "numeric" },
+    );
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString("fr-FR", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-        });
-    };
-
-    if (loading) {
-        return <div className="loading">Chargement...</div>;
-    }
+    if (loading) return <div className="loading">{t("workingPapers.loading")}</div>;
 
     return (
         <div className={embedded ? "" : "working-papers-container"}>
             {!embedded && (
                 <header className="wp-header">
-                    <h1>📚 Working Papers AEGC</h1>
-                    <p>Appels à contribution en cours et à venir</p>
+                    <h1>{t("workingPapers.listTitle")}</h1>
+                    <p>{t("workingPapers.listSubtitle")}</p>
                 </header>
             )}
 
             <div className="wp-grid">
                 {workingPapers.length === 0 ? (
-                    <div className="no-wp">
-                        <p>Aucun appel à contribution pour le moment.</p>
-                    </div>
+                    <div className="no-wp"><p>{t("workingPapers.emptyCalls")}</p></div>
                 ) : (
                     workingPapers.map((wp) => (
                         <div key={wp._id} className="wp-card">
-                            {/* Bande colorée selon le statut */}
                             <div className={`wp-card-accent${wp.status !== "ouvert" ? " closed-accent" : ""}`} />
-
                             <div className="wp-card-inner">
                                 <div className="wp-card-header">
                                     <div>
@@ -69,71 +59,41 @@ function WorkingPapersList({ embedded = false }) {
                                         {wp.subtitle && <p className="wp-subtitle">{wp.subtitle}</p>}
                                     </div>
                                     <span className={`wp-status ${wp.status === "ouvert" ? "open" : "closed"}`}>
-                                        {wp.status === "ouvert" ? "Ouvert" : "Clôturé"}
+                                        {wp.status === "ouvert" ? t("workingPapers.open") : t("workingPapers.closed")}
                                     </span>
                                 </div>
 
                                 <div className="wp-card-body">
-                                    <p className="wp-description">
-                                        {String(wp.description || "").substring(0, 180)}...
-                                    </p>
-
+                                    <p className="wp-description">{String(wp.description || "").substring(0, 180)}...</p>
                                     <div className="wp-meta">
                                         <div className="wp-meta-item">
                                             <span className="icon">📅</span>
-                                            <span>
-                                                Deadline&nbsp;:{" "}
-                                                <strong>{formatDate(wp.deadline)}</strong>
-                                            </span>
+                                            <span>{t("workingPapers.deadline")}&nbsp; <strong>{formatDate(wp.deadline)}</strong></span>
                                         </div>
                                         <div className="wp-meta-item">
                                             <span className="icon">📝</span>
-                                            <span>
-                                                {wp.submissionsCount || 0} soumission
-                                                {wp.submissionsCount > 1 ? "s" : ""}
-                                            </span>
+                                            <span>{t("workingPapers.submissions", { count: wp.submissionsCount || 0 })}</span>
                                         </div>
-                                        {wp.organizer && (
-                                            <div className="wp-meta-item">
-                                                <span className="icon">🏛️</span>
-                                                <span>{wp.organizer}</span>
-                                            </div>
-                                        )}
-                                        {wp.language && (
-                                            <div className="wp-meta-item">
-                                                <span className="icon">🌐</span>
-                                                <span>{wp.language === "anglais" ? "English" : "Français"}</span>
-                                            </div>
-                                        )}
+                                        {wp.organizer && <div className="wp-meta-item"><span className="icon">🏛️</span><span>{wp.organizer}</span></div>}
+                                        {wp.language && <div className="wp-meta-item"><span className="icon">🌐</span><span>{wp.language === "anglais" ? t("workingPapers.languageEnglish") : t("workingPapers.languageFrench")}</span></div>}
                                     </div>
 
                                     {(wp.manuscriptLength || wp.submissionRequirements) && (
                                         <div className="wp-card-extra">
-                                            {wp.manuscriptLength && <p><strong>Longueur attendue :</strong> {wp.manuscriptLength}</p>}
-                                            {wp.submissionRequirements && <p><strong>Soumission :</strong> {wp.submissionRequirements}</p>}
+                                            {wp.manuscriptLength && <p><strong>{t("workingPapers.expectedLength")}</strong> {wp.manuscriptLength}</p>}
+                                            {wp.submissionRequirements && <p><strong>{t("workingPapers.submission")}</strong> {wp.submissionRequirements}</p>}
                                         </div>
                                     )}
-
-                                    {isDeadlinePassed(wp.deadline) && (
-                                        <div className="deadline-passed">
-                                            La deadline est passée
-                                        </div>
-                                    )}
+                                    {isDeadlinePassed(wp.deadline) && <div className="deadline-passed">{t("workingPapers.deadlinePassedShort")}</div>}
                                 </div>
 
                                 <div className="wp-card-footer">
-                                    <button
-                                        className="btn btn-secondary btn-small"
-                                        onClick={() => navigate(`/working-papers/${wp._id}`)}
-                                    >
-                                        Voir les détails
+                                    <button className="btn btn-secondary btn-small" onClick={() => navigate(`/working-papers/${wp._id}`)}>
+                                        {t("workingPapers.details")}
                                     </button>
                                     {!isDeadlinePassed(wp.deadline) && wp.status === "ouvert" && (
-                                        <button
-                                            className="btn btn-primary btn-small"
-                                            onClick={() => navigate(`/working-papers/${wp._id}/submit`)}
-                                        >
-                                            Soumettre
+                                        <button className="btn btn-primary btn-small" onClick={() => navigate(`/working-papers/${wp._id}/submit`)}>
+                                            {t("workingPapers.submit")}
                                         </button>
                                     )}
                                 </div>
@@ -145,11 +105,8 @@ function WorkingPapersList({ embedded = false }) {
 
             {!embedded && (
                 <div className="wp-footer">
-                    <button
-                        className="btn btn-link"
-                        onClick={() => navigate("/working-papers/history")}
-                    >
-                        📖 Voir l'historique des travaux publiés
+                    <button className="btn btn-link" onClick={() => navigate("/working-papers/history")}>
+                        {t("workingPapers.historyLink")}
                     </button>
                 </div>
             )}

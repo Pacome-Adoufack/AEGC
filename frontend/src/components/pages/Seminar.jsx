@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../Url";
 import logo1 from "../../assets/logo1.png";
 import ConfirmDialog from "../common/ConfirmDialog";
+import { useTranslation } from "react-i18next";
 
 // onAvailabilityChange(bool) : prévient la page hôte s'il y a des séminaires à
 // afficher, pour qu'elle masque la colonne au lieu d'y montrer un bloc vide.
 const Seminar = ({ onAvailabilityChange }) => {
+  const { t } = useTranslation();
   const [activities, setActivities] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [reservations, setReservations] = useState([]);
@@ -27,12 +29,12 @@ const Seminar = ({ onAvailabilityChange }) => {
 
   const getCountdown = (targetDate) => {
     const diff = new Date(targetDate) - now;
-    if (diff <= 0) return "Terminé";
+    if (diff <= 0) return t("seminars.finished");
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((diff / (1000 * 60)) % 60);
     const seconds = Math.floor((diff / 1000) % 60);
-    return `${days}j ${hours}h ${minutes}m ${seconds}s`;
+    return `${days}${t("seminars.days")} ${hours}${t("seminars.hours")} ${minutes}${t("seminars.minutes")} ${seconds}${t("seminars.seconds")}`;
   };
 
   useEffect(() => {
@@ -42,13 +44,13 @@ const Seminar = ({ onAvailabilityChange }) => {
         const data = await response.json();
         setActivities(Array.isArray(data) ? data : []);
       } catch {
-        setLoadError("Impossible de charger les activités.");
+        setLoadError(t("seminars.loadError"));
       } finally {
         setLoaded(true);
       }
     };
     fetchActivities();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -78,8 +80,8 @@ const Seminar = ({ onAvailabilityChange }) => {
 
   const askDeleteReservation = (Id) => {
     openConfirm({
-      title: 'Annuler la réservation',
-      message: "Êtes-vous sûr de vouloir annuler cette réservation ?",
+      title: t("seminars.cancelTitle"),
+      message: t("seminars.cancelConfirm"),
       onConfirm: () => handleDeleteReservation(Id),
     });
   };
@@ -106,7 +108,7 @@ const Seminar = ({ onAvailabilityChange }) => {
     <>
       <div className="meeting-container">
         <div className="meeting-content">
-          <h1>Nos Prochains Séminaires</h1>
+          <h1>{t("seminars.title")}</h1>
 
           {loadError && <p className="seminar-error">{loadError}</p>}
 
@@ -117,7 +119,7 @@ const Seminar = ({ onAvailabilityChange }) => {
 
             <div id="scroll-gallery" className="activity-scroll-container">
               {visibleActivities.length === 0 ? (
-                <p className="no-seminar-msg">Aucun webinaire à venir pour l'instant.</p>
+                <p className="no-seminar-msg">{t("seminars.noUpcoming")}</p>
               ) : (
                 visibleActivities.map((activity) => {
                   const seminarDate = new Date(activity.date);
@@ -133,11 +135,11 @@ const Seminar = ({ onAvailabilityChange }) => {
                     <div key={activity._id} className="activity-card">
                       <div className="countdown-container">
                         <p className="countdown">
-                          ⏳ Début dans : <span>{getCountdown(activity.date)}</span>
+                          ⏳ {t("seminars.startsIn")} <span>{getCountdown(activity.date)}</span>
                         </p>
-                        <img src={logo1} alt="Logo séminaire" className="logo1" />
+                        <img src={logo1} alt={t("seminars.logoAlt")} className="logo1" />
                         <p className="countdown-small">
-                          Disparaît dans : <span>{getCountdown(oneWeekAfter)}</span>
+                          {t("seminars.disappearsIn")} <span>{getCountdown(oneWeekAfter)}</span>
                         </p>
                       </div>
 
@@ -151,9 +153,9 @@ const Seminar = ({ onAvailabilityChange }) => {
                             <span>{activity.date}</span>
                           </p>
                           <div className="divider"></div>
-                          <p className="activity-timezone">🕑 Paris : {activity.timeParis}</p>
+                          <p className="activity-timezone">🕑 {t("seminars.paris")} {activity.timeParis}</p>
                           <div className="divider"></div>
-                          <p className="activity-timezone">🕑 Yaoundé : {activity.timeYaounde}</p>
+                          <p className="activity-timezone">🕑 {t("seminars.yaounde")} {activity.timeYaounde}</p>
                         </div>
 
                         <div className="activity-info">
@@ -162,7 +164,7 @@ const Seminar = ({ onAvailabilityChange }) => {
                               activity.moderators.map((m, index) => (
                                 <div key={index}>
                                   <p>
-                                    <strong>Modérateur :</strong>{" "}
+                                    <strong>{t("seminars.moderator")}</strong>{" "}
                                     <Link className="doctor-link" to={`/speaker/${activity.presenterId}`}>
                                       {m.name}
                                     </Link>
@@ -171,7 +173,7 @@ const Seminar = ({ onAvailabilityChange }) => {
                                 </div>
                               ))
                             ) : (
-                              <p>Aucun modérateur pour ce webinaire.</p>
+                              <p>{t("seminars.noModerator")}</p>
                             )}
                           </div>
                           <div className="participant-card">
@@ -179,7 +181,7 @@ const Seminar = ({ onAvailabilityChange }) => {
                               activity.participants.map((p, index) => (
                                 <div key={index}>
                                   <p>
-                                    <strong>Intervenant :</strong>{" "}
+                                    <strong>{t("seminars.speaker")}</strong>{" "}
                                     <Link className="doctor-link" to={`/speaker/${activity.presenterId}`}>
                                       {p.name}
                                     </Link>
@@ -188,20 +190,20 @@ const Seminar = ({ onAvailabilityChange }) => {
                                 </div>
                               ))
                             ) : (
-                              <p>Aucun intervenant pour ce webinaire.</p>
+                              <p>{t("seminars.noSpeakerWebinar")}</p>
                             )}
                           </div>
                         </div>
 
                         <div className="card-actions">
                           {isPast ? (
-                            <Link to="/questionnaire" className="reserve-button">Questionnaire</Link>
+                            <Link to="/questionnaire" className="reserve-button">{t("seminars.questionnaire")}</Link>
                           ) : reservation ? (
                             <button onClick={() => askDeleteReservation(reservation._id)} className="delete-button">
-                              Annuler réservation
+                              {t("seminars.cancel")}
                             </button>
                           ) : (
-                            <Link to={`/reservation/${activity._id}`} className="reserve-button">Réserver</Link>
+                            <Link to={`/reservation/${activity._id}`} className="reserve-button">{t("seminars.reserve")}</Link>
                           )}
                         </div>
                       </div>

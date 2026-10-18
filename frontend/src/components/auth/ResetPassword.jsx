@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "@/styles/ResetPassword.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { API_BASE_URL } from "../Url";
 
 export default function ResetPassword() {
+  const { t } = useTranslation();
   const { token } = useParams();
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState("");
@@ -30,7 +32,7 @@ export default function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas");
+      setError(t("auth.passwordMismatch"));
       return;
     }
 
@@ -51,7 +53,7 @@ export default function ResetPassword() {
       if (!response.ok) {
         setError(
           data.error ||
-          "Le mot de passe n'a pas pu être réinitialisé. Essayez à nouveau."
+          t("auth.resetError")
         );
         setLoading(false);
         return;
@@ -61,7 +63,7 @@ export default function ResetPassword() {
       setLoading(false);
     } catch (err) {
       console.error(err);
-      setError("Une erreur s'est produite. Veuillez réessayer.");
+      setError(t("auth.resetRequestError"));
       setLoading(false);
     }
   };
@@ -70,12 +72,11 @@ export default function ResetPassword() {
     return (
       <div className="reset-success-container">
         <div className="reset-success-box">
-          <h2>Mot de passe réinitialisé avec succès !</h2>
+          <h2>{t("auth.resetSuccessTitle")}</h2>
           <p>
-            Vous pouvez maintenant vous connecter avec votre nouveau mot de
-            passe.
+            {t("auth.resetSuccessText")}
           </p>
-          <button onClick={() => navigate("/login")}>Se connecter</button>
+          <button onClick={() => navigate("/login")}>{t("auth.login")}</button>
         </div>
       </div>
     );
@@ -84,14 +85,14 @@ export default function ResetPassword() {
   return (
     <div className="reset-password-container">
       <div className="reset-password-card">
-        <h2>Réinitialiser le mot de passe</h2>
+        <h2>{t("auth.resetTitle")}</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label htmlFor="newPassword">Nouveau mot de passe</label>
+            <label htmlFor="newPassword">{t("auth.newPassword")}</label>
             <input
               id="newPassword"
               type={showPassword ? "text" : "password"}
-              placeholder="Saisir un nouveau mot de passe"
+              placeholder={t("auth.newPasswordPlaceholder")}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -100,7 +101,7 @@ export default function ResetPassword() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="show-password-btn"
-              aria-label="Passwort anzeigen/verbergen"
+              aria-label={t("auth.showPassword")}
             >
               {showPassword ? (
                 <i className="fa-regular fa-eye-slash"></i>
@@ -112,12 +113,12 @@ export default function ResetPassword() {
 
           <div className="input-group">
             <label htmlFor="confirmPassword">
-              Confirmez le nouveau mot de passe
+              {t("auth.confirmPassword")}
             </label>
             <input
               id="confirmPassword"
               type={showPassword ? "text" : "password"}
-              placeholder="Confirmer le nouveau mot de passe"
+              placeholder={t("auth.confirmPasswordPlaceholder")}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -126,7 +127,7 @@ export default function ResetPassword() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="show-password-btn"
-              aria-label="Passwort anzeigen/verbergen"
+              aria-label={t("auth.showPassword")}
             >
               {showPassword ? (
                 <i className="fa-regular fa-eye-slash"></i>
@@ -138,8 +139,8 @@ export default function ResetPassword() {
 
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading
-              ? "En cours de chargement..."
-              : "Réinitialiser le mot de passe"}
+              ? t("auth.resetLoading")
+              : t("auth.resetSubmit")}
           </button>
         </form>
       </div>

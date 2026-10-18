@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import "@/styles/wp-base.css";
 import "@/styles/wp-history.css";
 import "@/styles/wp-components.css";
 
 function WorkingPapersHistory({ embedded = false }) {
+    const { t, i18n } = useTranslation();
     const [publications, setPublications] = useState([]);
     const [papers, setPapers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -59,7 +61,7 @@ function WorkingPapersHistory({ embedded = false }) {
     };
 
     const formatDate = (date) => {
-        return new Date(date).toLocaleDateString("fr-FR", {
+        return new Date(date).toLocaleDateString(i18n.language === "en" ? "en-US" : "fr-FR", {
             day: "numeric",
             month: "long",
             year: "numeric",
@@ -67,7 +69,7 @@ function WorkingPapersHistory({ embedded = false }) {
     };
 
     if (loading) {
-        return <div className="loading">Chargement...</div>;
+        return <div className="loading">{t("workingPapers.loading")}</div>;
     }
 
     const years = Object.keys(groupedByYear).sort((a, b) => b - a);
@@ -76,14 +78,14 @@ function WorkingPapersHistory({ embedded = false }) {
         <div className={embedded ? "" : "working-papers-container"}>
             {!embedded && (
                 <header className="wp-header">
-                    <h1>📖 Historique des publications AEGC</h1>
-                    <p>Travaux publiés par l&apos;AEGC et numéros éditoriaux de synthèse.</p>
+                    <h1>{t("workingPapers.historyTitle")}</h1>
+                    <p>{t("workingPapers.historySubtitle")}</p>
                 </header>
             )}
 
             {!embedded && (
                 <button className="btn btn-secondary" onClick={() => navigate("/working-papers")}>
-                    ← Retour aux appels en cours
+                    {t("workingPapers.backToCalls")}
                 </button>
             )}
 
@@ -91,7 +93,7 @@ function WorkingPapersHistory({ embedded = false }) {
                 lecteur qui clique sur « historique des travaux publiés ». */}
             {papers.length > 0 && (
                 <section className="published-papers">
-                    <h2 className="year-title">Travaux publiés</h2>
+                    <h2 className="year-title">{t("workingPapers.publishedPapers")}</h2>
                     <div className="papers-grid">
                         {papers.map((paper) => (
                             <article key={paper._id} className="paper-card">
@@ -101,7 +103,7 @@ function WorkingPapersHistory({ embedded = false }) {
                                         ? paper.authors
                                             .map((a) => (a.affiliation ? `${a.name} (${a.affiliation})` : a.name))
                                             .join(" · ")
-                                        : "Auteur non renseigné"}
+                                        : t("workingPapers.unknownAuthor")}
                                 </p>
                                 {paper.callTitle && <p className="paper-call">{paper.callTitle}</p>}
                                 {paper.abstract && (
@@ -128,9 +130,9 @@ function WorkingPapersHistory({ embedded = false }) {
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        Lire le PDF
+                                        {t("workingPapers.readPdf")}
                                     </a>
-                                    <span className="meta-date">Publié le {formatDate(paper.publishedAt)}</span>
+                                    <span className="meta-date">{t("workingPapers.publishedOn", { date: formatDate(paper.publishedAt) })}</span>
                                 </div>
                             </article>
                         ))}
@@ -141,12 +143,12 @@ function WorkingPapersHistory({ embedded = false }) {
             {publications.length === 0 ? (
                 papers.length === 0 && (
                     <div className="no-submissions">
-                        <p>Aucune publication pour le moment.</p>
+                        <p>{t("workingPapers.noPublications")}</p>
                     </div>
                 )
             ) : (
                 <div className="history-container">
-                    {papers.length > 0 && <h2 className="year-title">Numéros de synthèse</h2>}
+                    {papers.length > 0 && <h2 className="year-title">{t("workingPapers.summaryIssues")}</h2>}
                     {years.map((year) => (
                         <div key={year} className="year-section">
                             <h2 className="year-title">{year}</h2>
@@ -164,12 +166,12 @@ function WorkingPapersHistory({ embedded = false }) {
                                                 <div className="keywords" style={{ marginBottom: "0.75rem" }}>
                                                     {publication.stats?.acceptedCount !== undefined && (
                                                         <span className="keyword-tag">
-                                                            Acceptes: {publication.stats.acceptedCount}
+                                                            {t("workingPapers.accepted")} {publication.stats.acceptedCount}
                                                         </span>
                                                     )}
                                                     {publication.stats?.rejectedCount !== undefined && (
                                                         <span className="keyword-tag">
-                                                            Rejetes: {publication.stats.rejectedCount}
+                                                            {t("workingPapers.rejected")} {publication.stats.rejectedCount}
                                                         </span>
                                                     )}
                                                 </div>
@@ -177,7 +179,7 @@ function WorkingPapersHistory({ embedded = false }) {
 
                                             {publication.summary && (
                                                 <div className="abstract-preview">
-                                                    <strong>Résumé :</strong>
+                                                    <strong>{t("workingPapers.summary")}</strong>
                                                     <p>
                                                         {publication.summary.length > 300
                                                             ? `${publication.summary.substring(0, 300)}...`
@@ -194,14 +196,14 @@ function WorkingPapersHistory({ embedded = false }) {
                                                         target="_blank"
                                                         rel="noreferrer"
                                                     >
-                                                        Ouvrir le PDF publié
+                                                        {t("workingPapers.openPublishedPdf")}
                                                     </a>
                                                 </div>
                                             )}
 
                                             <div className="history-meta">
                                                 <span className="meta-date">
-                                                    Publié le {formatDate(publication.publishedAt || publication.createdAt)}
+                                                    {t("workingPapers.publishedOn", { date: formatDate(publication.publishedAt || publication.createdAt) })}
                                                 </span>
                                             </div>
                                         </div>
@@ -215,7 +217,7 @@ function WorkingPapersHistory({ embedded = false }) {
 
             <div className="history-footer">
                 <p>
-                    Cet espace présente les documents de synthèse officiels publiés par l&apos;administration AEGC.
+                    {t("workingPapers.officialSpace")}
                 </p>
                 <p>
                     Pour plus d&apos;informations, contactez-nous à{" "}

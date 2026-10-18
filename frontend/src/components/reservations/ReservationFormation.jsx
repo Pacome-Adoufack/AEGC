@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import "@/styles/Reservation.css";
 import { API_BASE_URL } from "../Url";
+import { useTranslation } from "react-i18next";
 
 const Reservation = () => {
+  const { t } = useTranslation();
+  const reservationT = (key, options = {}) => t(`reservation.${key}`, options);
   const { formationId } = useParams();
   console.log("formationId:", formationId);
 
@@ -35,7 +38,7 @@ const Reservation = () => {
 
 
     if (!token) {
-      setMessage("Vous devez être connecté pour réserver.");
+      setMessage(reservationT("authRequired"));
       return;
     }
 
@@ -56,7 +59,7 @@ const Reservation = () => {
         return res.json();
       })
       .then((data) => {
-        setMessage("Réservation réussie !");
+        setMessage(reservationT("success"));
         console.log("Réservation réussie", data);
         setTimeout(() => {
           navigate("/home");
@@ -65,7 +68,7 @@ const Reservation = () => {
       .catch((error) => {
         console.error("Erreur lors de la réservation", error);
 
-        setMessage("Erreur lors de la réservation : " + error.message);
+        setMessage(reservationT("error", { message: error.message }));
         if (
           error.message.toLowerCase().includes("unauthorized") ||
           error.message.includes("401") ||
@@ -90,14 +93,13 @@ const Reservation = () => {
           {message}
         </div>
       )}
-      <h1 className="reservation-title">S'inscrire</h1>
+      <h1 className="reservation-title">{reservationT("formationTitle")}</h1>
       <p className="reservation-description">
-        Merci de votre intérêt pour nos Formations. Veuillez remplir le
-        formulaire d'inscription ci-dessous.
+        {reservationT("formationDescription")}
       </p>
       <form onSubmit={handleSubmit} className="reservation-form">
         <div className="form-group">
-          <label htmlFor="firstname">Nom:</label>
+          <label htmlFor="firstname">{reservationT("lastName")}</label>
           <input
             type="text"
             id="firstname"
@@ -108,7 +110,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="lastname">Prénom:</label>
+          <label htmlFor="lastname">{reservationT("firstName")}</label>
           <input
             type="text"
             id="lastname"
@@ -119,7 +121,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">{reservationT("email")}</label>
           <input
             type="email"
             id="email"
@@ -130,7 +132,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="phone">Numéro de téléphone:</label>
+          <label htmlFor="phone">{reservationT("phone")}</label>
           <input
             type="tel"
             id="phone"
@@ -141,7 +143,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="message">Message (optionnel):</label>
+          <label htmlFor="message">{reservationT("message")}</label>
           <textarea
             id="message"
             name="message"
@@ -150,7 +152,7 @@ const Reservation = () => {
           ></textarea>
         </div>
         <button type="submit" className="reservation-button">
-          S'inscrire
+          {reservationT("register")}
         </button>
       </form>
     </div>

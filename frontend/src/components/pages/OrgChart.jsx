@@ -1,12 +1,14 @@
 import React from "react";
 import "../../styles/OrgChart.css";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const OrgChart = () => {
+  const { t } = useTranslation();
   return (
     <div className="organigramme-container">
       <div className="org-header">
-        <h1>MEMBRES DU BUREAU EXÉCUTIF DE L'AEGC</h1>
+        <h1>{t("organization.title")}</h1>
       </div>
 
       <div className="org-tree">
@@ -14,7 +16,7 @@ const OrgChart = () => {
         <Link to="/president" className="link">
           <div className="org-level">
             <div className="org-node">
-              <div className="org-title">Président</div>
+              <div className="org-title">{t("organization.president")}</div>
               <div className="org-name">Aristide Merlin Ngono </div>
               <div className="org-titel">PhD en Economie de la santé </div>
             </div>
@@ -26,7 +28,7 @@ const OrgChart = () => {
         <div className="org-level">
           <Link to="/vice president" className="link">
             <div className="org-node">
-              <div className="org-title">Vice-Président</div>
+              <div className="org-title">{t("organization.vicePresident")}</div>
               <div className="org-name">Daave Franklin MVOGO II OSSEDE</div>
               <div className="org-titel">
                 PhD en analyse de politiques économiques{" "}
@@ -35,7 +37,7 @@ const OrgChart = () => {
           </Link>
           <Link to="/secretaire general" className="link">
             <div className="org-node">
-              <div className="org-title">Secrétaire Général</div>
+              <div className="org-title">{t("organization.secretaryGeneral")}</div>
               <div className="org-name">Blaise BEYENE ONDOUA </div>
               <div className="org-titel">PhD en Economie mathématique </div>
             </div>
@@ -47,7 +49,7 @@ const OrgChart = () => {
         <div className="org-level">
           <Link to="/tresorier" className="link">
             <div className="org-node">
-              <div className="org-title">Trésorière</div>
+              <div className="org-title">{t("organization.treasurer")}</div>
               <div className="org-name">Inès Pérolde ZEH</div>
               <div className="org-titel">
                 PhD en économie des ressources humaines
@@ -56,7 +58,7 @@ const OrgChart = () => {
           </Link>
           <Link to="/responsable GRH" className="link">
             <div className="org-node">
-              <div className="org-title">Responsable RH</div>
+              <div className="org-title">{t("organization.hrManager")}</div>
               <div className="org-name">Cyril Pierre Kinfack </div>
               <div className="org-titel">
                 PHD(s) en Sciences et techniques de Gestion{" "}
@@ -66,7 +68,7 @@ const OrgChart = () => {
           <Link to="/relations exterieures" className="link">
             <div className="org-node">
               <div className="org-title">
-                Responsable des relations extérieures
+                {t("organization.externalRelations")}
               </div>
               <div className="org-name">Marius Parfait Tebou Tedong </div>
               <div className="org-titel">
@@ -80,7 +82,7 @@ const OrgChart = () => {
         <div className="org-level">
           <Link to="/communication one" className="link">
             <div className="org-node">
-              <div className="org-title">Responsable de la communication</div>
+              <div className="org-title">{t("organization.communications")}</div>
               <div className="org-name">Erwan VOUNDI </div>
               <div className="org-titel">
                 Étudiant chercheur et Analyste financier
@@ -94,7 +96,7 @@ const OrgChart = () => {
 
           <Link to="/commissaire aux comptes" className="link">
             <div className="org-node">
-              <div className="org-title">Commissaire aux Comptes</div>
+              <div className="org-title">{t("organization.auditor")}</div>
               <div className="org-name">Jean Patrick Ulrich MANY AYISSI </div>
               <div className="org-titel">
                 Maître en Ingénierie Economique et Financière
@@ -103,7 +105,7 @@ const OrgChart = () => {
           </Link>
           <Link to="/charges des projets" className="link">
             <div className="org-node">
-              <div className="org-title">Chargés des projets</div>
+              <div className="org-title">{t("organization.projects")}</div>
               <div className="org-name">Léopold DJEUDJANG TEUNKWA </div>
               <div className="org-titel">
                 Ingénieur Économiste et Financier, Expert en Analyse et
@@ -117,7 +119,7 @@ const OrgChart = () => {
         {/* Niveau 5 - Conseillers et autres */}
         <div className="org-level">
           <div className="org-node">
-            <div className="org-title">Censeurs</div>
+            <div className="org-title">{t("organization.censors")}</div>
             <Link to="/censeur one" className="link">
               <div className="org-name">Dr.Salim Yazid Hamed</div>
               <div className="org-titel">
@@ -139,14 +141,14 @@ const OrgChart = () => {
           >
             <div className="org-node">
               <div className="org-title">
-                Responsable des affaires administratives et diplomatiques
+                {t("organization.administrativeAffairs")}
               </div>
               <div className="org-name">Raphael ELOUNDOU NGONO</div>
               <div className="org-titel">Magistrat des Comptes</div>
             </div>
           </Link>
           <div className="org-node">
-            <div className="org-title">Conseillers</div>
+            <div className="org-title">{t("organization.advisors")}</div>
             <Link to="/conseiller one" className="link">
               <div className="org-name">Georges NGNOUWAL ELOUNDOU</div>
               <div className="org-titel">PhD en Économie Mathématique</div>

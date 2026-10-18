@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/useToast.js";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import { getAuthToken } from "../../utils/auth";
 import "../../styles/wp-base.css";
@@ -14,6 +15,7 @@ function SubmissionForm() {
     const { id } = useParams();
     const navigate = useNavigate();
     const toast = useToast();
+    const { t } = useTranslation();
     const [wp, setWp] = useState(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -65,7 +67,7 @@ function SubmissionForm() {
             setWp(data);
         } catch (error) {
             console.error("Erreur:", error);
-            setError("Impossible de charger l'appel à contribution");
+            setError(t("submissions.loadCallError"));
         } finally {
             setLoading(false);
         }
@@ -102,11 +104,11 @@ function SubmissionForm() {
             const fileExt = "." + file.name.split(".").pop().toLowerCase();
 
             if (!acceptedTypes.includes(file.type) || !acceptedExtensions.includes(fileExt)) {
-                setError("Seuls les fichiers PDF et Word (.doc, .docx) sont acceptés");
+                setError(t("submissions.invalidFileType"));
                 return;
             }
             if (file.size > PDF_MAX_SIZE_BYTES) {
-                setError(`Le fichier ne doit pas dépasser ${PDF_MAX_SIZE_MB} MB`);
+                setError(t("submissions.fileTooLarge", { size: PDF_MAX_SIZE_MB }));
                 return;
             }
             setPdfFile(file);
@@ -127,7 +129,7 @@ function SubmissionForm() {
 
             // Ne rediriger que si vraiment pas connecté
             if (!token && !user) {
-                toast.warning("Vous devez être connecté pour soumettre");
+                toast.warning(t("submissions.loginRequired"));
                 navigate("/login", { state: { from: `/working-papers/${id}/submit` } });
                 return;
             }
@@ -139,20 +141,20 @@ function SubmissionForm() {
                 sessionStorage.removeItem("token");
                 localStorage.removeItem("user");
                 sessionStorage.removeItem("user");
-                toast.error("Votre session n'est pas valide. Veuillez vous reconnecter.");
+                toast.error(t("submissions.invalidSession"));
                 navigate("/login", { state: { from: `/working-papers/${id}/submit` } });
                 return;
             }
 
             // Vérifier les champs requis
             if (!formData.articleTitle || !formData.abstract || !pdfFile) {
-                toast.error("Veuillez remplir tous les champs obligatoires");
+                toast.error(t("submissions.requiredFields"));
                 return;
             }
 
             // Vérifier qu'au moins un auteur est renseigné
             if (!authors[0].name || !authors[0].email) {
-                toast.error("Veuillez renseigner au moins un auteur");
+                toast.error(t("submissions.authorRequired"));
                 return;
             }
 
@@ -192,7 +194,7 @@ function SubmissionForm() {
                 sessionStorage.removeItem("token");
                 localStorage.removeItem("user");
                 sessionStorage.removeItem("user");
-                toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+                toast.error(t("submissions.sessionExpired"));
                 navigate("/login", { state: { from: `/working-papers/${id}/submit` } });
                 return;
             }
@@ -201,7 +203,7 @@ function SubmissionForm() {
             // répondre en HTML : ne jamais parser du JSON à l'aveugle.
             if (response.status === 413) {
                 throw new Error(
-                    `Le document est trop volumineux pour être envoyé (maximum ${PDF_MAX_SIZE_MB} MB). Essayez de compresser votre PDF.`
+                    t("submissions.uploadTooLarge", { size: PDF_MAX_SIZE_MB })
                 );
             }
 
@@ -210,12 +212,12 @@ function SubmissionForm() {
                 data = await response.json();
             } catch {
                 throw new Error(
-                    `Le serveur a renvoyé une réponse inattendue (code ${response.status}). Votre document n'a pas été enregistré.`
+                    t("submissions.unexpectedResponse", { status: response.status })
                 );
             }
 
             if (!response.ok) {
-                throw new Error(data.error || "Erreur lors de la soumission");
+                throw new Error(data.error || t("submissions.submitError"));
             }
 
             setSuccess(true);
@@ -223,18 +225,18 @@ function SubmissionForm() {
                 navigate("/my-submissions");
             }, 2000);
         } catch (err) {
-            toast.error(err.message || "Erreur lors de la soumission");
+            toast.error(err.message || t("submissions.submitError"));
         } finally {
             setSubmitting(false);
         }
     };
 
     if (loading) {
-        return <div className="loading">Chargement...</div>;
+        return <div className="loading">{t("submissions.loading")}</div>;
     }
 
     if (!wp) {
-        return <div className="error">Working Paper non trouvé</div>;
+        return <div className="error">{t("submissions.notFound")}</div>;
     }
 
     if (success) {
@@ -242,10 +244,10 @@ function SubmissionForm() {
             <div className="submission-form-container">
                 <div className="submission-success">
                     <div className="submission-success-icon">✓</div>
-                    <h2>Soumission envoyée !</h2>
-                    <p>Votre travail a été soumis avec succès et est en attente de traitement.</p>
-                    <p>Vous serez notifié par email dès que l'équipe AEGC l'aura examiné.</p>
-                    <p className="redirect-hint">Redirection vers vos soumissions...</p>
+                    <h2>{t("submissions.successTitle")}</h2>
+                    <p>{t("submissions.successMessage")}</p>
+                    <p>{t("submissions.successNotification")}</p>
+                    <p className="redirect-hint">{t("submissions.redirecting")}</p>
                 </div>
             </div>
         );
@@ -256,15 +258,15 @@ function SubmissionForm() {
             <div className="submission-inner">
                 <button className="btn-back" onClick={() => navigate(`/working-papers/${id}`)}
                 >
-                    ← Retour au détail
+                    {t("submissions.backToDetails")}
                 </button>
 
                 <div className="submission-page-header">
-                    <h1>Soumettre mon travail</h1>
+                    <h1>{t("submissions.submitWork")}</h1>
                     <p className="submission-wp-title">{wp.title}</p>
                     {Array.isArray(wp.jelCodes) && wp.jelCodes.length > 0 && (
                         <p className="submission-wp-title">
-                            Codes JEL de l'appel: {wp.jelCodes.join(", ")}
+                            {t("submissions.callJelCodes", { codes: wp.jelCodes.join(", ") })}
                         </p>
                     )}
                 </div>
@@ -277,12 +279,12 @@ function SubmissionForm() {
                     <div className="form-section">
                         <div className="form-section-header">
                             <span className="form-section-number">1</span>
-                            <h3>Informations sur l'article</h3>
+                            <h3>{t("submissions.articleInformation")}</h3>
                         </div>
                         <div className="form-section-body">
                             <div className="form-group">
                                 <label htmlFor="articleTitle">
-                                    Titre de l'article <span className="required">*</span>
+                                    {t("submissions.articleTitle")} <span className="required">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -291,25 +293,25 @@ function SubmissionForm() {
                                     value={formData.articleTitle}
                                     onChange={handleInputChange}
                                     required
-                                    placeholder="Le titre complet de votre travail"
+                                    placeholder={t("submissions.articleTitlePlaceholder")}
                                 />
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="keywords">Mots-clés</label>
+                                <label htmlFor="keywords">{t("submissions.keywords")}</label>
                                 <input
                                     type="text"
                                     id="keywords"
                                     name="keywords"
                                     value={formData.keywords}
                                     onChange={handleInputChange}
-                                    placeholder="COVID-19, Finance, Afrique (séparés par des virgules)"
+                                    placeholder={t("submissions.keywordsPlaceholder")}
                                 />
                             </div>
 
                             <div className="form-group">
                                 <label htmlFor="abstract">
-                                    Résumé <span className="required">*</span>
+                                    {t("submissions.abstract")} <span className="required">*</span>
                                 </label>
                                 <textarea
                                     id="abstract"
@@ -318,7 +320,7 @@ function SubmissionForm() {
                                     onChange={handleInputChange}
                                     required
                                     rows="8"
-                                    placeholder="Résumé complet de votre travail (abstract)..."
+                                    placeholder={t("submissions.abstractPlaceholder")}
                                 />
                             </div>
                         </div>
@@ -328,51 +330,51 @@ function SubmissionForm() {
                     <div className="form-section">
                         <div className="form-section-header">
                             <span className="form-section-number">2</span>
-                            <h3>Auteur(s) <span className="required">*</span></h3>
+                            <h3>{t("submissions.authors")} <span className="required">*</span></h3>
                         </div>
                         <div className="form-section-body">
                             {authors.map((author, index) => (
                                 <div key={index} className="author-group">
                                     <div className="author-header">
-                                        <h4>Auteur {index + 1}</h4>
+                                        <h4>{t("submissions.authorNumber", { number: index + 1 })}</h4>
                                         {authors.length > 1 && (
                                             <button
                                                 type="button"
                                                 className="btn btn-danger btn-small"
                                                 onClick={() => removeAuthor(index)}
                                             >
-                                                Retirer
+                                                {t("submissions.remove")}
                                             </button>
                                         )}
                                     </div>
                                     <div className="author-fields">
                                         <div className="form-group">
-                                            <label>Nom complet</label>
+                                            <label>{t("submissions.fullName")}</label>
                                             <input
                                                 type="text"
                                                 value={author.name}
                                                 onChange={(e) => handleAuthorChange(index, "name", e.target.value)}
                                                 required={index === 0}
-                                                placeholder="Dr. Jean Dupont"
+                                                placeholder={t("submissions.fullNamePlaceholder")}
                                             />
                                         </div>
                                         <div className="form-group">
-                                            <label>Affiliation</label>
+                                            <label>{t("submissions.affiliation")}</label>
                                             <input
                                                 type="text"
                                                 value={author.affiliation}
                                                 onChange={(e) => handleAuthorChange(index, "affiliation", e.target.value)}
-                                                placeholder="Université de Yaoundé I"
+                                                placeholder={t("submissions.affiliationPlaceholder")}
                                             />
                                         </div>
                                         <div className="form-group">
-                                            <label>Email</label>
+                                            <label>{t("submissions.email")}</label>
                                             <input
                                                 type="email"
                                                 value={author.email}
                                                 onChange={(e) => handleAuthorChange(index, "email", e.target.value)}
                                                 required={index === 0}
-                                                placeholder="jean.dupont@univ.cm"
+                                                placeholder={t("submissions.emailPlaceholder")}
                                             />
                                         </div>
                                     </div>
@@ -383,7 +385,7 @@ function SubmissionForm() {
                                 className="btn btn-secondary btn-small"
                                 onClick={addAuthor}
                             >
-                                + Ajouter un co-auteur
+                                {t("submissions.addCoauthor")}
                             </button>
                         </div>
                     </div>
@@ -392,30 +394,30 @@ function SubmissionForm() {
                     <div className="form-section">
                         <div className="form-section-header">
                             <span className="form-section-number">3</span>
-                            <h3>Publication existante <span style={{ fontWeight: 400, color: "#9ca3af" }}>(optionnel)</span></h3>
+                            <h3>{t("submissions.existingPublication")} <span style={{ fontWeight: 400, color: "#9ca3af" }}>({t("submissions.optional")})</span></h3>
                         </div>
                         <div className="form-section-body">
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label htmlFor="publicationJournal">Nom de la revue</label>
+                                    <label htmlFor="publicationJournal">{t("submissions.journalName")}</label>
                                     <input
                                         type="text"
                                         id="publicationJournal"
                                         name="publicationJournal"
                                         value={formData.publicationJournal}
                                         onChange={handleInputChange}
-                                        placeholder="Revue Africaine d'Économie"
+                                        placeholder={t("submissions.journalPlaceholder")}
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="publicationNumber">Volume / Numéro</label>
+                                    <label htmlFor="publicationNumber">{t("submissions.volumeNumber")}</label>
                                     <input
                                         type="text"
                                         id="publicationNumber"
                                         name="publicationNumber"
                                         value={formData.publicationNumber}
                                         onChange={handleInputChange}
-                                        placeholder="Vol. 12, No. 3"
+                                        placeholder={t("submissions.volumePlaceholder")}
                                     />
                                 </div>
                             </div>
@@ -426,7 +428,7 @@ function SubmissionForm() {
                     <div className="form-section">
                         <div className="form-section-header">
                             <span className="form-section-number">4</span>
-                            <h3>Document <span className="required">*</span></h3>
+                            <h3>{t("submissions.document")} <span className="required">*</span></h3>
                         </div>
                         <div className="form-section-body">
                             <div className="pdf-drop-zone">
@@ -438,8 +440,8 @@ function SubmissionForm() {
                                     required={!pdfFile}
                                 />
                                 <span className="pdf-drop-icon">📎</span>
-                                <p className="pdf-drop-label">Glissez votre document ici ou cliquez pour sélectionner</p>
-                                <p className="pdf-drop-hint">Formats acceptés: PDF, Word (.doc, .docx) — maximum {PDF_MAX_SIZE_MB} MB</p>
+                                <p className="pdf-drop-label">{t("submissions.selectDocument")}</p>
+                                <p className="pdf-drop-hint">{t("submissions.acceptedFormats", { size: PDF_MAX_SIZE_MB })}</p>
                             </div>
                             {pdfFile && (
                                 <div className="file-info">
@@ -457,14 +459,14 @@ function SubmissionForm() {
                             className="btn btn-secondary"
                             onClick={() => navigate(`/working-papers/${id}`)}
                         >
-                            Annuler
+                            {t("submissions.cancel")}
                         </button>
                         <button
                             type="submit"
                             className="btn btn-primary"
                             disabled={submitting}
                         >
-                            {submitting ? "Envoi en cours..." : "Soumettre"}
+                            {submitting ? t("submissions.sending") : t("submissions.submit")}
                         </button>
                     </div>
                 </form>

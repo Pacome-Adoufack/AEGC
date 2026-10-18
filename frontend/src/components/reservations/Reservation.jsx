@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import "@/styles/Reservation.css";
 import { API_BASE_URL } from "../Url";
+import { useTranslation } from "react-i18next";
 
 const Reservation = () => {
+  const { t } = useTranslation();
   const { activityId } = useParams();
   console.log("Activity ID:", activityId);
 
@@ -36,7 +38,7 @@ const Reservation = () => {
 
 
     if (!token) {
-      setMessage("Vous devez être connecté pour réserver.");
+      setMessage(t("reservation.authRequired"));
       return;
     }
 
@@ -57,7 +59,7 @@ const Reservation = () => {
         return res.json();
       })
       .then((data) => {
-        setMessage("Réservation réussie !");
+        setMessage(t("reservation.success"));
         console.log("Réservation réussie", data);
         setTimeout(() => {
           navigate("/home");
@@ -66,7 +68,7 @@ const Reservation = () => {
       .catch((error) => {
         console.error("Erreur lors de la réservation", error);
 
-        setMessage("Erreur lors de la réservation : " + error.message);
+        setMessage(t("reservation.error", { message: error.message }));
         if (
           error.message.toLowerCase().includes("unauthorized") ||
           error.message.includes("401") ||
@@ -91,14 +93,13 @@ const Reservation = () => {
           {message}
         </div>
       )}
-      <h1 className="reservation-title">Réservation</h1>
+      <h1 className="reservation-title">{t("reservation.title")}</h1>
       <p className="reservation-description">
-        Merci de votre intérêt pour nos activités. Veuillez remplir le
-        formulaire de réservation ci-dessous.
+        {t("reservation.activityDescription")}
       </p>
       <form onSubmit={handleSubmit} className="reservation-form">
         <div className="form-group">
-          <label htmlFor="firstname">Nom:</label>
+          <label htmlFor="firstname">{t("reservation.lastName")}</label>
           <input
             type="text"
             id="firstname"
@@ -109,7 +110,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="lastname">Prénom:</label>
+          <label htmlFor="lastname">{t("reservation.firstName")}</label>
           <input
             type="text"
             id="lastname"
@@ -120,7 +121,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">{t("reservation.email")}</label>
           <input
             type="email"
             id="email"
@@ -131,7 +132,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="phone">Numéro de téléphone:</label>
+          <label htmlFor="phone">{t("reservation.phone")}</label>
           <input
             type="tel"
             id="phone"
@@ -142,7 +143,7 @@ const Reservation = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="gender">Sexe:</label>
+          <label htmlFor="gender">{t("reservation.gender")}</label>
           <select
             id="gender"
             name="gender"
@@ -150,13 +151,13 @@ const Reservation = () => {
             onChange={handleChange}
             required
           >
-            <option value="">-- Sélectionnez votre sexe --</option>
-            <option value="Masculin">Masculin</option>
-            <option value="Féminin">Féminin</option>
+            <option value="">{t("reservation.genderPlaceholder")}</option>
+            <option value="Masculin">{t("reservation.male")}</option>
+            <option value="Féminin">{t("reservation.female")}</option>
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="profession">Profession:</label>
+          <label htmlFor="profession">{t("reservation.profession")}</label>
           <input
             type="text"
             id="profession"
@@ -167,7 +168,7 @@ const Reservation = () => {
           />
         </div>
         <button type="submit" className="reservation-button">
-          Réserver
+          {t("reservation.submit")}
         </button>
       </form>
     </div>

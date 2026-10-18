@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import "@/styles/wp-base.css";
 import "@/styles/wp-detail.css";
@@ -8,6 +9,7 @@ import "@/styles/wp-components.css";
 const PDF_MAX_SIZE_MB = Number(import.meta.env.VITE_PDF_MAX_SIZE_MB) || 10;
 
 function WorkingPaperDetail() {
+    const { t, i18n } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const [wp, setWp] = useState(null);
@@ -31,7 +33,7 @@ function WorkingPaperDetail() {
     };
 
     const formatDate = (date) => {
-        return new Date(date).toLocaleDateString("fr-FR", {
+        return new Date(date).toLocaleDateString(i18n.language === "en" ? "en-US" : "fr-FR", {
             day: "numeric",
             month: "long",
             year: "numeric",
@@ -43,18 +45,18 @@ function WorkingPaperDetail() {
     };
 
     if (loading) {
-        return <div className="loading">Chargement...</div>;
+        return <div className="loading">{t("workingPapers.detailLoading")}</div>;
     }
 
     if (!wp) {
-        return <div className="error">Working Paper non trouvé</div>;
+        return <div className="error">{t("workingPapers.notFound")}</div>;
     }
 
     return (
         <div className="wp-detail-container">
             <div className="wp-detail-inner">
                 <button className="btn-back" onClick={() => navigate("/working-papers")}>
-                    ← Retour aux appels
+                    {t("workingPapers.backToCallsShort")}
                 </button>
 
                 <div className="wp-detail-header">
@@ -63,55 +65,55 @@ function WorkingPaperDetail() {
                         {wp.subtitle && <p className="wp-detail-subtitle">{wp.subtitle}</p>}
                     </div>
                     <span className={`wp-status ${wp.status === "ouvert" ? "open" : "closed"}`}>
-                        {wp.status === "ouvert" ? "Ouvert" : "Clôturé"}
+                        {wp.status === "ouvert" ? t("workingPapers.open") : t("workingPapers.closed")}
                     </span>
                 </div>
 
                 <div className="wp-detail-meta">
                     {wp.organizer && (
                         <div className="meta-item">
-                            <strong>Organisateur</strong>
+                            <strong>{t("workingPapers.organizer")}</strong>
                             <p>{wp.organizer}</p>
                         </div>
                     )}
                     <div className="meta-item">
-                        <strong>Deadline</strong>
+                        <strong>{t("workingPapers.deadline")}</strong>
                         <p>{formatDate(wp.deadline)}</p>
                     </div>
                     <div className="meta-item">
-                        <strong>Soumissions</strong>
+                        <strong>{t("workingPapers.submissionsLabel")}</strong>
                         <p>{wp.submissionsCount || 0}</p>
                     </div>
                     <div className="meta-item">
-                        <strong>Statut</strong>
+                        <strong>{t("workingPapers.status")}</strong>
                         <p style={{ color: wp.status === "ouvert" ? "#059669" : "#dc2626", fontWeight: 600 }}>
-                            {wp.status === "ouvert" ? "Ouvert" : "Clôturé"}
+                            {wp.status === "ouvert" ? t("workingPapers.open") : t("workingPapers.closed")}
                         </p>
                     </div>
                     <div className="meta-item">
-                        <strong>Codes JEL</strong>
+                            <strong>{t("workingPapers.jelCodes")}</strong>
                         <p>
                             {Array.isArray(wp.jelCodes) && wp.jelCodes.length > 0
                                 ? wp.jelCodes.join(", ")
-                                : "Non definis"}
+                                : t("workingPapers.undefined")}
                         </p>
                     </div>
                     {wp.language && (
                         <div className="meta-item">
-                            <strong>Langue</strong>
-                            <p>{wp.language === "anglais" ? "English" : "Français"}</p>
+                            <strong>{t("workingPapers.language")}</strong>
+                            <p>{wp.language === "anglais" ? t("workingPapers.languageEnglish") : t("workingPapers.languageFrench")}</p>
                         </div>
                     )}
                     {wp.manuscriptLength && (
                         <div className="meta-item">
-                            <strong>Longueur attendue</strong>
+                            <strong>{t("workingPapers.expectedLengthLabel")}</strong>
                             <p>{wp.manuscriptLength}</p>
                         </div>
                     )}
                 </div>
 
                 <div className="wp-detail-content">
-                    <h2>Description de l’appel</h2>
+                    <h2>{t("workingPapers.description")}</h2>
                     <div
                         className="wp-description-full"
                         dangerouslySetInnerHTML={{ __html: wp.description.replace(/\n/g, "<br/>") }}
@@ -120,14 +122,14 @@ function WorkingPaperDetail() {
 
                 {wp.submissionRequirements && (
                     <div className="wp-detail-content">
-                        <h2>Conditions de soumission</h2>
+                        <h2>{t("workingPapers.conditions")}</h2>
                         <p className="wp-description-full">{wp.submissionRequirements}</p>
                     </div>
                 )}
 
                 {(wp.contact?.email || wp.contact?.phone || wp.contact?.website || wp.contact?.linkedin || (Array.isArray(wp.usefulLinks) && wp.usefulLinks.length > 0)) && (
                     <div className="wp-detail-content">
-                        <h2>Contact et liens utiles</h2>
+                        <h2>{t("workingPapers.contactLinks")}</h2>
                         <div className="wp-detail-contact-grid">
                             {wp.contact?.email && (
                                 <div className="meta-item">
@@ -137,13 +139,13 @@ function WorkingPaperDetail() {
                             )}
                             {wp.contact?.phone && (
                                 <div className="meta-item">
-                                    <strong>Téléphone</strong>
+                                    <strong>{t("about.phone")}</strong>
                                     <p>{wp.contact.phone}</p>
                                 </div>
                             )}
                             {wp.contact?.website && (
                                 <div className="meta-item">
-                                    <strong>Site web</strong>
+                                    <strong>{t("workingPapers.website")}</strong>
                                     <p>{wp.contact.website}</p>
                                 </div>
                             )}
@@ -156,7 +158,7 @@ function WorkingPaperDetail() {
                         </div>
                         {Array.isArray(wp.usefulLinks) && wp.usefulLinks.length > 0 && (
                             <div style={{ marginTop: "1rem" }}>
-                                <strong>Liens utiles</strong>
+                                <strong>{t("workingPapers.usefulLinks")}</strong>
                                 <ul>
                                     {wp.usefulLinks.map((link, index) => (
                                         <li key={`${link}-${index}`}>
@@ -173,24 +175,24 @@ function WorkingPaperDetail() {
 
                 {isDeadlinePassed(wp.deadline) ? (
                     <div className="deadline-passed-notice">
-                        <p>La deadline pour cet appel est passée.</p>
-                        <p>Les soumissions ne sont plus acceptées.</p>
+                        <p>{t("workingPapers.deadlinePassed")}</p>
+                        <p>{t("workingPapers.submissionsClosed")}</p>
                     </div>
                 ) : (
                     <div className="wp-submit-cta">
-                        <h3>Soumettre votre travail</h3>
-                        <p>Assurez-vous d’avoir préparé les éléments suivants avant de commencer :</p>
+                        <h3>{t("workingPapers.submitWork")}</h3>
+                        <p>{t("workingPapers.prepareBefore")}</p>
                         <ul className="wp-submit-checklist">
-                            <li>Votre fichier en format PDF (max {PDF_MAX_SIZE_MB} MB)</li>
-                            <li>Titre, résumé et mots-clés de l’article</li>
-                            <li>Informations des co-auteurs si applicable</li>
-                            <li>Les codes JEL sont définis par le créateur de l’appel</li>
+                            <li>{t("workingPapers.pdfRequirement", { size: PDF_MAX_SIZE_MB })}</li>
+                            <li>{t("workingPapers.articleMetadata")}</li>
+                            <li>{t("workingPapers.coauthors")}</li>
+                            <li>{t("workingPapers.jelRequirement")}</li>
                         </ul>
                         <button
                             className="btn btn-primary"
                             onClick={() => navigate(`/working-papers/${id}/submit`)}
                         >
-                            Commencer la soumission
+                            {t("workingPapers.startSubmission")}
                         </button>
                     </div>
                 )}

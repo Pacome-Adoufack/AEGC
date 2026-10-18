@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import "../../styles/Activity.css";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {API_BASE_URL} from "../Url"
 
 const Activity = () => {
+  const { t } = useTranslation();
   const [activities, setActivities] = useState([]);
   const [data, setData] = useState([]);
 
@@ -77,23 +79,23 @@ const Activity = () => {
       <nav className="newspaper-nav">
         <ul>
           <li>
-            <a href="/seminaires">AEGC Seminaires</a>
+            <a href="/seminaires">{t("activity.navigation.seminars")}</a>
           </li>
           <li>
-            <a href="/web binaire">AEGC Web Binaire</a>
+            <a href="/web binaire">{t("activity.navigation.webinar")}</a>
           </li>
           <li>
-            <a href="/conference">AEGC Conference</a>
+            <a href="/conference">{t("activity.navigation.conference")}</a>
           </li>
           <li>
-            <a href="/picture">AEGC Photos</a>
+            <a href="/picture">{t("activity.navigation.photos")}</a>
           </li>
         </ul>
       </nav>
 
       <div className="meeting-container">
         <div className="meeting-content">
-          <h1>Nos activités</h1>
+          <h1>{t("activity.title")}</h1>
           <div className="activity-images-grid">
             {data.map((activity) => (
               <div key={activity._id} className="activity-card">
@@ -110,7 +112,7 @@ const Activity = () => {
                     <span>{activity.location}</span>
                   </p>
                   <p>
-                    <strong>Présenté par :</strong>{" "}
+                    <strong>{t("activity.presentedBy")}</strong>{" "}
                     <a className="doctor-link" href="/adoufack">
                       {activity.presenter}
                     </a>
@@ -122,14 +124,14 @@ const Activity = () => {
                         className="delete-button"
                         onClick={() => handleCancel(activity.reservationId)}
                       >
-                        Annuler la réservation
+                        {t("activity.cancelReservation")}
                       </button>
                     ) : (
                       <Link
                         to={`/reservation/${activity._id}`}
                         className="reserve-button"
                       >
-                        Réserver
+                        {t("activity.reserve")}
                       </Link>
                     )}
                   </div>

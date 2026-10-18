@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { API_BASE_URL } from "../Url";
 import "../../styles/Faq.css";
+import { useTranslation } from "react-i18next";
 
 const Faq = () => {
+  const { t } = useTranslation();
   // Définition complète des questions
   const questions = [
     {
@@ -125,7 +127,7 @@ const Faq = () => {
       // Vérification que toutes les réponses sont remplies
       const unansweredQuestions = questions.filter(q => !responses[q.id]);
       if (unansweredQuestions.length > 0) {
-        throw new Error(`Veuillez répondre à la question: ${unansweredQuestions[0].text}`);
+        throw new Error(t("faq.requiredQuestion", { question: t(`faq.questions.${unansweredQuestions[0].id}`) }));
       }
 
       // Préparation des données pour l'API
@@ -148,12 +150,12 @@ const Faq = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Erreur lors de la soumission");
+        throw new Error(errorData.error || t("faq.submitError"));
       }
 
       setSubmitStatus({
         success: true,
-        message: "Merci pour votre feedback ! Votre réponse a bien été enregistrée.",
+        message: t("faq.success"),
       });
       setResponses(initialResponses);
     } catch (error) {
@@ -170,6 +172,15 @@ const Faq = () => {
   // Rendu d'une question selon son type
   const renderQuestion = (question) => {
     const currentValue = responses[question.id] || "";
+    const translateOption = (option) => {
+      const optionKeys = {
+        "Très insatisfait": "veryDissatisfied", "Insatisfait": "dissatisfied", "Neutre": "neutral",
+        "Satisfait": "satisfied", "Très satisfait": "verySatisfied", Oui: "yes", Non: "no",
+        "Je ne sais pas": "dontKnow", "Totalement pas d'accord": "stronglyDisagree",
+        "Pas d'accord": "disagree", "D'accord": "agree", "Totalement d'accord": "stronglyAgree",
+      };
+      return t(`faq.options.${optionKeys[option] || option}`);
+    };
 
     switch (question.type) {
       case "select":
@@ -179,9 +190,9 @@ const Faq = () => {
             onChange={(e) => handleResponseChange(question.id, e.target.value)}
             required
           >
-            <option value="">Sélectionnez...</option>
+            <option value="">{t("faq.selectPlaceholder")}</option>
             {question.options.map(option => (
-              <option key={option} value={option}>{option}</option>
+              <option key={option} value={option}>{translateOption(option)}</option>
             ))}
           </select>
         );
@@ -199,7 +210,7 @@ const Faq = () => {
                   onChange={() => handleResponseChange(question.id, option)}
                   required
                 />
-                {option}
+                {translateOption(option)}
               </label>
             ))}
           </div>
@@ -212,7 +223,7 @@ const Faq = () => {
             onChange={(e) => handleResponseChange(question.id, e.target.value)}
             required
             rows={4}
-            placeholder="Votre réponse..."
+            placeholder={t("faq.answerPlaceholder")}
           />
         );
 
@@ -224,8 +235,8 @@ const Faq = () => {
   return (
     <div className="faq-container">
       <header className="faq-header">
-        <h1>Questionnaire de satisfaction</h1>
-        <p>Merci de prendre le temps de répondre à ce questionnaire</p>
+        <h1>{t("faq.title")}</h1>
+        <p>{t("faq.subtitle")}</p>
       </header>
 
       {submitStatus.message && (
@@ -237,7 +248,7 @@ const Faq = () => {
       <form onSubmit={handleSubmit} className="faq-form">
         {questions.map(question => (
           <div key={question.id} className="question-card">
-            <h3>{question.text}</h3>
+            <h3>{t(`faq.questions.${question.id}`)}</h3>
             <div className="question-input">
               {renderQuestion(question)}
             </div>
@@ -250,7 +261,7 @@ const Faq = () => {
             disabled={isSubmitting}
             className={`submit-btn ${isSubmitting ? "loading" : ""}`}
           >
-            {isSubmitting ? "Envoi en cours..." : "Soumettre le questionnaire"}
+            {isSubmitting ? t("faq.submitting") : t("faq.submit")}
           </button>
         </div>
       </form>

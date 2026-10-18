@@ -65,6 +65,34 @@
   gap: 20px;
 }
 
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  order: 1;
+  margin-left: 4px;
+}
+
+.language-toggle {
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 6px 5px;
+  color: var(--aegc-ink);
+  background-color: #ffffff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.language-toggle:hover,
+.language-toggle:focus-visible {
+  border-color: var(--aegc-line);
+  background-color: var(--aegc-blue-soft);
+  outline: none;
+}
+
 /* Liens de compte en bout de menu, séparés par un trait : le menu principal
    garde un espacement régulier, sans trou au milieu. */
 .nav_account {
@@ -378,6 +406,24 @@
     border-left: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.18);
     margin-bottom: 8px;
+  }
+
+  .language-switcher {
+    order: -1;
+    justify-content: space-between;
+    padding: 0 14px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    margin-bottom: 8px;
+  }
+
+  .language-switcher > span {
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .language-toggle {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    background-color: transparent;
   }
 
   .nav_list a.nav-cta {

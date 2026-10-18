@@ -4,11 +4,12 @@ import { useToast } from '../../hooks/useToast.js';
 import { API_BASE_URL } from '../Url';
 import { getAuthToken, getAuthHeaders } from '../../utils/auth';
 import '@/styles/MembershipPayment.css';
+import { useTranslation } from 'react-i18next';
 
-const formatDateSafe = (d) => {
+const formatDateSafe = (d, language) => {
     if (!d) return '-';
     const t = new Date(d);
-    return isNaN(t.getTime()) ? '-' : t.toLocaleDateString('fr-FR');
+    return isNaN(t.getTime()) ? '-' : t.toLocaleDateString(language);
 };
 
 const PRICING = [
@@ -38,6 +39,7 @@ const ADVANTAGES = [
 ];
 
 const MembershipPayment = () => {
+    const { t, i18n } = useTranslation();
     const toast = useToast();
     const [emailConfirmation, setEmailConfirmation] = useState(false);
     const [paymentInfo, setPaymentInfo] = useState(null);
@@ -91,12 +93,12 @@ const MembershipPayment = () => {
         try {
             const token = getAuthToken();
             if (!token) {
-                setError('Vous devez être connecté pour souscrire.');
+                setError(t('membership.authRequired'));
                 setLoading(false);
                 return;
             }
             if (!emailConfirmation) {
-                setError('Veuillez confirmer que vous avez envoyé la preuve et le formulaire par email.');
+                setError(t('membership.proofRequired'));
                 setLoading(false);
                 return;
             }
@@ -110,13 +112,13 @@ const MembershipPayment = () => {
                 body: JSON.stringify({ currency: 'XAF', category: 'standard' }),
             });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Erreur lors de la soumission');
+            if (!response.ok) throw new Error(data.message || t('membership.submissionError'));
 
-            toast.success(data.message || 'Soumission reçue. En attente de validation.');
+            toast.success(data.message || t('membership.received'));
             navigate('/membership/success');
         } catch (err) {
             console.error('Erreur paiement:', err);
-            setError(err.message || 'Une erreur est survenue');
+            setError(err.message || t('membership.unexpectedError'));
             setLoading(false);
         }
     };
@@ -140,15 +142,15 @@ const MembershipPayment = () => {
             <div className="mp-container">
                 <div className="mp-card mp-state-card">
                     <div className="mp-state-icon">✅</div>
-                    <h2>Cotisation Active</h2>
-                    <p>Votre cotisation annuelle est en cours de validité.</p>
+                    <h2>{t('membership.activeTitle')}</h2>
+                    <p>{t('membership.activeText')}</p>
                     <div className="mp-info-grid">
-                        <span>Montant</span><strong>{currentMembership.amount} {currentMembership.currency}</strong>
-                        <span>Date de début</span><strong>{formatDateSafe(currentMembership.startDate)}</strong>
-                        <span>Date de fin</span><strong>{formatDateSafe(currentMembership.endDate)}</strong>
-                        <span>N° de paiement</span><strong>{currentMembership.paymentNumber}</strong>
+                        <span>{t('membership.amount')}</span><strong>{currentMembership.amount} {currentMembership.currency}</strong>
+                        <span>{t('membership.startDate')}</span><strong>{formatDateSafe(currentMembership.startDate, i18n.language)}</strong>
+                        <span>{t('membership.endDate')}</span><strong>{formatDateSafe(currentMembership.endDate, i18n.language)}</strong>
+                        <span>{t('membership.paymentNumber')}</span><strong>{currentMembership.paymentNumber}</strong>
                     </div>
-                    <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">Retour au profil</button>
+                    <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">{t('membership.backProfile')}</button>
                 </div>
             </div>
         );
@@ -159,13 +161,13 @@ const MembershipPayment = () => {
             <div className="mp-container">
                 <div className="mp-card mp-state-card">
                     <div className="mp-state-icon">⏳</div>
-                    <h2>Demande en attente</h2>
-                    <p>Votre demande d'adhésion a été reçue et est en cours de validation par un administrateur.</p>
+                    <h2>{t('membership.pendingTitle')}</h2>
+                    <p>{t('membership.pendingText')}</p>
                     <div className="mp-info-grid">
-                        <span>N° de soumission</span><strong>{currentMembership.paymentNumber || '-'}</strong>
-                        <span>Soumis le</span><strong>{formatDateSafe(currentMembership.createdAt)}</strong>
+                        <span>{t('membership.submissionNumber')}</span><strong>{currentMembership.paymentNumber || '-'}</strong>
+                        <span>{t('membership.submittedOn')}</span><strong>{formatDateSafe(currentMembership.createdAt, i18n.language)}</strong>
                     </div>
-                    <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">Retour au profil</button>
+                    <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">{t('membership.backProfile')}</button>
                 </div>
             </div>
         );
@@ -176,22 +178,22 @@ const MembershipPayment = () => {
             <div className="mp-container">
                 <div className="mp-card mp-state-card">
                     <div className="mp-state-icon mp-state-icon--rejected">✗</div>
-                    <h2>Demande rejetée</h2>
-                    <p>Votre demande d'adhésion a été rejetée par l'administrateur.</p>
+                    <h2>{t('membership.rejectedTitle')}</h2>
+                    <p>{t('membership.rejectedText')}</p>
                     {currentMembership.rejectionReason && (
                         <div className="mp-rejection-reason">
-                            <strong>Motif :</strong> {currentMembership.rejectionReason}
+                            <strong>{t('membership.reason')}</strong> {currentMembership.rejectionReason}
                         </div>
                     )}
                     <div className="mp-info-grid">
-                        <span>N° de soumission</span><strong>{currentMembership.paymentNumber || '-'}</strong>
-                        <span>Soumis le</span><strong>{formatDateSafe(currentMembership.createdAt)}</strong>
+                        <span>{t('membership.submissionNumber')}</span><strong>{currentMembership.paymentNumber || '-'}</strong>
+                        <span>{t('membership.submittedOn')}</span><strong>{formatDateSafe(currentMembership.createdAt, i18n.language)}</strong>
                     </div>
                     <div className="mp-state-actions">
                         <button className="mp-btn-primary" onClick={() => { setCurrentMembership(null); setEmailConfirmation(false); }}>
-                            Resoumettre ma demande
+                            {t('membership.resubmit')}
                         </button>
-                        <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">Voir mon profil</button>
+                        <button onClick={() => navigate('/informations personnelles')} className="mp-btn-secondary">{t('membership.profile')}</button>
                     </div>
                 </div>
             </div>
@@ -205,36 +207,36 @@ const MembershipPayment = () => {
 
                 {/* En-tête */}
                 <div className="mp-header">
-                    <h1>Cotisation Annuelle AEGC</h1>
-                    <p>Rejoignez l'Association des Économistes et Gestionnaires du Cameroun et accédez à des avantages exclusifs pendant 1 an.</p>
+                    <h1>{t('membership.annualTitle')}</h1>
+                    <p>{t('membership.annualText')}</p>
                 </div>
 
                 {/* Étapes */}
                 <div className="mp-steps">
                     <div className="mp-step">
                         <div className="mp-step-num">1</div>
-                        <span>Effectuez votre paiement</span>
+                        <span>{t('membership.steps.0')}</span>
                     </div>
                     <div className="mp-step-sep" />
                     <div className="mp-step">
                         <div className="mp-step-num">2</div>
-                        <span>Envoyez la preuve par email</span>
+                        <span>{t('membership.steps.1')}</span>
                     </div>
                     <div className="mp-step-sep" />
                     <div className="mp-step">
                         <div className="mp-step-num">3</div>
-                        <span>Soumettez votre demande ici</span>
+                        <span>{t('membership.steps.2')}</span>
                     </div>
                 </div>
 
                 {/* Tarifs */}
                 <section className="mp-section">
-                    <h2 className="mp-section-title">Tarifs selon votre profil</h2>
+                    <h2 className="mp-section-title">{t('membership.pricingTitle')}</h2>
                     <div className="mp-pricing-grid">
-                        {PRICING.map(({ label, price, icon }) => (
+                        {PRICING.map(({ label, price, icon }, index) => (
                             <div className="mp-pricing-card" key={label}>
                                 <span className="mp-pricing-icon">{icon}</span>
-                                <span className="mp-pricing-label">{label}</span>
+                                <span className="mp-pricing-label">{t(`membership.pricing.${index}`)}</span>
                                 <span className="mp-pricing-price">{price}</span>
                             </div>
                         ))}
@@ -243,51 +245,54 @@ const MembershipPayment = () => {
 
                 {/* Avantages */}
                 <section className="mp-section">
-                    <h2 className="mp-section-title">Avantages par profil</h2>
+                    <h2 className="mp-section-title">{t('membership.advantagesTitle')}</h2>
                     <div className="mp-advantages-grid">
-                        {ADVANTAGES.map(({ title, icon, items }) => (
-                            <div className="mp-advantage-card" key={title}>
-                                <div className="mp-advantage-title">{icon} {title}</div>
+                        {ADVANTAGES.map(({ icon }, index) => {
+                            const advantageKey = ['students', 'teachers', 'professionals'][index];
+                            return (
+                            <div className="mp-advantage-card" key={advantageKey}>
+                                <div className="mp-advantage-title">{icon} {t(`membership.advantages.${advantageKey}.title`)}</div>
                                 <ul>
-                                    {items.map((item) => <li key={item}>{item}</li>)}
+                                    {t(`membership.advantages.${advantageKey}.items`, { returnObjects: true }).map((item) => <li key={item}>{item}</li>)}
                                 </ul>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </section>
 
                 {/* Méthodes de paiement */}
                 <section className="mp-section">
-                    <h2 className="mp-section-title">Instructions de paiement</h2>
+                    <h2 className="mp-section-title">{t('membership.paymentInstructions')}</h2>
                     <div className="mp-tabs">
-                        <button className={`mp-tab${paymentTab === 'bank' ? ' active' : ''}`} onClick={() => setPaymentTab('bank')}>🏦 Virement bancaire</button>
-                        <button className={`mp-tab${paymentTab === 'orange' ? ' active' : ''}`} onClick={() => setPaymentTab('orange')}>🟠 Orange Money</button>
-                        <button className={`mp-tab${paymentTab === 'mtn' ? ' active' : ''}`} onClick={() => setPaymentTab('mtn')}>🟡 MTN MoMo</button>
+                        <button className={`mp-tab${paymentTab === 'bank' ? ' active' : ''}`} onClick={() => setPaymentTab('bank')}>🏦 {t('membership.bankTransfer')}</button>
+                        <button className={`mp-tab${paymentTab === 'orange' ? ' active' : ''}`} onClick={() => setPaymentTab('orange')}>🟠 {t('membership.orangeMoney')}</button>
+                        <button className={`mp-tab${paymentTab === 'mtn' ? ' active' : ''}`} onClick={() => setPaymentTab('mtn')}>🟡 {t('membership.mtnMomo')}</button>
                     </div>
 
                     <div className="mp-tab-content">
                         {paymentTab === 'bank' && (
                             <div className="mp-bank-grid">
                                 <span>IBAN</span><strong>{p.iban}</strong>
-                                <span>Banque</span><strong>{p.bankAccount}</strong>
-                                <span>N° de compte</span><strong>{p.accountNumber}</strong>
-                                <span>Code SWIFT</span><strong>{p.swift}</strong>
-                                <span>Titulaire</span><strong>{p.accountHolder}</strong>
-                                <span>Adresse</span><strong>{p.address}</strong>
+                                <span>{t('membership.bank')}</span><strong>{p.bankAccount}</strong>
+                                <span>{t('membership.accountNumber')}</span><strong>{p.accountNumber}</strong>
+                                <span>{t('membership.swift')}</span><strong>{p.swift}</strong>
+                                <span>{t('membership.holder')}</span><strong>{p.accountHolder}</strong>
+                                <span>{t('membership.address')}</span><strong>{p.address}</strong>
                             </div>
                         )}
                         {paymentTab === 'orange' && (
                             <div className="mp-mobile-money orange">
                                 <div className="mp-mm-number">{p.orangeNumber}</div>
-                                <div className="mp-mm-label">Numéro Orange Money</div>
-                                <div className="mp-mm-holder">Titulaire : <strong>{p.mobileHolder}</strong></div>
+                                <div className="mp-mm-label">{t('membership.orangeNumber')}</div>
+                                <div className="mp-mm-holder">{t('membership.holder')} : <strong>{p.mobileHolder}</strong></div>
                             </div>
                         )}
                         {paymentTab === 'mtn' && (
                             <div className="mp-mobile-money mtn">
                                 <div className="mp-mm-number">{p.mtnNumber}</div>
-                                <div className="mp-mm-label">Numéro MTN MoMo</div>
-                                <div className="mp-mm-holder">Titulaire : <strong>{p.mobileHolder}</strong></div>
+                                <div className="mp-mm-label">{t('membership.mtnNumber')}</div>
+                                <div className="mp-mm-holder">{t('membership.holder')} : <strong>{p.mobileHolder}</strong></div>
                             </div>
                         )}
                     </div>
@@ -295,9 +300,9 @@ const MembershipPayment = () => {
 
                 {/* Formulaire + confirmation */}
                 <section className="mp-section mp-confirm-section">
-                    <h2 className="mp-section-title">Finaliser votre demande</h2>
+                    <h2 className="mp-section-title">{t('membership.finalize')}</h2>
                     <p className="mp-confirm-text">
-                        Après votre paiement, envoyez la preuve et le formulaire rempli à{' '}
+                        {t('membership.proofText')}{' '}
                         <a href={`mailto:${p.adminEmail}`} className="mp-email-link">{p.adminEmail}</a>.
                     </p>
 
@@ -308,7 +313,7 @@ const MembershipPayment = () => {
                         rel="noreferrer"
                         download
                     >
-                        ⬇ Télécharger le formulaire d'adhésion (Word)
+                        ⬇ {t('membership.downloadForm')}
                     </a>
 
                     <label className="mp-checkbox-label">
@@ -317,7 +322,7 @@ const MembershipPayment = () => {
                             checked={emailConfirmation}
                             onChange={(e) => setEmailConfirmation(e.target.checked)}
                         />
-                        <span>J'ai effectué mon paiement et envoyé la preuve avec le formulaire à {p.adminEmail}.</span>
+                        <span>{t('membership.confirmation', { email: p.adminEmail })}</span>
                     </label>
 
                     {error && (
@@ -329,11 +334,11 @@ const MembershipPayment = () => {
                         disabled={loading}
                         className="mp-submit-btn"
                     >
-                        {loading ? 'Traitement en cours…' : 'Soumettre ma demande d\'adhésion'}
+                        {loading ? t('membership.processing') : t('membership.submit')}
                     </button>
 
                     <p className="mp-footer-note">
-                        Un administrateur vérifiera votre paiement et activera votre adhésion sous quelques jours.
+                        {t('membership.footerNote')}
                     </p>
                 </section>
 

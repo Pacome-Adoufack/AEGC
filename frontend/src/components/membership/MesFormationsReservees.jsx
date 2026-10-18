@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../Url";
 import "@/styles/MesFormationsReservees.css";
+import { useTranslation } from "react-i18next";
 
 const MesFormationsReservees = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
 
@@ -34,16 +36,16 @@ const MesFormationsReservees = () => {
 
   return (
     <div className="reservations-container">
-      <h2>Mes Formations Réservées</h2>
+      <h2>{t("membersArea.reservedTrainings")}</h2>
 
       {reservations.length === 0 ? (
-        <p>Aucune formation réservée.</p>
+        <p>{t("membersArea.empty")}</p>
       ) : (
         reservations.map((res) => (
           <div key={res._id} className="reservation-card">
             <h3>{res.formationId?.title}</h3>
-            <p><strong>Date :</strong> {res.formationId?.date}</p>
-            <p><strong>Professeur :</strong> {res.formationId?.teacher}</p>
+            <p><strong>{t("membersArea.date")}</strong> {new Intl.DateTimeFormat(i18n.language).format(new Date(res.formationId?.date))}</p>
+            <p><strong>{t("membersArea.teacher")}</strong> {res.formationId?.teacher}</p>
           </div>
         ))
       )}

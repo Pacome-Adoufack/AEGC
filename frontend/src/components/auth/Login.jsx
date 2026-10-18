@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "@/styles/Login.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { API_BASE_URL } from "../Url";
 import logo from "../../assets/logo.png";
 
 export default function Login({ setIsLoggedIn }) {
+  const { t } = useTranslation();
   const [data, setData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
@@ -45,7 +47,7 @@ export default function Login({ setIsLoggedIn }) {
       })
       .then((dataRes) => {
         setMessageType("success");
-        setMessage("Connexion réussie !");
+        setMessage(t("auth.successLogin"));
         setIsLoggedIn(true);
         localStorage.setItem("user", JSON.stringify(dataRes.user));
 
@@ -73,9 +75,9 @@ export default function Login({ setIsLoggedIn }) {
 
         setTimeout(() => navigate(redirectPath), 1500);
       })
-      .catch((error) => {
+      .catch(() => {
         setMessageType("error");
-        setMessage("Identifiants incorrects. Vérifiez votre email et mot de passe.");
+        setMessage(t("auth.invalidCredentials"));
       });
   };
 
@@ -85,8 +87,8 @@ export default function Login({ setIsLoggedIn }) {
 
         <div className="lg-header">
           <img src={logo} alt="Logo AEGC" className="lg-logo" />
-          <h1 className="lg-title">Connexion</h1>
-          <p className="lg-subtitle">Accédez à votre espace membre AEGC</p>
+          <h1 className="lg-title">{t("auth.loginTitle")}</h1>
+          <p className="lg-subtitle">{t("auth.loginSubtitle")}</p>
         </div>
 
         {message && (
@@ -96,7 +98,7 @@ export default function Login({ setIsLoggedIn }) {
         <form onSubmit={handleSubmit} className="lg-form">
 
           <div className="lg-field">
-            <label htmlFor="email" className="lg-label">Adresse e-mail</label>
+            <label htmlFor="email" className="lg-label">{t("auth.email")}</label>
             <input
               className="lg-input"
               type="email"
@@ -111,8 +113,8 @@ export default function Login({ setIsLoggedIn }) {
 
           <div className="lg-field">
             <div className="lg-label-row">
-              <label htmlFor="password" className="lg-label">Mot de passe</label>
-              <Link to="/forgotpassword" className="lg-forgot">Mot de passe oublié ?</Link>
+              <label htmlFor="password" className="lg-label">{t("auth.password")}</label>
+              <Link to="/forgotpassword" className="lg-forgot">{t("auth.forgotPassword")}</Link>
             </div>
             <div className="lg-password-wrapper">
               <input
@@ -130,7 +132,7 @@ export default function Login({ setIsLoggedIn }) {
                 type="button"
                 className="lg-eye-btn"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label="Afficher / masquer mot de passe"
+                aria-label={t("auth.showPassword")}
               >
                 <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
               </button>
@@ -143,15 +145,15 @@ export default function Login({ setIsLoggedIn }) {
               checked={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
             />
-            Se souvenir de moi
+            {t("auth.rememberMe")}
           </label>
 
-          <button type="submit" className="lg-submit">Se connecter</button>
+          <button type="submit" className="lg-submit">{t("auth.login")}</button>
         </form>
 
         <p className="lg-register-link">
-          Pas encore membre ?{" "}
-          <Link to="/register">Créer un compte</Link>
+          {t("auth.notMember")}{" "}
+          <Link to="/register">{t("auth.register")}</Link>
         </p>
 
       </div>

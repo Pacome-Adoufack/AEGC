@@ -47,6 +47,15 @@ const awardSchema = new mongoose.Schema(
       default: "",
       maxlength: 200,
     },
+    // Lien vers le profil académique du lauréat (Google Scholar, ResearchGate,
+    // ORCID…). Champ à part : collé dans le nom, il s'affichait en clair sur la
+    // carte et rendait la page illisible.
+    profileUrl: {
+      type: String,
+      trim: true,
+      default: "",
+      maxlength: 500,
+    },
     // Motivation du jury, affichée sous le nom du lauréat.
     citation: {
       type: String,

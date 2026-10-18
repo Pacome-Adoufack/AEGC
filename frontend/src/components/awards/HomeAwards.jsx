@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import AwardCard from "./AwardCard";
+import AwardLightbox from "./AwardLightbox";
 import useSpotlight from "./useSpotlight";
 import "../../styles/Price.css";
 
@@ -13,8 +15,10 @@ import "../../styles/Price.css";
  * c'est ce qui évite de laisser « Prix 2026 » affiché en juillet 2027.
  */
 export default function HomeAwards() {
+    const { t } = useTranslation();
     const [prizes, setPrizes] = useState([]);
     const [year, setYear] = useState(null);
+    const [openIndex, setOpenIndex] = useState(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -43,8 +47,8 @@ export default function HomeAwards() {
         <section className="home-section home-awards">
             <div className="section-inner">
                 <div className="awards-year-line">
-                    <h2>Lauréats {year}</h2>
-                    <Link className="awards-all-link" to="/price">Tous les prix</Link>
+                    <h2>{t("home.awards.laureates", { year })}</h2>
+                    <Link className="awards-all-link" to="/price">{t("home.awards.all")}</Link>
                 </div>
 
                 <div className="awards-grid" {...pauseProps}>
@@ -55,11 +59,21 @@ export default function HomeAwards() {
                             index={i}
                             spotlight={i === active}
                             compact
-                            linkTo="/price"
+                            onOpen={() => setOpenIndex(i)}
                         />
                     ))}
                 </div>
             </div>
+
+            {openIndex !== null && (
+                <AwardLightbox
+                    prizes={prizes}
+                    index={openIndex}
+                    year={year}
+                    onClose={() => setOpenIndex(null)}
+                    onNavigate={setOpenIndex}
+                />
+            )}
         </section>
     );
 }

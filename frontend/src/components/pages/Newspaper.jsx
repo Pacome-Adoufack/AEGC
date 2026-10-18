@@ -1,13 +1,16 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import "../../styles/Newspaper.css";
 import NewspaperReview from "../reviews/NewspaperReview";
 
 function Newspaper() {
+  const { t } = useTranslation();
+
   return (
     <div className="newspaper-layout">
       <NewspaperReview />
       <div className="newspaper-container">
-        <h1 className="newspaper-h1">Journal</h1>
+        <h1 className="newspaper-h1">{t("newspaper.title")}</h1>
         <div className="images-grid">
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfWERCc5vyeR7GnmY3C6Wi3uqjmYLdmNe9Cg&s"

@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import AwardCard from "../awards/AwardCard";
+import AwardLightbox from "../awards/AwardLightbox";
 import useSpotlight from "../awards/useSpotlight";
 import "../../styles/Price.css";
 
 export default function Price() {
+    const { t } = useTranslation();
     const [years, setYears] = useState([]);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [openYear, setOpenYear] = useState(null);
+    // { year, index } du prix ouvert en grand, null si la fenetre est fermee.
+    const [open, setOpen] = useState(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -40,7 +45,7 @@ export default function Price() {
     if (loading) {
         return (
             <div className="awards-page">
-                <p className="awards-state">Chargement…</p>
+                <p className="awards-state">{t("price.loading")}</p>
             </div>
         );
     }
@@ -48,24 +53,24 @@ export default function Price() {
     return (
         <div className="awards-page">
             <header className="awards-header">
-                <h1>Les prix de l&apos;AEGC</h1>
-                <p>Distinctions décernées chaque année par l&apos;association</p>
+                <h1>{t("price.title")}</h1>
+                <p>{t("price.subtitle")}</p>
             </header>
 
             {failed ? (
                 <p className="awards-state">
-                    Les prix n&apos;ont pas pu être chargés. Réessayez dans un instant.
+                    {t("price.loadError")}
                 </p>
             ) : years.length === 0 ? (
                 <p className="awards-state">
-                    Les lauréats seront annoncés prochainement.
+                    {t("price.empty")}
                 </p>
             ) : (
                 <>
                     <section className="awards-current">
                         <div className="awards-year-line">
-                            <h2>Édition {current.year}</h2>
-                            <span className="awards-badge">nouveaux lauréats</span>
+                            <h2>{t("price.edition", { year: current.year })}</h2>
+                            <span className="awards-badge">{t("price.newLaureates")}</span>
                         </div>
 
                         <div className="awards-grid" {...pauseProps}>
@@ -75,6 +80,7 @@ export default function Price() {
                                     prize={prize}
                                     index={i}
                                     spotlight={i === active}
+                                    onOpen={() => setOpen({ year: current.year, index: i })}
                                 />
                             ))}
                         </div>
@@ -82,7 +88,7 @@ export default function Price() {
 
                     {previous.length > 0 && (
                         <section className="awards-archive">
-                            <h2>Éditions précédentes</h2>
+                            <h2>{t("price.previousEditions")}</h2>
 
                             {previous.map((edition) => {
                                 const open = openYear === edition.year;
@@ -95,7 +101,7 @@ export default function Price() {
                                         >
                                             <span className="awards-edition-year">{edition.year}</span>
                                             <span className="awards-edition-count">
-                                                {edition.prizes.length} prix
+                                                {t("price.prizes", { count: edition.prizes.length })}
                                             </span>
                                             <span className={`awards-chevron ${open ? "open" : ""}`} aria-hidden="true">▾</span>
                                         </button>
@@ -103,7 +109,12 @@ export default function Price() {
                                         {open && (
                                             <div className="awards-grid is-archive">
                                                 {edition.prizes.map((prize, i) => (
-                                                    <AwardCard key={prize.category} prize={prize} index={i} />
+                                                    <AwardCard
+                                                        key={prize.category}
+                                                        prize={prize}
+                                                        index={i}
+                                                        onOpen={() => setOpen({ year: edition.year, index: i })}
+                                                    />
                                                 ))}
                                             </div>
                                         )}
@@ -114,6 +125,20 @@ export default function Price() {
                     )}
                 </>
             )}
+
+            {open && (() => {
+                const edition = years.find((y) => y.year === open.year);
+                if (!edition) return null;
+                return (
+                    <AwardLightbox
+                        prizes={edition.prizes}
+                        index={open.index}
+                        year={edition.year}
+                        onClose={() => setOpen(null)}
+                        onNavigate={(i) => setOpen({ year: open.year, index: i })}
+                    />
+                );
+            })()}
         </div>
     );
 }

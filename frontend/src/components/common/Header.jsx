@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "@/styles/Header.css";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
@@ -9,6 +10,7 @@ import { API_BASE_URL } from "../Url";
 import logo from "@/assets/logo.png";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -82,15 +84,15 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
     if (!membershipStatus) return null;
 
     if (membershipStatus.status === 'active') {
-      return { label: 'Actif', className: 'membership-pill active' };
+      return { label: t('header.membership.active'), className: 'membership-pill active' };
     }
 
     if (membershipStatus.status === 'expired') {
-      return { label: 'Expiré', className: 'membership-pill expired' };
+      return { label: t('header.membership.expired'), className: 'membership-pill expired' };
     }
 
     if (membershipStatus.status === 'pending') {
-      return { label: 'En attente', className: 'membership-pill pending' };
+      return { label: t('header.membership.pending'), className: 'membership-pill pending' };
     }
 
     // Do not show a 'Rejeté' badge in the header — it's confusing for users.
@@ -100,6 +102,11 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
   };
 
   const _membershipBadge = getMembershipBadge();
+  const roleLabel = userRole === 'dev'
+    ? t('header.dashboard.developer')
+    : userRole === 'dispatcher'
+      ? t('header.dashboard.manager')
+      : t('header.dashboard.administrator');
 
   return (
     <>
@@ -121,13 +128,13 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
             <FaTimes
               className="hamburger-icon"
               onClick={toggleMenu}
-              aria-label="Fermer le menu"
+              aria-label={t('header.closeMenu')}
             />
           ) : (
             <FaBars
               className="hamburger-icon"
               onClick={toggleMenu}
-              aria-label="Ouvrir le menu"
+              aria-label={t('header.openMenu')}
             />
           )}
         </div>
@@ -135,16 +142,16 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
           {/* Liens de compte : à droite du menu sur ordinateur (voir .nav_account),
               en tête du panneau sur mobile. Absents une fois connecté. */}
           {!isLoggedIn && (
-            <nav className="nav_account" aria-label="Compte">
+            <nav className="nav_account" aria-label={t('header.account')}>
               <ul className="nav_list">
                 <li>
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    Se connecter
+                    {t('header.login')}
                   </Link>
                 </li>
                 <li>
                   <Link to="/register" className="nav-cta" onClick={() => setIsMenuOpen(false)}>
-                    Créer un compte
+                    {t('header.register')}
                   </Link>
                 </li>
               </ul>
@@ -167,7 +174,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       }
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Dashboard {userRole === 'dev' ? 'Développeur' : userRole === 'dispatcher' ? 'Gestionnaire' : 'Administrateur'}
+                      Dashboard {roleLabel}
                     </Link>
                   </li>
                   {(userRole === 'admin' || userRole === 'dispatcher') && (
@@ -192,7 +199,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       </button>
                       <div className="dropdown-menu">
                         <button onClick={handleLogout} className="logout-button">
-                          Déconnexion
+                          {t('header.logout')}
                         </button>
                       </div>
                     </li>
@@ -203,7 +210,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                 <>
                   <li className="not-Dropdown">
                     <Link to="/home" onClick={() => setIsMenuOpen(false)}>
-                      Accueil
+                      {t('header.home')}
                     </Link>
                   </li>
 
@@ -212,44 +219,44 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       className="dropdown-button"
                       onClick={() => toggleDropdown("activites")}
                     >
-                      Journal
+                      {t('header.journal')}
                     </button>
                     <div
                       className={`dropdown-menu ${openDropdown === "activites" ? "open" : ""
                         }`}
                     >
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Review
+                        {t('header.journalItems.aegcReview')}
                       </Link>
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Economic Review
+                        {t('header.journalItems.aegcEconomicReview')}
                       </Link>
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
-                        Cameroon Economics Review
+                        {t('header.journalItems.cameroonEconomicsReview')}
                       </Link>
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
-                        Management Review
+                        {t('header.journalItems.managementReview')}
                       </Link>
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
-                        Research
+                        {t('header.journalItems.research')}
                       </Link>
                       <Link to="/development" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Metadata
+                        {t('header.journalItems.metadata')}
                       </Link>
                     </div>
                   </li>
 
                   <li className="not-Dropdown">
                     <Link to="/working-papers" onClick={() => setIsMenuOpen(false)}>
-                      Working Papers
+                      {t('header.workingPapers')}
                     </Link>
                   </li>
 
                   <li className="dropdown">
-                    <button className="dropdown-button">Activités</button>
+                    <button className="dropdown-button">{t('header.activities')}</button>
                     <div className="dropdown-menu">
                       <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Webinaire
+                        {t('header.webinar')}
                       </Link>
                       {/* <Link to="/seminaire" onClick={() => setIsMenuOpen(false)}>
                   AEGC Séminaire
@@ -261,39 +268,39 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   AEGC Conférence
                 </Link> */}
                       <Link to="/price" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Prix
+                        {t('header.award')}
                       </Link>
                       <Link to="/bourse" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Bourses
+                        {t('header.scholarships')}
                       </Link>
                       <Link to="/picture" onClick={() => setIsMenuOpen(false)}>
-                        AEGC Photos
+                        {t('header.photos')}
                       </Link>
                     </div>
                   </li>
 
                   <li className="not-Dropdown">
                     <Link to="/formations" onClick={() => setIsMenuOpen(false)}>
-                      Formations
+                      {t('header.formations')}
                     </Link>
                   </li>
                   <li className="dropdown">
-                    <button className="dropdown-button">À propos</button>
+                    <button className="dropdown-button">{t('header.about')}</button>
                     <div className="dropdown-menu">
                       <Link to="/about" onClick={() => setIsMenuOpen(false)}>
-                        A propos de nous
+                        {t('header.aboutUs')}
                       </Link>
                       {/* <Link to="/membres" onClick={() => setIsMenuOpen(false)}>
                   Les Membres
                 </Link> */}
                       <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
-                        Nous contacter
+                        {t('header.contactUs')}
                       </Link>
                       <Link to="/organigrame" onClick={() => setIsMenuOpen(false)}>
-                        Organigramme
+                        {t('header.organization')}
                       </Link>
                       <Link to="/ethique" onClick={() => setIsMenuOpen(false)}>
-                        Éthique
+                        {t('header.ethics')}
                       </Link>
                     </div>
                   </li>
@@ -308,46 +315,46 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                           to="/informations personnelles"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Informations personnelles
+                          {t('header.personalInformation')}
                         </Link>
                         <Link
                           to="/my-submissions"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Mes Soumissions
+                          {t('header.submissions')}
                         </Link>
                         <Link
                           to="/status de facturation"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Status de facturation
+                          {t('header.billingStatus')}
                         </Link>
                         <Link
                           to="/appercu des Webinaires"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Appercu des Webinaires
+                          {t('header.webinarsOverview')}
                         </Link>
                         <Link
                           to="/appercu des formations"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Appercu des Formations
+                          {t('header.formationsOverview')}
                         </Link>
                         <Link
                           to="/reference des communications"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Référence des Communications
+                          {t('header.communicationsReference')}
                         </Link>
                         <Link
                           to="/forgotpassword"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Mot de passe oublié
+                          {t('header.forgotPassword')}
                         </Link>
                         <button onClick={handleLogout} className="logout-button">
-                          Déconnexion
+                          {t('header.logout')}
                         </button>
                       </div>
                     </li>
@@ -364,6 +371,18 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
               )}
             </ul>
           </nav>
+
+          <div className="language-switcher">
+            <span aria-hidden="true">🌐</span>
+            <button
+              type="button"
+              className="language-toggle"
+              aria-label={i18n.resolvedLanguage?.startsWith('en') ? t('header.switchToFrench') : t('header.switchToEnglish')}
+              onClick={() => i18n.changeLanguage(i18n.resolvedLanguage?.startsWith('en') ? 'fr' : 'en')}
+            >
+              {i18n.resolvedLanguage?.startsWith('en') ? 'EN' : 'FR'}
+            </button>
+          </div>
         </div>
       </header>
     </>

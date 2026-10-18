@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../../styles/Activity.css";
 import {
   FaCalendarAlt,
-  FaMapMarkerAlt,
   FaArrowLeft,
   FaArrowRight,
 } from "react-icons/fa";
@@ -11,8 +10,10 @@ import { API_BASE_URL } from "../Url";
 import logo1 from "../../assets/logo1.png";
 import ConfirmDialog from "../common/ConfirmDialog";
 
+import { useTranslation } from "react-i18next";
 const SeminarHome = () => {
   const [activities, setActivities] = useState([]);
+  const { t } = useTranslation();
   const [reservations, setReservations] = useState([]);
   const [message, setMessage] = useState("");
   const [confirmState, setConfirmState] = useState({
@@ -37,11 +38,11 @@ const SeminarHome = () => {
         setActivities(data);
       } catch (error) {
         console.error(error);
-        setMessage("Impossible de charger les activités.");
+        setMessage(t("seminars.loadError"));
       }
     };
     fetchActivities();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -61,11 +62,11 @@ const SeminarHome = () => {
         setReservations(data);
       } catch (error) {
         console.error(error);
-        setMessage("Impossible de charger vos réservations.");
+        setMessage(t("seminars.reservationsError"));
       }
     };
     fetchReservations();
-  }, []);
+  }, [t]);
 
   const handleDeleteReservation = async (Id) => {
     try {
@@ -84,14 +85,14 @@ const SeminarHome = () => {
       );
     } catch (error) {
       console.error(error);
-      setMessage(`Erreur : ${error.message}`);
+      setMessage(t("seminars.error", { message: error.message }));
     }
   };
 
   const askDeleteReservation = (Id) => {
     openConfirm({
-      title: "Annuler la réservation",
-      message: "Êtes-vous sûr de vouloir annuler cette réservation ?",
+      title: t("seminars.cancelTitle"),
+      message: t("seminars.cancelConfirm"),
       onConfirm: () => handleDeleteReservation(Id),
       type: "danger",
     });
@@ -121,7 +122,7 @@ const SeminarHome = () => {
 
     return (
       <div key={activity._id} className="activity-card">
-        <img src={logo1} alt={activity.name || 'logo'} className="logo1" />
+        <img src={logo1} alt={activity.name || t("seminars.logoAlt")} className="logo1" />
         <div className="activity-card-content">
           <div className="first-card">
             <h2>{activity.name}</h2>
@@ -135,17 +136,17 @@ const SeminarHome = () => {
             </p>
             <div className="divider"></div>
             <p className="activity-timezone">
-              🕑 Heure de Paris : <span>{activity.timeParis}</span>
+              🕑 {t("seminars.parisTime")} <span>{activity.timeParis}</span>
             </p>
             <div className="divider"></div>
             <p className="activity-timezone">
-              🕑 Heure de Yaoundé : <span>{activity.timeYaounde}</span>
+              🕑 {t("seminars.yaoundeTime")} <span>{activity.timeYaounde}</span>
             </p>
           </div>
 
           <div className="activity-info">
             <p className="moderator">
-              <strong>Modérateur :</strong> {" "}
+              <strong>{t("seminars.moderator")}</strong> {" "}
               <Link className="doctor-link" to={`/speaker/${activity.presenterId}`}>
                 {activity.moderator}
               </Link>
@@ -156,7 +157,7 @@ const SeminarHome = () => {
                 activity.participants.map((p, index) => (
                   <div key={index}>
                     <p>
-                      <strong>Intervenant :</strong>
+                      <strong>{t("seminars.speaker")}</strong>
                       <Link className="doctor-link" to={`/speaker/${activity.presenterId}`}>
                         {p.name}
                       </Link>
@@ -165,7 +166,7 @@ const SeminarHome = () => {
                   </div>
                 ))
               ) : (
-                <p>Aucun intervenant pour ce séminaire.</p>
+                <p>{t("seminars.noSpeaker")}</p>
               )}
             </div>
           </div>
@@ -175,15 +176,15 @@ const SeminarHome = () => {
           <div className="card-actions">
             {isPast ? (
               <Link to={`/questionnaire`} className="reserve-button">
-                Questionnaire
+                {t("seminars.questionnaire")}
               </Link>
             ) : reservation ? (
               <button onClick={() => askDeleteReservation(reservation._id)} className="delete-button">
-                Annuler réservation
+                {t("seminars.cancel")}
               </button>
             ) : (
               <Link to={`/reservation/${activity._id}`} className="reserve-button">
-                Réserver
+                {t("seminars.reserve")}
               </Link>
             )}
           </div>
@@ -195,7 +196,7 @@ const SeminarHome = () => {
   return (
     <div className="meeting-container">
       <div className="meeting-content">
-        <h1>Nos Prochains Séminaires</h1>
+        <h1>{t("seminars.title")}</h1>
         {message && <p className="message">{message}</p>}
 
         <div className="scroll-controls">

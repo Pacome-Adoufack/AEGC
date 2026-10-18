@@ -1,8 +1,11 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next';
 
 function Committees() {
+  const { t } = useTranslation();
+
   return (
-    <div>Comités</div>
+    <div>{t("committees.title")}</div>
   )
 }
 

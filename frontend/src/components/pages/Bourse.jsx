@@ -1,6 +1,7 @@
 import React from "react";
 import "../../styles/Price.css";
 import logo from "../../assets/logo.png";
+import { useTranslation } from "react-i18next";
 
 const bourseFiles = [
   {
@@ -33,6 +34,12 @@ const bourseFiles = [
 ];
 
 export const Bourse = () => {
+  const { t, i18n } = useTranslation();
+  const translatedFiles = [
+    { ...bourseFiles[0], title: t("bourse.files.mobility.title"), description: t("bourse.files.mobility.description") },
+    { ...bourseFiles[1], title: t("bourse.files.youngResearcher.title"), description: t("bourse.files.youngResearcher.description") },
+    { ...bourseFiles[2], title: t("bourse.files.excellence.title"), description: t("bourse.files.excellence.description") },
+  ];
   const handleDownload = (filename) => {
     const fileUrl = `/pdf/${filename}`;
     const link = document.createElement("a");
@@ -50,22 +57,22 @@ export const Bourse = () => {
 
   return (
     <div className="release-container">
-      <h1 className="release-title">Les Bourses AEGC</h1>
+      <h1 className="release-title">{t("bourse.title")}</h1>
       <p className="release-subtitle">
-        Découvrez les différentes opportunités de financement offertes par l'association
+        {t("bourse.subtitle")}
       </p>
 
       <div className="release-list">
-        {bourseFiles.map((item) => (
+        {translatedFiles.map((item) => (
           <div key={item.id} className="release-card">
             <div className="release-thumbnail">
-              <img src={item.thumbnail} alt={`Miniature ${item.title}`} />
+              <img src={item.thumbnail} alt={t("bourse.thumbnailAlt", { title: item.title })} />
               <div className="pdf-label">PDF</div>
             </div>
 
             <div className="release-content">
               <h2>{item.title}</h2>
-              <p className="release-date">Publié le : {item.date}</p>
+              <p className="release-date">{t("bourse.publishedOn", { date: new Intl.DateTimeFormat(i18n.language).format(new Date(item.date.split("/").reverse().join("-"))) })}</p>
               <p className="release-description">{item.description}</p>
 
               <div className="release-actions">
@@ -73,13 +80,13 @@ export const Bourse = () => {
                   className="view-button"
                   onClick={() => handleView(item.filename)}
                 >
-                  Visualiser
+                  {t("bourse.view")}
                 </button>
                 <button
                   className="download-button"
                   onClick={() => handleDownload(item.filename)}
                 >
-                  Télécharger
+                  {t("bourse.download")}
                 </button>
               </div>
             </div>

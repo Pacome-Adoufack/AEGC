@@ -13,6 +13,13 @@ import { resolveStoredPath, deleteStoredFiles } from "../utils/uploadStorage.js"
 
 const router = express.Router();
 
+// Les adresses sont parfois collées entre guillemets ; on nettoie, et on
+// n'accepte que http(s) : un lien "javascript:" deviendrait une faille.
+function cleanUrl(value) {
+  const url = String(value || "").trim().replace(/^["'\s]+|["'\s]+$/g, "");
+  return /^https?:\/\//i.test(url) ? url : "";
+}
+
 const parseBoolean = (value) => value === true || value === "true" || value === "on";
 
 function parseYear(value) {
@@ -29,6 +36,7 @@ function serializeAward(award) {
     year: award.year,
     laureate: award.laureate,
     affiliation: award.affiliation,
+    profileUrl: award.profileUrl,
     citation: award.citation,
     isPublished: award.isPublished,
     publishedAt: award.publishedAt,
@@ -182,6 +190,7 @@ router.post(
         year,
         laureate,
         affiliation: (req.body.affiliation || "").trim(),
+        profileUrl: cleanUrl(req.body.profileUrl),
         citation: (req.body.citation || "").trim(),
         document: req.files?.document?.[0] ? toStoredAwardFile(req.files.document[0]) : null,
         photo: req.files?.photo?.[0] ? toStoredAwardFile(req.files.photo[0]) : null,
@@ -229,6 +238,7 @@ router.put(
       const year = parseYear(req.body.year);
       if (year) award.year = year;
       if (typeof req.body.affiliation === "string") award.affiliation = req.body.affiliation.trim();
+      if (typeof req.body.profileUrl === "string") award.profileUrl = cleanUrl(req.body.profileUrl);
       if (typeof req.body.citation === "string") award.citation = req.body.citation.trim();
       if (req.body.categoryRank !== undefined) {
         award.categoryRank = Number.parseInt(req.body.categoryRank, 10) || 0;

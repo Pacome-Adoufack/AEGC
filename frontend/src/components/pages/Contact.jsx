@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 // import { useNavigate } from "react-router-dom";
 import { FaGithub } from "react-icons/fa";
 import "../../styles/Contact.css";
@@ -6,6 +7,7 @@ import { API_BASE_URL } from "../Url";
 
 export default function Contact() {
 //   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [customSubject, setCustomSubject] = useState(false);
   const [message, setMessage] = useState("");
   const [data, setData] = useState({
@@ -28,7 +30,7 @@ export default function Contact() {
     e.preventDefault();
 
     if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-      setMessage("Veuillez saisir une adresse e-mail valide.");
+      setMessage(t("contact.invalidEmail"));
       return;
     }
 
@@ -54,7 +56,7 @@ export default function Contact() {
           subject: "",
           message: "",
         });
-        setMessage("Message envoyé avec succès !");
+        setMessage(t("contact.sent"));
         setTimeout(() => {
           setMessage("");
         }, 3000);
@@ -62,9 +64,9 @@ export default function Contact() {
       .catch((error) => {
         try {
           const err = JSON.parse(error.message);
-          setMessage(err.error || "Erreur inconnue.");
+          setMessage(err.error || t("contact.unknownError"));
         } catch {
-          setMessage("Erreur lors de l'envoi du message.");
+          setMessage(t("contact.sendError"));
         }
         setTimeout(() => {
           setMessage("");
@@ -78,11 +80,11 @@ export default function Contact() {
     <p className="message-text">{message}</p>
   ) : (
     <form onSubmit={handleSubmit} className="contact-form">
-      <h2 className="contact-title">Formulaire de contact</h2>
+      <h2 className="contact-title">{t("contact.title")}</h2>
 
       <div className="form-group">
         <label htmlFor="email" className="form-label">
-          Adresse Email
+          {t("contact.email")}
         </label>
         <input
           id="email"
@@ -97,7 +99,7 @@ export default function Contact() {
 
       <div className="form-group">
         <label htmlFor="subject" className="form-label">
-          Objet :
+          {t("contact.subject")}
         </label>
         <select
           id="subject"
@@ -107,13 +109,13 @@ export default function Contact() {
           className="form-select"
         >
           <option value="" disabled>
-            Sélectionner l'objet de votre message
+            {t("contact.chooseSubject")}
           </option>
-          <option value="support">Demande d'assistance</option>
-          <option value="feedback">Réactions</option>
-          <option value="profile-change">Modifier le profil</option>
-          <option value="profile-delete">Supprimer le profil</option>
-          <option value="custom">Autre (veuillez préciser)</option>
+          <option value="support">{t("contact.support")}</option>
+          <option value="feedback">{t("contact.feedback")}</option>
+          <option value="profile-change">{t("contact.profileChange")}</option>
+          <option value="profile-delete">{t("contact.profileDelete")}</option>
+          <option value="custom">{t("contact.custom")}</option>
         </select>
 
         {customSubject && (
@@ -123,7 +125,7 @@ export default function Contact() {
             value={data.subject}
             onChange={(e) => setData({ ...data, subject: e.target.value })}
             className="form-input"
-            placeholder="Veuillez indiquer l'objet"
+            placeholder={t("contact.customPlaceholder")}
             style={{ marginTop: "1rem" }}
           />
         )}
@@ -131,7 +133,7 @@ export default function Contact() {
 
       <div className="form-group">
         <label htmlFor="message" className="form-label">
-          Votre message :
+          {t("contact.message")}
         </label>
         <textarea
           id="message"
@@ -140,12 +142,12 @@ export default function Contact() {
           value={data.message}
           onChange={(e) => setData({ ...data, message: e.target.value })}
           className="form-textarea"
-          placeholder="Décrivez votre demande..."
+          placeholder={t("contact.messagePlaceholder")}
         />
       </div>
 
       <button type="submit" className="submit-button">
-        Envoyer
+        {t("contact.send")}
       </button>
     </form>
   )}
@@ -171,7 +173,7 @@ export default function Contact() {
   </div> */}
 
   <p className="contact-dev-credit">
-    Site développé par{' '}
+    {t("contact.developedBy")}{' '}
     <a href="https://landry-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer">
       Landry Atikeng
     </a>

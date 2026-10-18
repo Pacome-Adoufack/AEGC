@@ -81,7 +81,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.25rem;
-  align-items: start;
+  /* Hauteurs égales de nouveau : la carte ne porte plus que le nom du prix et
+     les lauréats, donc un prix à deux noms n'est plus deux fois plus haut. Le
+     détail s'ouvre dans AwardLightbox. */
+  align-items: stretch;
   justify-items: center;
 }
 
@@ -116,12 +119,14 @@
   box-shadow: 0 16px 34px rgba(26, 95, 166, 0.18);
 }
 
-/* Carte entièrement cliquable (accueil uniquement) : on retire le style de
-   lien et on signale la cible au survol. */
+/* Carte cliquable : c'est un vrai bouton, pour qu'on l'atteigne au clavier.
+   On retire donc l'apparence native du bouton. */
 .award-card.is-clickable {
-  text-decoration: none;
+  font: inherit;
+  text-align: left;
   color: inherit;
   cursor: pointer;
+  padding: 0;
 }
 
 .award-card.is-clickable:hover {
@@ -135,10 +140,12 @@
 
 /* Un prix peut avoir plusieurs lauréats : les portraits se partagent la
    couverture, comme sur les affiches de l'association. */
+/* Cadre carré : l'association publie des affiches carrées, qu'un cadre 4/3
+   amputait en haut et en bas. */
 .award-cover {
   position: relative;
   display: flex;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   background: var(--aegc-tint);
   overflow: hidden;
 }
@@ -159,9 +166,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Cadrage haut : sur un portrait, c'est le visage qu'on garde quand la photo
-     est plus haute que le cadre. */
-  object-position: center 20%;
+  /* Cadrage haut : les affiches sont plus hautes que larges, un centrage au
+     milieu coupait le sommet des têtes. */
+  object-position: center 18%;
   transition: transform 0.6s ease;
 }
 
@@ -238,6 +245,19 @@
   font-size: 0.9rem;
   line-height: 1.6;
   color: var(--aegc-text);
+}
+
+.award-profile-link {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--aegc-blue);
+  text-decoration: none;
+}
+
+.award-profile-link:hover {
+  text-decoration: underline;
 }
 
 .award-doc-link {
@@ -412,5 +432,158 @@
 
   .award-card.is-compact .award-cover {
     aspect-ratio: 4 / 3;
+  }
+}
+
+/* ===== Détail d'un prix, en grand ===== */
+/* Même comportement que la visionneuse de la galerie : fond sombre, Échap pour
+   fermer, flèches pour passer d'un prix à l'autre. */
+.award-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(8, 15, 26, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.award-lightbox-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  background: #ffffff;
+  border-radius: 14px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.award-lightbox-images {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.award-lightbox-images img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+
+.award-lightbox-year {
+  margin: 0 0 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aegc-muted);
+}
+
+.award-lightbox-text h2 {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--aegc-ink);
+}
+
+.award-lightbox-laureates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.award-lightbox-laureates strong {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--aegc-ink);
+}
+
+.award-lightbox-laureates span {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--aegc-muted);
+}
+
+.award-lightbox-laureates p {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--aegc-text);
+}
+
+.award-lightbox-laureates a {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--aegc-blue);
+  text-decoration: none;
+}
+
+.award-lightbox-laureates a:hover {
+  text-decoration: underline;
+}
+
+.award-lightbox-close,
+.award-lightbox-nav {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.14);
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.award-lightbox-close:hover,
+.award-lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.award-lightbox-close {
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  font-size: 1.1rem;
+}
+
+.award-lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.award-lightbox-nav--prev { left: 18px; }
+.award-lightbox-nav--next { right: 18px; }
+
+/* Sur téléphone, le panneau passe en une colonne et les flèches gêneraient le
+   défilement : on les retire, le balayage reste possible par le clavier. */
+@media (max-width: 720px) {
+  .award-lightbox {
+    padding: 12px;
+  }
+
+  .award-lightbox-panel {
+    grid-template-columns: 1fr;
+    padding: 1.1rem;
+  }
+
+  .award-lightbox-nav {
+    display: none;
   }
 }

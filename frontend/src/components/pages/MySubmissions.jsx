@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/useToast.js";
+import { useTranslation } from "react-i18next";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { API_BASE_URL } from "../Url";
 import { getAuthToken } from "../../utils/auth";
@@ -26,6 +27,7 @@ function MySubmissions() {
     const openConfirm = ({ title, message, onConfirm, type = 'danger' }) => setConfirmState({ isOpen: true, title, message, onConfirm, type });
     const navigate = useNavigate();
     const toast = useToast();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         const token = getAuthToken();
@@ -142,7 +144,7 @@ function MySubmissions() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || "Erreur lors de la suppression");
+                throw new Error(data.error || t("submissions.deleteError"));
             }
 
             if (selectedSubmission?._id === submissionId) {
@@ -151,16 +153,16 @@ function MySubmissions() {
 
             setSubmissions((current) => current.filter((submission) => submission._id !== submissionId));
             setUnreadComments((current) => Math.max(0, current - 1));
-            toast.success(data.message || "Soumission supprimée");
+            toast.success(data.message || t("submissions.deleted"));
         } catch (error) {
-            toast.error(error.message || "Erreur lors de la suppression");
+            toast.error(error.message || t("submissions.deleteError"));
         }
     };
 
     const askDeleteSubmission = (submissionId, articleTitle) => {
         openConfirm({
-            title: 'Supprimer la soumission',
-            message: `Supprimer définitivement la soumission "${articleTitle}" ?\n\nCette action est irréversible.`,
+            title: t("submissions.deleteTitle"),
+            message: t("submissions.deleteConfirmation", { title: articleTitle }),
             onConfirm: () => deleteSubmission(submissionId, articleTitle),
             type: 'danger',
         });
@@ -181,11 +183,11 @@ function MySubmissions() {
     const getStatusLabel = (status) => {
         const normalizedStatus = normalizeStatus(status);
         const labels = {
-            soumise: "Soumise",
-            en_revision: "En révision",
-            revision_requise: "À modifier",
-            rejetee: "Rejetée",
-            acceptee: "Acceptée",
+            soumise: t("submissions.status.submitted"),
+            en_revision: t("submissions.status.inReview"),
+            revision_requise: t("submissions.status.revisionRequired"),
+            rejetee: t("submissions.status.rejected"),
+            acceptee: t("submissions.status.accepted"),
         };
         return labels[normalizedStatus] || status;
     };
@@ -225,7 +227,7 @@ function MySubmissions() {
             return "-";
         }
 
-        return parsed.toLocaleDateString("fr-FR", {
+        return parsed.toLocaleDateString(i18n.language === "en" ? "en-US" : "fr-FR", {
             day: "numeric",
             month: "long",
             year: "numeric",
@@ -233,7 +235,7 @@ function MySubmissions() {
     };
 
     if (loading) {
-        return <div className="loading">Chargement...</div>;
+        return <div className="loading">{t("submissions.loading")}</div>;
     }
 
     return (
@@ -241,22 +243,22 @@ function MySubmissions() {
             <div className="my-submissions-inner">
 
                 <div className="subs-page-header">
-                    <h1>Mes Soumissions</h1>
+                    <h1>{t("submissions.mySubmissions")}</h1>
                     {unreadComments > 0 && (
                         <span className="notification-badge">
-                            {unreadComments} nouveau{unreadComments > 1 ? "x" : ""} commentaire{unreadComments > 1 ? "s" : ""}
+                            {t("submissions.newComments", { count: unreadComments })}
                         </span>
                     )}
                 </div>
 
                 {submissions.length === 0 ? (
                     <div className="no-submissions">
-                        <p>Vous n&apos;avez pas encore soumis de travaux.</p>
+                        <p>{t("submissions.noSubmissions")}</p>
                         <button
                             className="btn btn-primary"
                             onClick={() => navigate("/working-papers")}
                         >
-                            Voir les appels ouverts
+                            {t("submissions.viewOpenCalls")}
                         </button>
                     </div>
                 ) : (
@@ -282,11 +284,11 @@ function MySubmissions() {
                                                 {submission.workingPaper?.title}
                                             </p>
                                             <p className="submission-date">
-                                                Soumis le {formatDate(submission.createdAt)}
+                                                {t("submissions.submittedOn", { date: formatDate(submission.createdAt) })}
                                             </p>
                                             {newComments > 0 && (
                                                 <span className="new-comments-badge">
-                                                    {newComments} nouveau{newComments > 1 ? "x" : ""} commentaire{newComments > 1 ? "s" : ""}
+                                                    {t("submissions.newComments", { count: newComments })}
                                                 </span>
                                             )}
                                         </div>
@@ -296,20 +298,20 @@ function MySubmissions() {
                                                 className="btn btn-secondary btn-small"
                                                 onClick={() => viewDetails(submission._id)}
                                             >
-                                                Voir détails
+                                                {t("submissions.viewDetails")}
                                             </button>
                                             <button
                                                 className="btn btn-primary btn-small"
                                                 onClick={() => downloadPDF(submission._id)}
                                             >
-                                                Télécharger PDF
+                                                {t("submissions.downloadPdf")}
                                             </button>
                                             {normalizeStatus(submission.status) === "soumise" && (
                                                 <button
                                                     className="btn btn-danger btn-small"
                                                     onClick={() => askDeleteSubmission(submission._id, submission.articleTitle)}
                                                 >
-                                                    Supprimer
+                                                    {t("submissions.delete")}
                                                 </button>
                                             )}
                                             {normalizeStatus(submission.status) === "revision_requise" && (
@@ -317,7 +319,7 @@ function MySubmissions() {
                                                     className="btn btn-primary btn-small"
                                                     onClick={() => navigate(`/my-submissions/${submission._id}/resubmit`)}
                                                 >
-                                                    Corriger et resoumettre
+                                                    {t("submissions.correctAndResubmit")}
                                                 </button>
                                             )}
                                         </div>
@@ -351,21 +353,21 @@ function MySubmissions() {
                         <div className="sub-modal-body">
                             <div className="sub-modal-meta">
                                 <div className="sub-modal-meta-item">
-                                    <strong>Statut</strong>
+                                    <strong>{t("submissions.statusLabel")}</strong>
                                     <p>{getStatusLabel(selectedSubmission.status)}</p>
                                 </div>
                                 <div className="sub-modal-meta-item">
-                                    <strong>Soumis le</strong>
+                                    <strong>{t("submissions.submittedOnLabel")}</strong>
                                     <p>{formatDate(selectedSubmission.createdAt)}</p>
                                 </div>
                                 <div className="sub-modal-meta-item">
-                                    <strong>Appel</strong>
+                                    <strong>{t("submissions.callLabel")}</strong>
                                     <p>{selectedSubmission.workingPaper?.title}</p>
                                 </div>
                             </div>
 
                             <div className="sub-modal-section">
-                                <h3>Auteurs</h3>
+                                <h3>{t("submissions.authors")}</h3>
                                 <ul>
                                     {selectedSubmission.authors.map((author, i) => (
                                         <li key={i}>
@@ -378,7 +380,7 @@ function MySubmissions() {
                             </div>
 
                             <div className="sub-modal-section">
-                                <h3>Mots-clés</h3>
+                                <h3>{t("submissions.keywords")}</h3>
                                 <div className="keyword-pills">
                                     {selectedSubmission.keywords.map((kw, i) => (
                                         <span key={i} className="keyword-pill">{kw}</span>
@@ -388,20 +390,20 @@ function MySubmissions() {
 
                             {selectedSubmission.jelCodes.length > 0 && (
                                 <div className="sub-modal-section">
-                                    <h3>Codes JEL</h3>
+                                    <h3>{t("submissions.jelCodes")}</h3>
                                     <p>{selectedSubmission.jelCodes.join(", ")}</p>
                                 </div>
                             )}
 
                             <div className="sub-modal-section">
-                                <h3>Résumé</h3>
+                                <h3>{t("submissions.abstract")}</h3>
                                 <p>{selectedSubmission.abstract}</p>
                             </div>
 
                             {getLatestReviewRequest(selectedSubmission) && (
                                 <div className="sub-modal-section">
-                                    <h3>Dernière appréciation de l&apos;administration</h3>
-                                    <p><strong>Résumé :</strong> {getLatestReviewRequest(selectedSubmission).summary}</p>
+                                    <h3>{t("submissions.latestAdminReview")}</h3>
+                                    <p><strong>{t("submissions.summary")} :</strong> {getLatestReviewRequest(selectedSubmission).summary}</p>
                                     {getLatestReviewRequest(selectedSubmission).items?.length > 0 && (
                                         <ul>
                                             {getLatestReviewRequest(selectedSubmission).items.map((item, index) => (
@@ -414,7 +416,7 @@ function MySubmissions() {
                                             className="btn btn-primary btn-small"
                                             onClick={() => navigate(`/my-submissions/${selectedSubmission._id}/resubmit`)}
                                         >
-                                            Corriger et resoumettre
+                                            {t("submissions.correctAndResubmit")}
                                         </button>
                                     )}
                                 </div>
@@ -422,20 +424,20 @@ function MySubmissions() {
 
                             {getSortedVersions(selectedSubmission).length > 0 && (
                                 <div className="sub-modal-section">
-                                    <h3>Historique des versions</h3>
+                                    <h3>{t("submissions.versionHistory")}</h3>
                                     {getSortedVersions(selectedSubmission).map((version) => (
                                         <div key={version._id || version.versionNumber} className="admin-comment-item">
                                             <p className="comment-date">
-                                                Version {version.versionNumber} · {formatDate(version.submittedAt || version.pdfFile?.uploadDate || selectedSubmission.createdAt)}
+                                                {t("submissions.version", { number: version.versionNumber })} · {formatDate(version.submittedAt || version.pdfFile?.uploadDate || selectedSubmission.createdAt)}
                                             </p>
                                             {version.responseNote && (
-                                                <p className="comment-text"><strong>Réponse auteur :</strong> {version.responseNote}</p>
+                                                <p className="comment-text"><strong>{t("submissions.authorResponse")} :</strong> {version.responseNote}</p>
                                             )}
                                             <button
                                                 className="btn btn-secondary btn-small"
                                                 onClick={() => downloadVersionPDF(selectedSubmission._id, version.versionNumber)}
                                             >
-                                                Télécharger cette version
+                                                {t("submissions.downloadVersion")}
                                             </button>
                                         </div>
                                     ))}
@@ -444,7 +446,7 @@ function MySubmissions() {
 
                             {selectedSubmission.adminComments.length > 0 && (
                                 <div className="sub-modal-section">
-                                    <h3>Commentaires de l&apos;administrateur</h3>
+                                    <h3>{t("submissions.adminComments")}</h3>
                                     {selectedSubmission.adminComments.map((comment, i) => (
                                         <div key={i} className="admin-comment-item">
                                             <p className="comment-date">
@@ -462,7 +464,7 @@ function MySubmissions() {
                                         className="btn btn-danger"
                                         onClick={() => askDeleteSubmission(selectedSubmission._id, selectedSubmission.articleTitle)}
                                     >
-                                        Supprimer cette soumission
+                                        {t("submissions.deleteThisSubmission")}
                                     </button>
                                 </div>
                             )}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import PhotoLightbox from "../common/PhotoLightbox";
 import { galleryImageUrl } from "../../utils/gallery";
@@ -9,6 +10,7 @@ const HOME_PHOTO_COUNT = 8;
 
 // Section « L'AEGC en images » de l'accueil : les photos les plus récentes de la galerie.
 export default function HomeGallery() {
+  const { t } = useTranslation();
   const [photos, setPhotos] = useState([]);
   const [total, setTotal] = useState(0);
   const [openIndex, setOpenIndex] = useState(null);
@@ -33,9 +35,9 @@ export default function HomeGallery() {
     <section className="home-section gal-home">
       <div className="section-inner">
         <div className="section-header">
-          <h2>L'AEGC en images</h2>
+          <h2>{t("home.gallery.title")}</h2>
           {total > photos.length && (
-            <Link to="/picture" className="section-link">Toutes les photos ({total}) →</Link>
+            <Link to="/picture" className="section-link">{t("home.gallery.all", { count: total })}</Link>
           )}
         </div>
 
@@ -46,7 +48,7 @@ export default function HomeGallery() {
               type="button"
               className="gal-home-item"
               onClick={() => setOpenIndex(index)}
-              aria-label={`Agrandir : ${photo.title}`}
+              aria-label={t("home.gallery.enlarge", { title: photo.title })}
             >
               <img
                 src={galleryImageUrl(photo, "thumb")}

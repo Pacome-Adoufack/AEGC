@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "../../styles/Home.css";
 import Seminar from "./Seminar";
 import HeroMosaic from "./HeroMosaic";
@@ -17,6 +18,7 @@ import {
 } from "../../utils/announcements";
 
 const Home = () => {
+  const { t, i18n } = useTranslation();
   const [announcements, setAnnouncements] = useState([]);
   // La colonne séminaires ne s'affiche que s'il y a un séminaire à venir.
   const [hasSeminars, setHasSeminars] = useState(false);
@@ -75,20 +77,20 @@ const Home = () => {
       <section className="hero">
         <div className="hero-inner">
           <div className="hero-content">
-            <p className="hero-kicker">Association académique et professionnelle, fondée en 2021</p>
+            <p className="hero-kicker">{t("home.hero.kicker")}</p>
             <h1 className="hero-title">
-              Le réseau des économistes et gestionnaires du Cameroun
+              {t("home.hero.title")}
             </h1>
             <p className="hero-subtitle">
-              Rejoignez une communauté d'experts engagés pour le développement économique et la recherche en gestion.
+              {t("home.hero.subtitle")}
             </p>
             <div className="hero-ctas">
               <Link to="/membership/payment" className="hero-cta-primary">
-                Devenir membre
+                {t("home.hero.becomeMember")}
               </Link>
               <button type="button" className="hero-play-btn" onClick={handlePlay}>
                 <span className="hero-play-icon" aria-hidden="true">▶</span>
-                Voir le film
+                {t("home.hero.watchFilm")}
               </button>
             </div>
           </div>
@@ -104,7 +106,7 @@ const Home = () => {
       {showOverlay && (
         <div className="video-overlay" onClick={handleClose}>
           <div className="video-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="video-close" onClick={handleClose}>✕</button>
+            <button className="video-close" onClick={handleClose} aria-label={t("home.hero.closeVideo")}>✕</button>
             <video ref={videoRef} controls>
               <source src={video} type="video/mp4" />
             </video>
@@ -118,8 +120,8 @@ const Home = () => {
 
           {/* Header au-dessus des deux colonnes */}
           <div className="section-header">
-            <h2>Actualités AEGC</h2>
-            <Link to="/actualites" className="section-link">Toutes les actualités →</Link>
+            <h2>{t("home.news.title")}</h2>
+            <Link to="/actualites" className="section-link">{t("home.news.all")}</Link>
           </div>
 
           <div className={hasSeminars ? "dual-layout" : "dual-layout dual-layout--single"}>
@@ -149,7 +151,7 @@ const Home = () => {
                         className="news-read-more"
                         onClick={() => openAnnouncementModal(featuredAnnouncement)}
                       >
-                        Lire la suite →
+                        {t("home.news.readMore")}
                       </button>
                     )}
                   </article>
@@ -182,7 +184,7 @@ const Home = () => {
                             <p className="news-card-summary">{item.summary}</p>
                             {readable && (
                               <span className="news-card-more">
-                                {pdfCount > 0 ? `Lire la suite · ${pdfCount} PDF →` : "Lire la suite →"}
+                                {pdfCount > 0 ? t("home.news.readMorePdf", { count: pdfCount }) : t("home.news.readMore")}
                               </span>
                             )}
                           </Tag>
@@ -192,7 +194,7 @@ const Home = () => {
                   )}
                 </>
               ) : (
-                <p className="no-content-msg">Aucune actualité pour le moment.</p>
+                <p className="no-content-msg">{t("home.news.empty")}</p>
               )}
             </div>
 
@@ -200,7 +202,7 @@ const Home = () => {
             {/* Toujours monté pour charger les séminaires, mais masqué s'il n'y en a
                 aucun à venir : pas de bloc vide sur la page d'accueil. */}
             <aside className="seminar-sidebar" hidden={!hasSeminars}>
-              <h2 className="sidebar-title">Prochains séminaires</h2>
+              <h2 className="sidebar-title">{t("home.news.upcomingSeminars")}</h2>
               <div className="seminar-sidebar-inner">
                 <Seminar onAvailabilityChange={setHasSeminars} />
               </div>
@@ -217,7 +219,7 @@ const Home = () => {
             <button className="announcement-close" onClick={closeAnnouncementModal}>✕</button>
             <div className="announcement-content">
               <h3 className="announcement-title">{modalItem.title}</h3>
-              <p className="announcement-meta">{new Date(modalItem.publishedAt || modalItem.createdAt).toLocaleDateString('fr-FR')}</p>
+              <p className="announcement-meta">{new Date(modalItem.publishedAt || modalItem.createdAt).toLocaleDateString(i18n.language === "en" ? "en-US" : "fr-FR")}</p>
               <div className="announcement-body">
                 <AnnouncementBody announcement={modalItem} />
               </div>
@@ -232,9 +234,9 @@ const Home = () => {
       {/* Newsletter */}
       <section className="newsletter-section">
         <div className="newsletter-inner">
-          <h2>Restez informé-e</h2>
-          <p>Recevez les annonces, les appels à contributions et les événements de l'AEGC.</p>
-          <Link to="/subscribe" className="newsletter-btn">S'abonner</Link>
+          <h2>{t("home.newsletter.title")}</h2>
+          <p>{t("home.newsletter.description")}</p>
+          <Link to="/subscribe" className="newsletter-btn">{t("home.newsletter.subscribe")}</Link>
         </div>
       </section>
 

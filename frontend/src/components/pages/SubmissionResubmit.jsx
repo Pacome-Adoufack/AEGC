@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../hooks/useToast.js";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import { getAuthToken } from "../../utils/auth";
 import "../../styles/wp-base.css";
@@ -15,6 +16,7 @@ function SubmissionResubmit() {
     const { id } = useParams();
     const navigate = useNavigate();
     const toast = useToast();
+    const { t, i18n } = useTranslation();
 
     const [submission, setSubmission] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ function SubmissionResubmit() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || "Impossible de charger la soumission");
+                throw new Error(data.error || t("submissions.loadSubmissionError"));
             }
 
             setSubmission(data);
@@ -98,12 +100,12 @@ function SubmissionResubmit() {
         const fileExt = "." + file.name.split(".").pop().toLowerCase();
 
         if (!acceptedTypes.includes(file.type) || !acceptedExtensions.includes(fileExt)) {
-            setError("Seuls les fichiers PDF et Word (.doc, .docx) sont acceptés");
+            setError(t("submissions.invalidFileType"));
             return;
         }
 
         if (file.size > PDF_MAX_SIZE_BYTES) {
-            setError(`Le fichier ne doit pas dépasser ${PDF_MAX_SIZE_MB} MB`);
+            setError(t("submissions.fileTooLarge", { size: PDF_MAX_SIZE_MB }));
             return;
         }
 
@@ -115,7 +117,7 @@ function SubmissionResubmit() {
         e.preventDefault();
 
         if (!pdfFile) {
-            setError("Veuillez sélectionner un fichier document (PDF ou Word) pour resoumettre");
+            setError(t("submissions.resubmitFileRequired"));
             return;
         }
 
@@ -140,7 +142,7 @@ function SubmissionResubmit() {
             // répondre en HTML : ne jamais parser du JSON à l'aveugle.
             if (response.status === 413) {
                 throw new Error(
-                    `Le document est trop volumineux pour être envoyé (maximum ${PDF_MAX_SIZE_MB} MB). Essayez de compresser votre PDF.`
+                    t("submissions.uploadTooLarge", { size: PDF_MAX_SIZE_MB })
                 );
             }
 
@@ -149,29 +151,29 @@ function SubmissionResubmit() {
                 data = await response.json();
             } catch {
                 throw new Error(
-                    `Le serveur a renvoyé une réponse inattendue (code ${response.status}). Votre document n'a pas été enregistré.`
+                    t("submissions.unexpectedResponse", { status: response.status })
                 );
             }
 
             if (!response.ok) {
-                throw new Error(data.error || "Erreur lors de la resoumission");
+                throw new Error(data.error || t("submissions.resubmitError"));
             }
 
-            toast.success("Nouvelle version envoyée avec succès");
+            toast.success(t("submissions.resubmitSuccess"));
             navigate("/my-submissions");
         } catch (submitError) {
-            toast.error(submitError.message || "Erreur lors de la resoumission");
+            toast.error(submitError.message || t("submissions.resubmitError"));
         } finally {
             setSubmitting(false);
         }
     };
 
     if (loading) {
-        return <div className="loading">Chargement...</div>;
+        return <div className="loading">{t("submissions.loading")}</div>;
     }
 
     if (!submission) {
-        return <div className="error">Soumission introuvable</div>;
+        return <div className="error">{t("submissions.submissionNotFound")}</div>;
     }
 
     const canResubmit = submission.status === "revision_requise";
@@ -179,19 +181,19 @@ function SubmissionResubmit() {
     return (
         <div className="submission-form-container">
             <div className="submission-inner">
-                <button className="btn-back" onClick={() => navigate("/my-submissions")}>← Retour à mes soumissions</button>
+                <button className="btn-back" onClick={() => navigate("/my-submissions")}>{t("submissions.backToMySubmissions")}</button>
 
                 <div className="submission-page-header">
-                    <h1>Corriger et resoumettre</h1>
+                    <h1>{t("submissions.correctAndResubmit")}</h1>
                     <p className="submission-wp-title">{submission.articleTitle}</p>
                     <p style={{ marginTop: "0.5rem", color: "#64748b" }}>
-                        Appel : {submission.workingPaper?.title}
+                        {t("submissions.callTitle", { title: submission.workingPaper?.title })}
                     </p>
                 </div>
 
                 {!canResubmit && (
                     <div className="error-message" style={{ marginBottom: "1rem" }}>
-                        Cette soumission n'est plus en statut "À modifier". La resoumission est donc bloquée.
+                        {t("submissions.resubmitBlocked")}
                     </div>
                 )}
 
@@ -201,13 +203,13 @@ function SubmissionResubmit() {
                     <div className="form-section">
                         <div className="form-section-header">
                             <span className="form-section-number">1</span>
-                            <h3>Appréciation de l&apos;administration</h3>
+                            <h3>{t("submissions.adminReview")}</h3>
                         </div>
                         <div className="form-section-body">
-                            <p style={{ marginTop: 0 }}><strong>Résumé :</strong> {latestReviewRequest.summary}</p>
+                            <p style={{ marginTop: 0 }}><strong>{t("submissions.summary")} :</strong> {latestReviewRequest.summary}</p>
                             {latestReviewRequest.items?.length > 0 && (
                                 <div>
-                                    <p style={{ marginBottom: "0.5rem" }}><strong>Points à corriger :</strong></p>
+                                    <p style={{ marginBottom: "0.5rem" }}><strong>{t("submissions.correctionPoints")} :</strong></p>
                                     <ul style={{ marginTop: 0 }}>
                                         {latestReviewRequest.items.map((item, index) => (
                                             <li key={`${index}-${item}`}>{item}</li>
@@ -222,22 +224,22 @@ function SubmissionResubmit() {
                 <div className="form-section">
                     <div className="form-section-header">
                         <span className="form-section-number">2</span>
-                        <h3>Historique des versions</h3>
+                        <h3>{t("submissions.versionHistory")}</h3>
                     </div>
                     <div className="form-section-body">
                         {sortedVersions.length === 0 ? (
-                            <p style={{ margin: 0, color: "#64748b" }}>Aucune version enregistrée.</p>
+                            <p style={{ margin: 0, color: "#64748b" }}>{t("submissions.noVersions")}</p>
                         ) : (
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                                 {sortedVersions.map((version) => (
                                     <div key={version._id || version.versionNumber} style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.85rem 1rem" }}>
-                                        <p style={{ margin: 0, fontWeight: 600 }}>Version {version.versionNumber}</p>
+                                        <p style={{ margin: 0, fontWeight: 600 }}>{t("submissions.version", { number: version.versionNumber })}</p>
                                         <p style={{ margin: "0.35rem 0 0", color: "#64748b", fontSize: "0.9rem" }}>
-                                            Envoyée le {new Date(version.submittedAt || version.pdfFile?.uploadDate || submission.createdAt).toLocaleDateString("fr-FR")}
+                                            {t("submissions.sentOn", { date: new Date(version.submittedAt || version.pdfFile?.uploadDate || submission.createdAt).toLocaleDateString(i18n.language === "en" ? "en-US" : "fr-FR") })}
                                         </p>
                                         {version.responseNote && (
                                             <p style={{ margin: "0.45rem 0 0", color: "#1f2937" }}>
-                                                <strong>Réponse auteur :</strong> {version.responseNote}
+                                                <strong>{t("submissions.authorResponse")} :</strong> {version.responseNote}
                                             </p>
                                         )}
                                     </div>
@@ -251,17 +253,17 @@ function SubmissionResubmit() {
                     <div className="form-section">
                         <div className="form-section-header">
                             <span className="form-section-number">3</span>
-                            <h3>Votre réponse et nouveau PDF</h3>
+                            <h3>{t("submissions.responseAndNewPdf")}</h3>
                         </div>
                         <div className="form-section-body">
                             <div className="form-group">
-                                <label htmlFor="responseNote">Réponse aux remarques (optionnel)</label>
+                                <label htmlFor="responseNote">{t("submissions.responseToComments")} ({t("submissions.optional")})</label>
                                 <textarea
                                     id="responseNote"
                                     rows="5"
                                     value={responseNote}
                                     onChange={(e) => setResponseNote(e.target.value)}
-                                    placeholder="Expliquez brièvement les corrections apportées..."
+                                    placeholder={t("submissions.responsePlaceholder")}
                                 />
                             </div>
 
@@ -275,8 +277,8 @@ function SubmissionResubmit() {
                                     required
                                 />
                                 <span className="pdf-drop-icon">📎</span>
-                                <p className="pdf-drop-label">Sélectionnez la nouvelle version du document</p>
-                                <p className="pdf-drop-hint">Formats acceptés: PDF, Word (.doc, .docx) — maximum {PDF_MAX_SIZE_MB} MB</p>
+                                <p className="pdf-drop-label">{t("submissions.selectNewVersion")}</p>
+                                <p className="pdf-drop-hint">{t("submissions.acceptedFormats", { size: PDF_MAX_SIZE_MB })}</p>
                             </div>
 
                             {pdfFile && (
@@ -289,9 +291,9 @@ function SubmissionResubmit() {
                     </div>
 
                     <div className="form-actions">
-                        <button type="button" className="btn btn-secondary" onClick={() => navigate("/my-submissions")}>Annuler</button>
+                        <button type="button" className="btn btn-secondary" onClick={() => navigate("/my-submissions")}>{t("submissions.cancel")}</button>
                         <button type="submit" className="btn btn-primary" disabled={submitting || !canResubmit}>
-                            {submitting ? "Envoi en cours..." : "Resoumettre la nouvelle version"}
+                            {submitting ? t("submissions.sending") : t("submissions.resubmitNewVersion")}
                         </button>
                     </div>
                 </form>

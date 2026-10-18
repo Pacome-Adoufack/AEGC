@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../Url";
+import { useTranslation } from "react-i18next";
 
 const MesActivitesReservees = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
 
@@ -34,16 +36,16 @@ const MesActivitesReservees = () => {
 
   return (
     <div className="reservations-container">
-      <h2>Mes Webinaire assistés</h2>
+      <h2>{t("seminars.title")}</h2>
       {reservations.length === 0 ? (
-        <p>Aucune activité réservée.</p>
+        <p>{t("membersArea.empty")}</p>
       ) : (
         reservations.map(r => (
           <div key={r._id} className="reservation-card">
             <h3>{r.activity?.name}</h3>
-            <p><strong>Date :</strong> {r.activity?.date}</p>
-            <p><strong>Heure de Paris:</strong> {r.activity?.timeParis}</p>
-            <p><strong>Heure de Yaoundé:</strong> {r.activity?.timeYaounde}</p>
+            <p><strong>{t("membersArea.date")}</strong> {new Intl.DateTimeFormat(i18n.language).format(new Date(r.activity?.date))}</p>
+            <p><strong>{t("seminars.parisTime")}</strong> {r.activity?.timeParis}</p>
+            <p><strong>{t("seminars.yaoundeTime")}</strong> {r.activity?.timeYaounde}</p>
           </div>
         ))
       )}

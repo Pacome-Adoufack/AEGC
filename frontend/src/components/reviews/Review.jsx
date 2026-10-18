@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import "@/styles/Review.css";
 import NewspaperReview from "./NewspaperReview";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Review = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedVolume, setSelectedVolume] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const handleVolumeChange = (event) => {
     const volume = event.target.value;
     setSelectedVolume(volume);
@@ -25,29 +27,24 @@ const Review = () => {
         <div className="review-header">
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfWERCc5vyeR7GnmY3C6Wi3uqjmYLdmNe9Cg&s"
-            alt="Journal AEGC"
+            alt={t("reviews.journalAlt")}
             className="review-image"
           />
           <div className="review-title-section">
-            <h1 className="review-title">AEGC Review</h1>
+            <h1 className="review-title">{t("reviews.title")}</h1>
             <select className="review-select">
-              <option value="">Trier par :</option>
-              <option value="title">Titre</option>
-              <option value="author">Auteur</option>
+              <option value="">{t("reviews.sortBy")}</option>
+              <option value="title">{t("reviews.titleSort")}</option>
+              <option value="author">{t("reviews.authorSort")}</option>
             </select>
           </div>
         </div>
-        <p className="review-description">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Consequuntur, deleniti voluptates itaque dolorum aut porro sit
-          numquam voluptate delectus labore maxime amet non culpa perspiciatis
-          reprehenderit alias sapiente? Atque, sunt?
-        </p>
+        <p className="review-description">{t("reviews.description")}</p>
         <div className="review-actions">
           <input
             type="text"
             className="review-search-input"
-            placeholder="Rechercher un article..."
+            placeholder={t("reviews.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -58,10 +55,10 @@ const Review = () => {
           onChange={handleVolumeChange}
           defaultValue=""
         >
-          <option value="">2025 - Volume 1</option>
-          <option value="janvier">Janvier 2025 (Vol.1, No1)</option>
-          <option value="mai">Mai 2025 (Vol.1, No2)</option>
-          <option value="décembre">Décembre 2025 (Vol.1, No3)</option>
+          <option value="">{t("reviews.volume")}</option>
+          <option value="janvier">{t("reviews.januaryIssue")}</option>
+          <option value="mai">{t("reviews.mayIssue")}</option>
+          <option value="décembre">{t("reviews.decemberIssue")}</option>
         </select>
       </div>
     </div>

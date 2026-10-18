@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "@/styles/Register.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { API_BASE_URL } from "../Url";
@@ -7,6 +8,7 @@ import { COUNTRIES } from "../../data/countries";
 import logo from "../../assets/logo.png";
 
 export default function Register() {
+  const { t } = useTranslation();
   const [data, setData] = useState({
     name: "",
     firstName: "",
@@ -44,7 +46,7 @@ export default function Register() {
     e.preventDefault();
     if (!isPasswordValid(data.password)) {
       setMessageType("error");
-      setMessage("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
+      setMessage(t("auth.passwordInvalid"));
       return;
     }
 
@@ -59,12 +61,12 @@ export default function Register() {
       })
       .then(() => {
         setMessageType("success");
-        setMessage("Enregistrement réussi !");
+        setMessage(t("auth.successRegister"));
         setTimeout(() => navigate("/login"), 2000);
       })
       .catch((error) => {
         setMessageType("error");
-        setMessage("Erreur lors de l'enregistrement : " + error.message);
+        setMessage(t("auth.registerError") + " " + error.message);
       });
   };
 
@@ -77,8 +79,8 @@ export default function Register() {
         {/* Logo + titre */}
         <div className="reg-header">
           <img src={logo} alt="Logo AEGC" className="reg-logo" />
-          <h1 className="reg-title">Créer un compte</h1>
-          <p className="reg-subtitle">Rejoignez le réseau des économistes et gestionnaires du Cameroun</p>
+          <h1 className="reg-title">{t("auth.registerTitle")}</h1>
+          <p className="reg-subtitle">{t("auth.registerSubtitle")}</p>
         </div>
 
         {/* Message feedback */}
@@ -91,35 +93,35 @@ export default function Register() {
           {/* Nom + Prénom */}
           <div className="reg-grid-2">
             <div className="reg-field">
-              <label htmlFor="name" className="reg-label">Nom</label>
+              <label htmlFor="name" className="reg-label">{t("auth.lastName")}</label>
               <input className="reg-input" type="text" id="name" name="name" value={data.name} onChange={handleChange} placeholder="Dupont" required />
             </div>
             <div className="reg-field">
-              <label htmlFor="firstName" className="reg-label">Prénom</label>
+              <label htmlFor="firstName" className="reg-label">{t("auth.firstName")}</label>
               <input className="reg-input" type="text" id="firstName" name="firstName" value={data.firstName} onChange={handleChange} placeholder="Jean" required />
             </div>
           </div>
 
           {/* Email */}
           <div className="reg-field">
-            <label htmlFor="email" className="reg-label">Adresse e-mail</label>
+            <label htmlFor="email" className="reg-label">{t("auth.email")}</label>
             <input className="reg-input" type="email" id="email" name="email" value={data.email} onChange={handleChange} placeholder="jean.dupont@example.com" required />
           </div>
 
           {/* Sexe + Pays */}
           <div className="reg-grid-2">
             <div className="reg-field">
-              <label htmlFor="gender" className="reg-label">Sexe</label>
+              <label htmlFor="gender" className="reg-label">{t("auth.gender")}</label>
               <select className="reg-select" id="gender" name="gender" value={data.gender} onChange={handleChange} required>
-                <option value="">-- Sélectionner --</option>
-                <option value="Masculin">Masculin</option>
-                <option value="Féminin">Féminin</option>
+                <option value="">{t("auth.select")}</option>
+                <option value="Masculin">{t("auth.male")}</option>
+                <option value="Féminin">{t("auth.female")}</option>
               </select>
             </div>
             <div className="reg-field">
-              <label htmlFor="country" className="reg-label">Pays</label>
+              <label htmlFor="country" className="reg-label">{t("auth.country")}</label>
               <select className="reg-select" id="country" name="country" value={data.country} onChange={handleChange} required>
-                <option value="">-- Sélectionner --</option>
+                <option value="">{t("auth.select")}</option>
                 {COUNTRIES.map((c) => (
                   <option key={c.code} value={c.name}>{c.name}</option>
                 ))}
@@ -129,7 +131,7 @@ export default function Register() {
 
           {/* Téléphone */}
           <div className="reg-field">
-            <label htmlFor="telefonNummer" className="reg-label">Numéro de téléphone</label>
+            <label htmlFor="telefonNummer" className="reg-label">{t("auth.phone")}</label>
             <div className="reg-phone">
               {selectedCountry && (
                 <span className="reg-phone-code">{selectedCountry.callingCode}</span>
@@ -150,18 +152,18 @@ export default function Register() {
           {/* Ville + Université */}
           <div className="reg-grid-2">
             <div className="reg-field">
-              <label htmlFor="city" className="reg-label">Ville</label>
+              <label htmlFor="city" className="reg-label">{t("auth.city")}</label>
               <input className="reg-input" type="text" id="city" name="city" value={data.city} onChange={handleChange} placeholder="Yaoundé" required />
             </div>
             <div className="reg-field">
-              <label htmlFor="university" className="reg-label">Institution / Université</label>
+              <label htmlFor="university" className="reg-label">{t("auth.institution")}</label>
               <input className="reg-input" type="text" id="university" name="university" value={data.university} onChange={handleChange} placeholder="Université de Yaoundé II" required />
             </div>
           </div>
 
           {/* Mot de passe */}
           <div className="reg-field">
-            <label htmlFor="password" className="reg-label">Mot de passe</label>
+            <label htmlFor="password" className="reg-label">{t("auth.password")}</label>
             <div className="reg-password-wrapper">
               <input
                 className="reg-input"
@@ -170,7 +172,7 @@ export default function Register() {
                 name="password"
                 value={data.password}
                 onChange={handleChange}
-                placeholder="Min. 8 caractères, majuscule, chiffre, symbole"
+                placeholder={t("auth.passwordRequirements")}
                 required
                 autoComplete="new-password"
               />
@@ -178,19 +180,19 @@ export default function Register() {
                 type="button"
                 className="reg-eye-btn"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label="Afficher / masquer mot de passe"
+                aria-label={t("auth.showPassword")}
               >
                 <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
               </button>
             </div>
           </div>
 
-          <button type="submit" className="reg-submit">S'inscrire</button>
+          <button type="submit" className="reg-submit">{t("auth.submitRegister")}</button>
         </form>
 
         <p className="reg-login-link">
-          Déjà membre ?{" "}
-          <Link to="/login">Se connecter</Link>
+          {t("auth.alreadyMember")}{" "}
+          <Link to="/login">{t("auth.login")}</Link>
         </p>
 
       </div>

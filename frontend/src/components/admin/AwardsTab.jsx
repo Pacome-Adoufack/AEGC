@@ -6,6 +6,7 @@ const EMPTY_FORM = {
     year: new Date().getFullYear(),
     laureate: "",
     affiliation: "",
+    profileUrl: "",
     citation: "",
     categoryRank: 0,
     isPublished: false,
@@ -66,6 +67,7 @@ export default function AwardsTab({ token, setMessage, openConfirm }) {
             year: award.year,
             laureate: award.laureate,
             affiliation: award.affiliation || "",
+            profileUrl: award.profileUrl || "",
             citation: award.citation || "",
             categoryRank: award.categoryRank || 0,
             isPublished: award.isPublished,
@@ -89,6 +91,7 @@ export default function AwardsTab({ token, setMessage, openConfirm }) {
         fd.append("year", form.year);
         fd.append("laureate", form.laureate.trim());
         fd.append("affiliation", form.affiliation.trim());
+        fd.append("profileUrl", form.profileUrl.trim());
         fd.append("citation", form.citation.trim());
         fd.append("categoryRank", form.categoryRank);
         fd.append("isPublished", form.isPublished);
@@ -214,6 +217,20 @@ export default function AwardsTab({ token, setMessage, openConfirm }) {
                         <div>
                             <label>Affiliation</label>
                             <input type="text" value={form.affiliation} onChange={set("affiliation")} />
+                        </div>
+                    </div>
+
+                    <div className="announcements-grid-2">
+                        <div>
+                            <label>Profil académique (facultatif)</label>
+                            {/* Champ séparé : collée dans le nom, l'adresse s'affichait
+                                en clair sur la carte. */}
+                            <input
+                                type="text"
+                                placeholder="https://scholar.google.com/citations?user=..."
+                                value={form.profileUrl}
+                                onChange={set("profileUrl")}
+                            />
                         </div>
                     </div>
 

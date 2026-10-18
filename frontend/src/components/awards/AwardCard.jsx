@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../Url";
 
 // Repli quand un lauréat n'a pas de portrait. Le choix suit le rang de la
@@ -6,31 +5,32 @@ import { API_BASE_URL } from "../Url";
 const FALLBACK_ICONS = ["🏆", "🌱", "💡", "⭐"];
 
 /**
- * Carte d'un prix. Un prix peut avoir plusieurs lauréats la même année — le
- * Prix du jeune économiste 2026 en compte deux — d'où les portraits côte à
- * côte et les noms séparés.
+ * Carte d'un prix. Volontairement sobre : la photo, le nom du prix, le ou les
+ * lauréats. Tout le détail — affiliations, motivation du jury, liens de profil,
+ * document — s'ouvre dans AwardLightbox au clic.
  *
- * `spotlight` met la carte en avant. `linkTo` rend la carte entièrement
- * cliquable, utilisé sur l'accueil où elle mène à la page des prix. Sur la
- * page des prix elle-même il n'y a nulle part où aller, donc pas de lien.
+ * C'est aussi ce qui garde les cartes à la même hauteur : un prix à deux
+ * lauréats n'est plus deux fois plus haut que les autres.
+ *
+ * `spotlight` met la carte en avant (projecteur tournant).
  */
-export default function AwardCard({ prize, spotlight = false, index = 0, compact = false, linkTo = null }) {
+export default function AwardCard({ prize, spotlight = false, index = 0, compact = false, onOpen }) {
     const laureates = prize.laureates || [];
     const multiple = laureates.length > 1;
 
     const classes = ["award-card"];
     if (spotlight) classes.push("is-spotlight");
     if (compact) classes.push("is-compact");
-    if (linkTo) classes.push("is-clickable");
+    if (onOpen) classes.push("is-clickable");
     if (multiple) classes.push("is-multiple");
 
-    // Une seule motivation affichée quand elle est commune, sinon celle de
-    // chaque lauréat sous son nom.
-    const sharedCitation = !multiple ? laureates[0]?.citation : "";
-    const document = laureates.find((l) => l.documentUrl);
+    // « Untel et Unetelle » sur une seule ligne : les noms détaillés, avec leur
+    // affiliation, sont dans la fenêtre de détail.
+    const names = laureates.map((l) => l.laureate).join(" et ");
+    const affiliations = [...new Set(laureates.map((l) => l.affiliation).filter(Boolean))].join(" · ");
 
-    return (
-        <Wrapper className={classes.join(" ")} linkTo={linkTo}>
+    const content = (
+        <>
             <div className="award-cover">
                 {laureates.map((laureate, i) => (
                     <span className="award-cover-slot" key={laureate._id}>
@@ -51,51 +51,21 @@ export default function AwardCard({ prize, spotlight = false, index = 0, compact
 
             <div className="award-body">
                 <p className="award-category">{prize.category}</p>
-
-                {multiple ? (
-                    <ul className="award-laureates">
-                        {laureates.map((laureate) => (
-                            <li key={laureate._id}>
-                                <span className="award-laureate">{laureate.laureate}</span>
-                                {laureate.affiliation && (
-                                    <span className="award-affiliation">{laureate.affiliation}</span>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <>
-                        <h3 className="award-laureate">{laureates[0]?.laureate}</h3>
-                        {laureates[0]?.affiliation && (
-                            <p className="award-affiliation">{laureates[0].affiliation}</p>
-                        )}
-                    </>
-                )}
-
-                {!compact && sharedCitation && <p className="award-citation">{sharedCitation}</p>}
-
-                {/* Pas de lien dans une carte déjà cliquable : deux cibles
-                    imbriquées, c'est invalide en HTML et déroutant à l'usage. */}
-                {!linkTo && document && (
-                    <a
-                        className="award-doc-link"
-                        href={`${API_BASE_URL}${document.documentUrl}`}
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        Lire le document →
-                    </a>
-                )}
+                <h3 className="award-laureate">{names}</h3>
+                {affiliations && <p className="award-affiliation">{affiliations}</p>}
             </div>
 
             <span className="award-progress" aria-hidden="true"><i /></span>
-        </Wrapper>
+        </>
     );
-}
 
-function Wrapper({ linkTo, className, children }) {
-    if (linkTo) {
-        return <Link className={className} to={linkTo}>{children}</Link>;
+    if (onOpen) {
+        return (
+            <button type="button" className={classes.join(" ")} onClick={onOpen}>
+                {content}
+            </button>
+        );
     }
-    return <article className={className}>{children}</article>;
+
+    return <article className={classes.join(" ")}>{content}</article>;
 }

@@ -1,14 +1,14 @@
 import React from "react";
 import "../../styles/Development.css";
+import { useTranslation } from "react-i18next";
 
 const Development = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="journal-notice">
       <p>
-        🛠️ Cette rubrique est en cours de développement.
-        Nous travaillons activement pour vous offrir très prochainement un
-        espace riche en contenus et actualités. Merci pour votre compréhension
-        et votre fidélité.
+        {t("development.notice")}
       </p>
     </div>
   );

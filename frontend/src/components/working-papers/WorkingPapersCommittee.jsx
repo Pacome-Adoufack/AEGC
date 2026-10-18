@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../Url";
 import { getAuthToken } from "../../utils/auth";
 import CommitteeFormModal from "./CommitteeFormModal";
@@ -9,6 +10,7 @@ import {
 import "@/styles/committee.css";
 
 function WorkingPapersCommittee() {
+    const { t } = useTranslation();
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -181,22 +183,19 @@ function WorkingPapersCommittee() {
         return sorted;
     }, [enrichedMembers, searchTerm, categoryFilter, titleFilter, statusFilter, sortBy, canManage]);
 
-    if (loading) return <div className="loading">Chargement des membres du comité...</div>;
+    if (loading) return <div className="loading">{t("workingPapers.loading")}</div>;
 
     return (
         <div className="working-papers-container" style={{ paddingTop: "0.5rem" }}>
             <p className="committee-intro">
-                Le comité scientifique des Working Papers de l'AEGC (Association des Économistes et Gestionnaires du Cameroun)
+                {t("workingPapers.committeeIntro")}
             </p>
             <p className="committee-intro">
-                Il est composé de professeurs, de chercheurs titulaires d'un doctorat (PhD) et de membres internes de l'AEGC,
-                issus d'universités et d'institutions académiques nationales et internationales. Il est chargé d'assurer
-                l'évaluation scientifique, la rigueur académique et la qualité des travaux soumis, sous la coordination de
-                l'éditeur en chef.
+                {t("workingPapers.committeeDescription")}
             </p>
 
             <div className="wp-header committee-header" style={{ marginBottom: "1rem" }}>
-                <h1>Comité scientifique</h1>
+                <h1>{t("workingPapers.committeeTitle")}</h1>
                 {canManage && (
                     <button type="button" className="btn btn-primary committee-add-button" onClick={openCreateModal}>
                         + Ajouter un membre
@@ -209,37 +208,37 @@ function WorkingPapersCommittee() {
             {/* Toolbar filtres */}
             <div className="committee-toolbar">
                 <div className="committee-toolbar-item committee-toolbar-search">
-                    <label htmlFor="committee-search">Recherche</label>
-                    <input id="committee-search" type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Nom, titre, catégorie, institution..." />
+                    <label htmlFor="committee-search">{t("workingPapers.search")}</label>
+                    <input id="committee-search" type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder={t("workingPapers.searchPlaceholder")} />
                 </div>
                 <div className="committee-toolbar-item">
-                    <label htmlFor="committee-filter-category">Catégorie</label>
+                    <label htmlFor="committee-filter-category">{t("workingPapers.category")}</label>
                     <select id="committee-filter-category" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                        <option value="all">Toutes</option>
+                        <option value="all">{t("workingPapers.all")}</option>
                         {categories.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
                 {canManage && (
                     <>
                         <div className="committee-toolbar-item">
-                            <label htmlFor="committee-filter-title">Titre académique</label>
+                            <label htmlFor="committee-filter-title">{t("workingPapers.academicTitle")}</label>
                             <select id="committee-filter-title" value={titleFilter} onChange={(e) => setTitleFilter(e.target.value)}>
-                                <option value="all">Tous</option>
+                                <option value="all">{t("workingPapers.allMasculine")}</option>
                                 {academicTitles.map((t) => <option key={t} value={t}>{t}</option>)}
                             </select>
                         </div>
                         <div className="committee-toolbar-item">
-                            <label htmlFor="committee-filter-status">Statut</label>
+                            <label htmlFor="committee-filter-status">{t("workingPapers.status")}</label>
                             <select id="committee-filter-status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                                <option value="all">Tous</option>
-                                <option value="active">Actifs</option>
-                                <option value="inactive">Inactifs</option>
+                                <option value="all">{t("workingPapers.allMasculine")}</option>
+                                <option value="active">{t("workingPapers.active")}</option>
+                                <option value="inactive">{t("workingPapers.inactive")}</option>
                             </select>
                         </div>
                     </>
                 )}
                 <div className="committee-toolbar-item">
-                    <label htmlFor="committee-sort">Tri</label>
+                    <label htmlFor="committee-sort">{t("workingPapers.sort")}</label>
                     <select id="committee-sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -247,19 +246,19 @@ function WorkingPapersCommittee() {
             </div>
 
             <div className="committee-summary">
-                <span><strong>{filteredMembers.length}</strong> membre(s) affiché(s)</span>
+                <span>{t("workingPapers.shownMembers", { count: filteredMembers.length })}</span>
                 <button
                     type="button" className="btn btn-secondary btn-small"
                     onClick={() => { setSearchTerm(""); setCategoryFilter("all"); setTitleFilter("all"); setStatusFilter("all"); setSortBy("displayOrder_asc"); }}
                 >
-                    Réinitialiser les filtres
+                    {t("workingPapers.resetFilters")}
                 </button>
             </div>
 
             {/* Grille membres */}
             <div className="committee-grid" style={{ marginBottom: "1.25rem" }}>
                 {filteredMembers.length === 0 ? (
-                    <div className="no-submissions"><p>Aucun membre ne correspond aux critères.</p></div>
+                    <div className="no-submissions"><p>{t("workingPapers.noMatchingMembers")}</p></div>
                 ) : (
                     filteredMembers.map((member) => (
                         <div
@@ -278,12 +277,12 @@ function WorkingPapersCommittee() {
                                     </div>
                                 </div>
                                 <span className={`sub-status ${member.isActive ? "status-acceptee" : "status-rejetee"}`}>
-                                    {member.isActive ? "Actif" : "Inactif"}
+                                    {member.isActive ? t("workingPapers.activeStatus") : t("workingPapers.inactiveStatus")}
                                 </span>
                             </div>
                             <div className="committee-card-body">
-                                <div className="committee-meta-item"><strong>Nom complet</strong><p>{member.fullName}</p></div>
-                                {member.affiliation && <div className="committee-meta-item"><strong>Institution</strong><p>{member.affiliation}</p></div>}
+                                <div className="committee-meta-item"><strong>{t("workingPapers.fullName")}</strong><p>{member.fullName}</p></div>
+                                {member.affiliation && <div className="committee-meta-item"><strong>{t("workingPapers.institution")}</strong><p>{member.affiliation}</p></div>}
                                 {member.email && (
                                     <div className="committee-meta-item">
                                         <strong>Email</strong>
@@ -292,8 +291,8 @@ function WorkingPapersCommittee() {
                                 )}
                                 {member.profileLink && (
                                     <div className="committee-meta-item">
-                                        <strong>Lien de profil</strong>
-                                        <p><a href={member.profileLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>Ouvrir le profil</a></p>
+                                        <strong>{t("workingPapers.profileLink")}</strong>
+                                        <p><a href={member.profileLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>{t("workingPapers.openProfile")}</a></p>
                                     </div>
                                 )}
                             </div>
@@ -314,22 +313,22 @@ function WorkingPapersCommittee() {
                     <div className="committee-detail-panel" onClick={(e) => e.stopPropagation()}>
                         <div className="committee-detail-header">
                             <div>
-                                <p className="committee-detail-kicker">Fiche membre</p>
+                                <p className="committee-detail-kicker">{t("workingPapers.memberSheet")}</p>
                                 <h2>{selectedMember.fullName}</h2>
                             </div>
                             <button className="committee-detail-close" onClick={() => setSelectedMember(null)}>x</button>
                         </div>
                         <div className="committee-detail-grid">
-                            <div className="committee-detail-item"><strong>Catégorie / Fonction</strong><p>{selectedMember.roleTitle || "-"}</p></div>
-                            <div className="committee-detail-item"><strong>Institution</strong><p>{selectedMember.affiliation || "-"}</p></div>
+                            <div className="committee-detail-item"><strong>{t("workingPapers.categoryFunction")}</strong><p>{selectedMember.roleTitle || "-"}</p></div>
+                            <div className="committee-detail-item"><strong>{t("workingPapers.institution")}</strong><p>{selectedMember.affiliation || "-"}</p></div>
                             <div className="committee-detail-item">
                                 <strong>Email</strong>
                                 <p>{selectedMember.email ? <a href={`mailto:${selectedMember.email}`}>{selectedMember.email}</a> : "-"}</p>
                             </div>
-                            <div className="committee-detail-item"><strong>Statut</strong><p>{selectedMember.isActive ? "Actif" : "Inactif"}</p></div>
+                            <div className="committee-detail-item"><strong>{t("workingPapers.status")}</strong><p>{selectedMember.isActive ? t("workingPapers.activeStatus") : t("workingPapers.inactiveStatus")}</p></div>
                             <div className="committee-detail-item">
-                                <strong>Lien de profil</strong>
-                                <p>{selectedMember.profileLink ? <a href={selectedMember.profileLink} target="_blank" rel="noreferrer">Ouvrir le lien</a> : "-"}</p>
+                                <strong>{t("workingPapers.profileLink")}</strong>
+                                <p>{selectedMember.profileLink ? <a href={selectedMember.profileLink} target="_blank" rel="noreferrer">{t("workingPapers.openLink")}</a> : "-"}</p>
                             </div>
                         </div>
                     </div>

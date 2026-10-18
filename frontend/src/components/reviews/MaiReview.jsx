@@ -1,9 +1,10 @@
-import React from 'react'
+import React from "react";
+import { useTranslation } from "react-i18next";
 
 function MaiReview() {
-  return (
-    <div>MaiReview</div>
-  )
+  const { t } = useTranslation();
+
+  return <div>{t("reviews.mayReview")}</div>;
 }
 
-export default MaiReview
+export default MaiReview;

@@ -1,16 +1,19 @@
 import React from 'react';
 import '../../styles/ConfirmDialog.css';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmDialog = ({
     isOpen,
     onClose,
     onConfirm,
-    title = "Confirmation",
+    title,
     message,
-    confirmText = "Confirmer",
-    cancelText = "Annuler",
+    confirmText,
+    cancelText,
     type = "danger" // 'danger', 'warning', 'info'
 }) => {
+    const { t } = useTranslation();
+
     if (!isOpen) return null;
 
     const handleConfirm = () => {
@@ -36,7 +39,7 @@ const ConfirmDialog = ({
             <div className={`confirm-dialog ${type}`} onClick={(e) => e.stopPropagation()}>
                 <div className="confirm-header">
                     <span className="confirm-icon">{getIcon()}</span>
-                    <h3>{title}</h3>
+                    <h3>{title ?? t("confirmDialog.title")}</h3>
                 </div>
                 <div className="confirm-body">
                     <p>{message}</p>
@@ -46,13 +49,13 @@ const ConfirmDialog = ({
                         className="btn-cancel"
                         onClick={onClose}
                     >
-                        {cancelText}
+                        {cancelText ?? t("confirmDialog.cancel")}
                     </button>
                     <button
                         className={`btn-confirm btn-confirm-${type}`}
                         onClick={handleConfirm}
                     >
-                        {confirmText}
+                        {confirmText ?? t("confirmDialog.confirm")}
                     </button>
                 </div>
             </div>
