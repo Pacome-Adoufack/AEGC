@@ -48,6 +48,11 @@ router.post("/register", async (req, res) => {
       university,
       password: hashedPassword,
       role: "user", // Par défaut
+      // Case à cocher du formulaire. Non cochée = refus explicite, enregistré
+      // comme tel : la personne a été sollicitée et a dit non.
+      newsletterOptIn: req.body.newsletterOptIn === true || req.body.newsletterOptIn === "true",
+      newsletterOptInAt: new Date(),
+      newsletterToken: crypto.randomBytes(24).toString("hex"),
     });
 
     res.status(201).json({

@@ -19,6 +19,8 @@ export default function Register() {
     city: "",
     university: "",
     password: "",
+    // Case non pre-cochee : le consentement doit etre un acte positif.
+    newsletterOptIn: false,
   });
 
   const [_phoneCode, setPhoneCode] = useState("");
@@ -34,8 +36,8 @@ export default function Register() {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData({ ...data, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setData({ ...data, [name]: type === "checkbox" ? checked : value });
     if (name === "country") {
       const selected = COUNTRIES.find((c) => c.name === value);
       setPhoneCode(selected ? selected.callingCode : "");
@@ -186,6 +188,18 @@ export default function Register() {
               </button>
             </div>
           </div>
+
+          {/* Consentement RGPD : case non pré-cochée, et refuser n'empêche pas
+              de créer un compte. */}
+          <label className="reg-consent">
+            <input
+              type="checkbox"
+              name="newsletterOptIn"
+              checked={data.newsletterOptIn}
+              onChange={handleChange}
+            />
+            <span>{t("auth.newsletterConsent")}</span>
+          </label>
 
           <button type="submit" className="reg-submit">{t("auth.submitRegister")}</button>
         </form>

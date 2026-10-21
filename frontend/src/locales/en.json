@@ -238,7 +238,6 @@
     "all": "All",
     "academicTitle": "Academic title",
     "allMasculine": "All",
-    "status": "Status",
     "active": "Active",
     "inactive": "Inactive",
     "sort": "Sort",
@@ -317,7 +316,8 @@
     "resetError": "The password could not be reset. Please try again.",
     "resetRequestError": "Something went wrong. Please try again.",
     "resetLoading": "Loading...",
-    "resetSubmit": "Reset password"
+    "resetSubmit": "Reset password",
+    "newsletterConsent": "I agree to receive AEGC news by email. I can unsubscribe at any time."
   },
   "announcements": {
     "title": "AEGC news",
@@ -340,21 +340,63 @@
     "success": "Thank you for your feedback! Your response has been recorded.",
     "submitError": "Error submitting the survey",
     "options": {
-      "veryDissatisfied": "Very dissatisfied", "dissatisfied": "Dissatisfied", "neutral": "Neutral", "satisfied": "Satisfied", "verySatisfied": "Very dissatisfied", "yes": "Yes", "no": "No", "dontKnow": "I don't know", "stronglyDisagree": "Strongly disagree", "disagree": "Disagree", "agree": "Agree", "stronglyAgree": "Strongly agree"
+      "veryDissatisfied": "Very dissatisfied",
+      "dissatisfied": "Dissatisfied",
+      "neutral": "Neutral",
+      "satisfied": "Satisfied",
+      "verySatisfied": "Very dissatisfied",
+      "yes": "Yes",
+      "no": "No",
+      "dontKnow": "I don't know",
+      "stronglyDisagree": "Strongly disagree",
+      "disagree": "Disagree",
+      "agree": "Agree",
+      "stronglyAgree": "Strongly agree"
     },
     "questions": {
-      "q1": "Was the topic relevant?", "q2": "Did this webinar meet your expectations?", "q3": "Was the presentation clear?", "q4": "Was the webinar duration appropriate?", "q5": "What did you appreciate most about this webinar?", "q6": "Did you learn new things during this webinar?", "q7": "Will this webinar be useful in your work?", "q8": "Suggestion for improvement", "q9": "Are you motivated to attend the next webinar?", "q10": "Would you recommend AEGC webinars to your colleagues or friends?", "q11": "Did you receive enough information about AEGC, the panelists and the webinar content before it started?", "q12": "Were you able to discuss your concerns with the panelists?", "q13": "Was the quality of the speakers satisfactory?", "q14": "Were the presentation materials clear and useful?", "q15": "Other comments or suggestions"
+      "q1": "Was the topic relevant?",
+      "q2": "Did this webinar meet your expectations?",
+      "q3": "Was the presentation clear?",
+      "q4": "Was the webinar duration appropriate?",
+      "q5": "What did you appreciate most about this webinar?",
+      "q6": "Did you learn new things during this webinar?",
+      "q7": "Will this webinar be useful in your work?",
+      "q8": "Suggestion for improvement",
+      "q9": "Are you motivated to attend the next webinar?",
+      "q10": "Would you recommend AEGC webinars to your colleagues or friends?",
+      "q11": "Did you receive enough information about AEGC, the panelists and the webinar content before it started?",
+      "q12": "Were you able to discuss your concerns with the panelists?",
+      "q13": "Was the quality of the speakers satisfactory?",
+      "q14": "Were the presentation materials clear and useful?",
+      "q15": "Other comments or suggestions"
     }
   },
   "subscribe": {
-    "description": "Stay informed about the latest AEGC news and updates.", "emailPlaceholder": "Enter your email address", "namePlaceholder": "Enter your last name", "firstNamePlaceholder": "Enter your first name", "submit": "Subscribe", "success": "Subscription successful!", "error": "Subscription error: {{message}}"
+    "description": "Stay informed about the latest AEGC news and updates.",
+    "emailPlaceholder": "Enter your email address",
+    "namePlaceholder": "Enter your last name",
+    "firstNamePlaceholder": "Enter your first name",
+    "submit": "Subscribe",
+    "success": "Subscription successful!",
+    "error": "Subscription error: {{message}}"
   },
   "gallery": {
-    "title": "Photo gallery", "loading": "Loading photos…", "loadError": "The gallery is temporarily unavailable. Please try again shortly.", "empty": "No photos at the moment.", "allYears": "All years", "enlarge": "Enlarge: {{title}}"
+    "title": "Photo gallery",
+    "loading": "Loading photos…",
+    "loadError": "The gallery is temporarily unavailable. Please try again shortly.",
+    "empty": "No photos at the moment.",
+    "allYears": "All years",
+    "enlarge": "Enlarge: {{title}}"
   },
-  "research": { "title": "Global research" },
-  "ethics": { "title": "Ethics" },
-  "committees": { "title": "Committees" },
+  "research": {
+    "title": "Global research"
+  },
+  "ethics": {
+    "title": "Ethics"
+  },
+  "committees": {
+    "title": "Committees"
+  },
   "development": {
     "notice": "🛠️ This section is currently under development. We are actively working to offer you a space filled with content and news very soon. Thank you for your understanding and continued support."
   },
@@ -370,7 +412,9 @@
     "cancelReservation": "Cancel reservation",
     "reserve": "Reserve"
   },
-  "newspaper": { "title": "Newspaper" },
+  "newspaper": {
+    "title": "Newspaper"
+  },
   "newspaperReview": {
     "title": "Journals",
     "aegcReview": "AEGC Review",
@@ -379,7 +423,11 @@
     "research": "AEGC Research",
     "metadata": "AEGC Metadata"
   },
-  "journals": { "title": "AEGC journals", "description": "Explore AEGC journals and editorial resources.", "imageAlt": "AEGC journal" },
+  "journals": {
+    "title": "AEGC journals",
+    "description": "Explore AEGC journals and editorial resources.",
+    "imageAlt": "AEGC journal"
+  },
   "reviews": {
     "journalAlt": "AEGC journal",
     "title": "AEGC Review",
@@ -400,11 +448,25 @@
     "decemberReview": "December Review"
   },
   "bourse": {
-    "title": "AEGC scholarships", "subtitle": "Discover the funding opportunities offered by the association", "thumbnailAlt": "Thumbnail of {{title}}", "publishedOn": "Published on: {{date}}", "view": "View", "download": "Download",
+    "title": "AEGC scholarships",
+    "subtitle": "Discover the funding opportunities offered by the association",
+    "thumbnailAlt": "Thumbnail of {{title}}",
+    "publishedOn": "Published on: {{date}}",
+    "view": "View",
+    "download": "Download",
     "files": {
-      "mobility": { "title": "AEGC International Mobility Scholarship", "description": "Financial support allowing researchers to travel abroad for scientific missions." },
-      "youngResearcher": { "title": "AEGC Young Researcher Scholarship", "description": "Funding for young researchers' academic work and seminars." },
-      "excellence": { "title": "Scientific Excellence Scholarship", "description": "A scholarship awarded to members who have produced outstanding work in economics or management." }
+      "mobility": {
+        "title": "AEGC International Mobility Scholarship",
+        "description": "Financial support allowing researchers to travel abroad for scientific missions."
+      },
+      "youngResearcher": {
+        "title": "AEGC Young Researcher Scholarship",
+        "description": "Funding for young researchers' academic work and seminars."
+      },
+      "excellence": {
+        "title": "Scientific Excellence Scholarship",
+        "description": "A scholarship awarded to members who have produced outstanding work in economics or management."
+      }
     }
   },
   "formations": {
@@ -417,21 +479,203 @@
     "cancelError": "Error while cancelling.",
     "errorPrefix": "Error",
     "logoAlt": "Training logo",
-    "teacher": "Trainer:", "date": "Date:", "duration": "Duration:", "level": "Level:", "price": "Price:", "location": "Location:",
-    "details": "View more details", "register": "Register for this training", "cancel": "Cancel registration", "cancelTitle": "Cancel registration", "cancelConfirm": "Are you sure you want to cancel this registration?", "back": "Training programs"
+    "teacher": "Trainer:",
+    "date": "Date:",
+    "duration": "Duration:",
+    "level": "Level:",
+    "price": "Price:",
+    "location": "Location:",
+    "details": "View more details",
+    "register": "Register for this training",
+    "cancel": "Cancel registration",
+    "cancelTitle": "Cancel registration",
+    "cancelConfirm": "Are you sure you want to cancel this registration?",
+    "back": "Training programs"
   },
   "seminars": {
-    "title": "Upcoming seminars", "loadError": "Unable to load activities.", "reservationsError": "Unable to load your reservations.", "cancelTitle": "Cancel reservation", "cancelConfirm": "Are you sure you want to cancel this reservation?", "moderator": "Moderator:", "speaker": "Speaker:", "noSpeaker": "No speaker for this seminar.", "noSpeakerWebinar": "No speaker for this webinar.", "noModerator": "No moderator for this webinar.", "parisTime": "Paris time:", "yaoundeTime": "Yaoundé time:", "paris": "Paris:", "yaounde": "Yaoundé:", "startsIn": "Starts in:", "disappearsIn": "Disappears in:", "days": "d", "hours": "h", "minutes": "m", "seconds": "s", "finished": "Finished", "logoAlt": "Seminar logo", "noUpcoming": "No upcoming webinar at the moment.", "questionnaire": "Survey", "cancel": "Cancel reservation", "reserve": "Reserve", "error": "Error: {{message}}"
+    "title": "Upcoming seminars",
+    "loadError": "Unable to load activities.",
+    "reservationsError": "Unable to load your reservations.",
+    "cancelTitle": "Cancel reservation",
+    "cancelConfirm": "Are you sure you want to cancel this reservation?",
+    "moderator": "Moderator:",
+    "speaker": "Speaker:",
+    "noSpeaker": "No speaker for this seminar.",
+    "noSpeakerWebinar": "No speaker for this webinar.",
+    "noModerator": "No moderator for this webinar.",
+    "parisTime": "Paris time:",
+    "yaoundeTime": "Yaoundé time:",
+    "paris": "Paris:",
+    "yaounde": "Yaoundé:",
+    "startsIn": "Starts in:",
+    "disappearsIn": "Disappears in:",
+    "days": "d",
+    "hours": "h",
+    "minutes": "m",
+    "seconds": "s",
+    "finished": "Finished",
+    "logoAlt": "Seminar logo",
+    "noUpcoming": "No upcoming webinar at the moment.",
+    "questionnaire": "Survey",
+    "cancel": "Cancel reservation",
+    "reserve": "Reserve",
+    "error": "Error: {{message}}"
   },
   "reservation": {
-    "title": "Reservation", "formationTitle": "Register", "activityDescription": "Thank you for your interest in our activities. Please complete the reservation form below.", "formationDescription": "Thank you for your interest in our training programs. Please complete the registration form below.", "lastName": "Last name:", "firstName": "First name:", "email": "Email:", "phone": "Phone number:", "gender": "Gender:", "genderPlaceholder": "-- Select your gender --", "male": "Male", "female": "Female", "profession": "Profession:", "message": "Message (optional):", "submit": "Reserve", "register": "Register", "authRequired": "You must be logged in to make a reservation.", "success": "Reservation successful!", "error": "Reservation error: {{message}}"
+    "title": "Reservation",
+    "formationTitle": "Register",
+    "activityDescription": "Thank you for your interest in our activities. Please complete the reservation form below.",
+    "formationDescription": "Thank you for your interest in our training programs. Please complete the registration form below.",
+    "lastName": "Last name:",
+    "firstName": "First name:",
+    "email": "Email:",
+    "phone": "Phone number:",
+    "gender": "Gender:",
+    "genderPlaceholder": "-- Select your gender --",
+    "male": "Male",
+    "female": "Female",
+    "profession": "Profession:",
+    "message": "Message (optional):",
+    "submit": "Reserve",
+    "register": "Register",
+    "authRequired": "You must be logged in to make a reservation.",
+    "success": "Reservation successful!",
+    "error": "Reservation error: {{message}}"
   },
-  "confirmDialog": { "title": "Confirmation", "confirm": "Confirm", "cancel": "Cancel" },
-  "membersArea": { "reservedTrainings": "My reserved training programs", "empty": "No reserved training program.", "date": "Date:", "teacher": "Professor:" },
-  "programming": { "title": "AEGC Programming", "journalAlt": "AEGC journal", "reviewTitle": "AEGC Review", "publishedBy": "published by:", "issue": "Vol1, No1, January 2025", "summary": "Abstract", "classification": "JEL Classification", "d02": "Institutions: design, formation, organisation and role", "d03": "Institutions: agents' behavior, role of institutions", "d83": "Information, knowledge and uncertainty", "download": "Download PDF" },
-  "organization": { "title": "AEGC EXECUTIVE BOARD MEMBERS", "president": "President", "vicePresident": "Vice-President", "secretaryGeneral": "Secretary General", "treasurer": "Treasurer", "hrManager": "HR Manager", "externalRelations": "External Relations Manager", "communications": "Communications Manager", "auditor": "Auditor", "projects": "Project Managers", "censors": "Censors", "administrativeAffairs": "Administrative and Diplomatic Affairs Manager", "advisors": "Advisors" }
-  ,"membership": {
-    "activeTitle": "Active membership", "activeText": "Your annual membership is currently valid.", "pendingTitle": "Application pending", "pendingText": "Your membership application has been received and is being reviewed by an administrator.", "rejectedTitle": "Application rejected", "rejectedText": "Your membership application was rejected by the administrator.", "resubmit": "Resubmit my application", "annualTitle": "AEGC annual membership", "annualText": "Join the Association of Economists and Managers of Cameroon and access exclusive benefits for one year.", "profile": "View my profile", "backProfile": "Back to profile", "loading": "Loading...", "wait": "Please wait a moment.", "submissionSaved": "Submission recorded", "requestReceived": "Your application has been received", "requestText": "Thank you. Your membership application has been recorded and will be reviewed by the administrative team.", "requestState": "Application status", "status": "Status", "rejectionReason": "Rejection reason", "backHome": "Back to home", "confirmationSent": "A confirmation message with useful information has been sent.", "amount": "Amount", "startDate": "Start date", "endDate": "End date", "paymentNumber": "Payment number", "submissionNumber": "Submission number", "submittedOn": "Submitted on", "reason": "Reason:", "steps": ["Make your payment", "Email the proof", "Submit your application here"], "pricingTitle": "Rates by profile", "advantagesTitle": "Benefits by profile", "paymentInstructions": "Payment instructions", "bankTransfer": "Bank transfer", "orangeMoney": "Orange Money", "mtnMomo": "MTN MoMo", "bank": "Bank", "accountNumber": "Account number", "swift": "SWIFT code", "holder": "Account holder", "address": "Address", "orangeNumber": "Orange Money number", "mtnNumber": "MTN MoMo number", "finalize": "Finalize your application", "proofText": "After payment, email the proof and completed form to", "downloadForm": "Download the membership form (Word)", "confirmation": "I have paid and emailed the proof with the form to {{email}}.", "processing": "Processing…", "submit": "Submit my membership application", "footerNote": "An administrator will verify your payment and activate your membership within a few days.", "authRequired": "You must be logged in to subscribe.", "proofRequired": "Please confirm that you have emailed the proof and form.", "submissionError": "Submission error", "received": "Submission received. Awaiting validation.", "unexpectedError": "An error occurred", "pricing": ["National student", "International student", "Teacher-researcher / Professional (National)", "Teacher-researcher / Professional (Foreign - low-income country)", "Teacher-researcher / Professional (Foreign - high-income country)"], "advantages": { "students": { "title": "Students", "items": ["Free participation in activities", "Mentoring", "Research awards", "Publication in bulletins"] }, "teachers": { "title": "Teachers", "items": ["80% discount on conferences", "Research scholarships", "Free or discounted publication", "Participation in scientific committees"] }, "professionals": { "title": "Professionals", "items": ["80% discount on events", "Access to partner networks", "Guest speaker opportunities", "Promotion of their companies through AEGC"] } }
+  "confirmDialog": {
+    "title": "Confirmation",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "membersArea": {
+    "reservedTrainings": "My reserved training programs",
+    "empty": "No reserved training program.",
+    "date": "Date:",
+    "teacher": "Professor:"
+  },
+  "programming": {
+    "title": "AEGC Programming",
+    "journalAlt": "AEGC journal",
+    "reviewTitle": "AEGC Review",
+    "publishedBy": "published by:",
+    "issue": "Vol1, No1, January 2025",
+    "summary": "Abstract",
+    "classification": "JEL Classification",
+    "d02": "Institutions: design, formation, organisation and role",
+    "d03": "Institutions: agents' behavior, role of institutions",
+    "d83": "Information, knowledge and uncertainty",
+    "download": "Download PDF"
+  },
+  "organization": {
+    "title": "AEGC EXECUTIVE BOARD MEMBERS",
+    "president": "President",
+    "vicePresident": "Vice-President",
+    "secretaryGeneral": "Secretary General",
+    "treasurer": "Treasurer",
+    "hrManager": "HR Manager",
+    "externalRelations": "External Relations Manager",
+    "communications": "Communications Manager",
+    "auditor": "Auditor",
+    "projects": "Project Managers",
+    "censors": "Censors",
+    "administrativeAffairs": "Administrative and Diplomatic Affairs Manager",
+    "advisors": "Advisors"
+  },
+  "membership": {
+    "activeTitle": "Active membership",
+    "activeText": "Your annual membership is currently valid.",
+    "pendingTitle": "Application pending",
+    "pendingText": "Your membership application has been received and is being reviewed by an administrator.",
+    "rejectedTitle": "Application rejected",
+    "rejectedText": "Your membership application was rejected by the administrator.",
+    "resubmit": "Resubmit my application",
+    "annualTitle": "AEGC annual membership",
+    "annualText": "Join the Association of Economists and Managers of Cameroon and access exclusive benefits for one year.",
+    "profile": "View my profile",
+    "backProfile": "Back to profile",
+    "loading": "Loading...",
+    "wait": "Please wait a moment.",
+    "submissionSaved": "Submission recorded",
+    "requestReceived": "Your application has been received",
+    "requestText": "Thank you. Your membership application has been recorded and will be reviewed by the administrative team.",
+    "requestState": "Application status",
+    "status": "Status",
+    "rejectionReason": "Rejection reason",
+    "backHome": "Back to home",
+    "confirmationSent": "A confirmation message with useful information has been sent.",
+    "amount": "Amount",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "paymentNumber": "Payment number",
+    "submissionNumber": "Submission number",
+    "submittedOn": "Submitted on",
+    "reason": "Reason:",
+    "steps": [
+      "Make your payment",
+      "Email the proof",
+      "Submit your application here"
+    ],
+    "pricingTitle": "Rates by profile",
+    "advantagesTitle": "Benefits by profile",
+    "paymentInstructions": "Payment instructions",
+    "bankTransfer": "Bank transfer",
+    "orangeMoney": "Orange Money",
+    "mtnMomo": "MTN MoMo",
+    "bank": "Bank",
+    "accountNumber": "Account number",
+    "swift": "SWIFT code",
+    "holder": "Account holder",
+    "address": "Address",
+    "orangeNumber": "Orange Money number",
+    "mtnNumber": "MTN MoMo number",
+    "finalize": "Finalize your application",
+    "proofText": "After payment, email the proof and completed form to",
+    "downloadForm": "Download the membership form (Word)",
+    "confirmation": "I have paid and emailed the proof with the form to {{email}}.",
+    "processing": "Processing…",
+    "submit": "Submit my membership application",
+    "footerNote": "An administrator will verify your payment and activate your membership within a few days.",
+    "authRequired": "You must be logged in to subscribe.",
+    "proofRequired": "Please confirm that you have emailed the proof and form.",
+    "submissionError": "Submission error",
+    "received": "Submission received. Awaiting validation.",
+    "unexpectedError": "An error occurred",
+    "pricing": [
+      "National student",
+      "International student",
+      "Teacher-researcher / Professional (National)",
+      "Teacher-researcher / Professional (Foreign - low-income country)",
+      "Teacher-researcher / Professional (Foreign - high-income country)"
+    ],
+    "advantages": {
+      "students": {
+        "title": "Students",
+        "items": [
+          "Free participation in activities",
+          "Mentoring",
+          "Research awards",
+          "Publication in bulletins"
+        ]
+      },
+      "teachers": {
+        "title": "Teachers",
+        "items": [
+          "80% discount on conferences",
+          "Research scholarships",
+          "Free or discounted publication",
+          "Participation in scientific committees"
+        ]
+      },
+      "professionals": {
+        "title": "Professionals",
+        "items": [
+          "80% discount on events",
+          "Access to partner networks",
+          "Guest speaker opportunities",
+          "Promotion of their companies through AEGC"
+        ]
+      }
+    }
   },
   "submissions": {
     "loading": "Loading...",

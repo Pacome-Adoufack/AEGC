@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastProvider } from "./components/common/Toast.jsx";
 import Header from "./components/common/Header.jsx";
 import Footer from "./components/common/Footer.jsx";
+import NewsletterConsentBanner from "./components/common/NewsletterConsentBanner";
+const Unsubscribe = lazy(() => import("./components/pages/Unsubscribe.jsx"));
 
 // Pages
 const Home = lazy(() => import("./components/pages/Home.jsx"));
@@ -100,6 +102,7 @@ function App() {
             <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center" }}>Chargement...</div>}>
               <Routes>
                 <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn} />} />
+                <Route path="/desinscription/:token" element={<Unsubscribe />} />
                 <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
                 <Route path="/home" element={<Home isLoggedIn={isLoggedIn} />} />
                 <Route path="/newspaper" element={<Newspaper />} />
@@ -166,6 +169,8 @@ function App() {
                 <Route path="/dispatcher/working-papers" element={<AdminWorkingPapers />} />
               </Routes>
             </Suspense>
+            {/* Ne s affiche que pour un membre connecte qui n a jamais repondu. */}
+            {isLoggedIn && <NewsletterConsentBanner />}
           </div>
         </Router>
         <Footer />

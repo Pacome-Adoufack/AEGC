@@ -43,6 +43,7 @@ export default function AnnouncementsTab({ token, setMessage, openConfirm, start
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [sending, setSending] = useState(null);
     const [form, setForm] = useState(EMPTY_FORM);
     const [existingAttachments, setExistingAttachments] = useState([]);
     const [removedIds, setRemovedIds] = useState([]);
@@ -218,6 +219,54 @@ export default function AnnouncementsTab({ token, setMessage, openConfirm, start
         setTimeout(() => setMessage(''), 3000);
     };
 
+    // Envoi aux abonnés. On demande le nombre de destinataires d'abord : on ne
+    // confirme pas un envoi en masse sans savoir à combien de personnes il part.
+    const askSendNewsletter = async (annonce) => {
+        let compte = null;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/admin/newsletter/recipients`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) compte = await res.json();
+        } catch {
+            // Le compteur n'est qu'une aide : son échec ne bloque pas l'envoi.
+        }
+
+        const combien = compte ? `${compte.total} destinataire${compte.total > 1 ? "s" : ""}` : "les abonnés";
+        const dejaEnvoye = annonce.newsletter?.sentAt
+            ? `\n\nAttention : déjà envoyée le ${new Date(annonce.newsletter.sentAt).toLocaleDateString("fr-FR")}.`
+            : "";
+
+        openConfirm({
+            title: "Envoyer aux abonnés",
+            message: `Envoyer « ${annonce.title} » à ${combien} ?${dejaEnvoye}`,
+            type: "warning",
+            onConfirm: async () => {
+                setSending(annonce._id);
+                try {
+                    const res = await fetch(`${API_BASE_URL}/api/admin/announcements/${annonce._id}/newsletter`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                        body: JSON.stringify({ force: Boolean(annonce.newsletter?.sentAt) }),
+                    });
+                    const payload = await res.json().catch(() => ({}));
+                    if (!res.ok) throw new Error(payload.error || "Envoi impossible");
+                    setMessage(
+                        payload.echecs
+                            ? `${payload.message}, ${payload.echecs} échec(s)`
+                            : payload.message,
+                    );
+                    loadAnnouncements();
+                } catch (err) {
+                    setMessage(`Erreur: ${err.message}`);
+                } finally {
+                    setSending(null);
+                    setTimeout(() => setMessage(""), 6000);
+                }
+            },
+        });
+    };
+
     const askDelete = (id) =>
         openConfirm({
             title: "Supprimer l'annonce",
@@ -266,6 +315,21 @@ export default function AnnouncementsTab({ token, setMessage, openConfirm, start
                                 </small>
                                 <div className="announcement-card-actions">
                                     <button className="btn-approve" onClick={() => handleEdit(a)}>Modifier</button>
+                                    {/* L'envoi est un geste explicite, jamais déclenché par la
+                                        publication : une correction relancerait sinon un envoi. */}
+                                    {a.isPublished && (
+                                        <button
+                                            className="btn-cancel"
+                                            disabled={sending === a._id}
+                                            onClick={() => askSendNewsletter(a)}
+                                        >
+                                            {sending === a._id
+                                                ? "Envoi…"
+                                                : a.newsletter?.sentAt
+                                                    ? `Renvoyer (${a.newsletter.recipients} envoyés)`
+                                                    : "Envoyer aux abonnés"}
+                                        </button>
+                                    )}
                                     <button className="btn-delete" onClick={() => askDelete(a._id)}>Supprimer</button>
                                 </div>
                             </div>

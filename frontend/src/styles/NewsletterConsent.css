@@ -1,0 +1,85 @@
+/* Bandeau de consentement aux actualités.
+   Posé en bas d'écran : il demande une réponse sans bloquer la navigation,
+   contrairement à une fenêtre modale qu'il faudrait fermer pour continuer. */
+.nl-consent {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 9000;
+  width: calc(100% - 32px);
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border: 1px solid var(--aegc-line, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
+}
+
+.nl-consent-text {
+  flex: 1;
+  min-width: 220px;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--aegc-text, #334155);
+}
+
+.nl-consent-done {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--aegc-text, #334155);
+}
+
+.nl-consent-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.nl-consent-yes,
+.nl-consent-no {
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.nl-consent-yes {
+  background: var(--aegc-blue, #1a5fa6);
+  color: #ffffff;
+}
+
+.nl-consent-yes:hover {
+  background: var(--aegc-blue-hover, #144d88);
+}
+
+/* Le refus est aussi lisible que l'acceptation : un bouton « non » discret au
+   point d'être invisible vicierait le consentement. */
+.nl-consent-no {
+  background: #ffffff;
+  border-color: var(--aegc-line, #e2e8f0);
+  color: var(--aegc-text, #334155);
+}
+
+.nl-consent-no:hover {
+  background: #f1f5f9;
+}
+
+@media (max-width: 520px) {
+  .nl-consent-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .nl-consent-yes,
+  .nl-consent-no {
+    flex: 1;
+  }
+}

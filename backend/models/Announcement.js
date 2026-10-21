@@ -47,6 +47,15 @@ const announcementSchema = new mongoose.Schema(
       required: true,
     },
     // Pièces jointes (PDF, images). storedPath est relatif au dossier uploads.
+    // Envoi aux abonnés. Conservé sur l'annonce pour qu'on voie, dans
+    // l'administration, ce qui a déjà été envoyé — et qu'on n'envoie pas deux
+    // fois la même actualité.
+    newsletter: {
+      sentAt: { type: Date, default: null },
+      sentBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+      recipients: { type: Number, default: 0 },
+      failed: { type: Number, default: 0 },
+    },
     attachments: [
       {
         originalName: { type: String, required: true, trim: true },

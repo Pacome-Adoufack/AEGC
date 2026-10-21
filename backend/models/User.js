@@ -63,6 +63,27 @@ const userSchema = new mongoose.Schema(
       ref: "Membership",
       default: null,
     },
+    // Consentement à recevoir les actualités de l'association.
+    // `null` = la personne n'a jamais répondu : on ne lui écrit pas, et un
+    // bandeau lui pose la question à sa prochaine connexion. C'est ce qui
+    // distingue « a refusé » de « n'a jamais été sollicité », distinction
+    // exigée par le RGPD pour les comptes créés avant la case à cocher.
+    newsletterOptIn: {
+      type: Boolean,
+      default: null,
+    },
+    // Date de la réponse : c'est la preuve du consentement.
+    newsletterOptInAt: {
+      type: Date,
+      default: null,
+    },
+    // Jeton de désinscription, utilisable sans se connecter : le lien figure
+    // dans chaque message envoyé.
+    newsletterToken: {
+      type: String,
+      default: null,
+      index: true,
+    },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
   },

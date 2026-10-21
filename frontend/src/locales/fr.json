@@ -238,7 +238,6 @@
     "all": "Toutes",
     "academicTitle": "Titre académique",
     "allMasculine": "Tous",
-    "status": "Statut",
     "active": "Actifs",
     "inactive": "Inactifs",
     "sort": "Tri",
@@ -317,7 +316,8 @@
     "resetError": "Le mot de passe n'a pas pu être réinitialisé. Essayez à nouveau.",
     "resetRequestError": "Une erreur s'est produite. Veuillez réessayer.",
     "resetLoading": "En cours de chargement...",
-    "resetSubmit": "Réinitialiser le mot de passe"
+    "resetSubmit": "Réinitialiser le mot de passe",
+    "newsletterConsent": "J'accepte de recevoir les actualités de l'AEGC par courriel. Je peux me désinscrire à tout moment."
   },
   "announcements": {
     "title": "Actualités AEGC",
@@ -388,9 +388,15 @@
     "allYears": "Toutes les années",
     "enlarge": "Agrandir : {{title}}"
   },
-  "research": { "title": "Recherche globale" },
-  "ethics": { "title": "Éthique" },
-  "committees": { "title": "Comités" },
+  "research": {
+    "title": "Recherche globale"
+  },
+  "ethics": {
+    "title": "Éthique"
+  },
+  "committees": {
+    "title": "Comités"
+  },
   "development": {
     "notice": "🛠️ Cette rubrique est en cours de développement. Nous travaillons activement pour vous offrir très prochainement un espace riche en contenus et actualités. Merci pour votre compréhension et votre fidélité."
   },
@@ -406,7 +412,9 @@
     "cancelReservation": "Annuler la réservation",
     "reserve": "Réserver"
   },
-  "newspaper": { "title": "Journal" },
+  "newspaper": {
+    "title": "Journal"
+  },
   "newspaperReview": {
     "title": "Journaux",
     "aegcReview": "Revue AEGC",
@@ -447,9 +455,18 @@
     "view": "Visualiser",
     "download": "Télécharger",
     "files": {
-      "mobility": { "title": "Bourse de Mobilité Internationale AEGC", "description": "Programme de soutien financier permettant aux chercheurs de se déplacer pour des missions scientifiques à l'étranger." },
-      "youngResearcher": { "title": "Bourse Jeune Chercheur AEGC", "description": "Financement destiné aux jeunes chercheurs pour leurs travaux et séminaires académiques." },
-      "excellence": { "title": "Bourse Excellence Scientifique", "description": "Une bourse attribuée aux membres ayant réalisé des travaux exceptionnels en économie ou gestion." }
+      "mobility": {
+        "title": "Bourse de Mobilité Internationale AEGC",
+        "description": "Programme de soutien financier permettant aux chercheurs de se déplacer pour des missions scientifiques à l'étranger."
+      },
+      "youngResearcher": {
+        "title": "Bourse Jeune Chercheur AEGC",
+        "description": "Financement destiné aux jeunes chercheurs pour leurs travaux et séminaires académiques."
+      },
+      "excellence": {
+        "title": "Bourse Excellence Scientifique",
+        "description": "Une bourse attribuée aux membres ayant réalisé des travaux exceptionnels en économie ou gestion."
+      }
     }
   },
   "formations": {
@@ -565,7 +582,100 @@
     "advisors": "Conseillers"
   },
   "membership": {
-    "activeTitle": "Cotisation Active", "activeText": "Votre cotisation annuelle est en cours de validité.", "pendingTitle": "Demande en attente", "pendingText": "Votre demande d'adhésion a été reçue et est en cours de validation par un administrateur.", "rejectedTitle": "Demande rejetée", "rejectedText": "Votre demande d'adhésion a été rejetée par l'administrateur.", "resubmit": "Resoumettre ma demande", "annualTitle": "Cotisation Annuelle AEGC", "annualText": "Rejoignez l'Association des Économistes et Gestionnaires du Cameroun et accédez à des avantages exclusifs pendant 1 an.", "profile": "Voir mon profil", "backProfile": "Retour au profil", "loading": "Chargement...", "wait": "Veuillez patienter quelques instants.", "submissionSaved": "Soumission enregistrée", "requestReceived": "Votre demande a bien été reçue", "requestText": "Merci. Votre demande d'adhésion est bien enregistrée et sera traitée par l'équipe administrative.", "requestState": "État de la demande", "status": "Statut", "rejectionReason": "Motif du rejet", "backHome": "Retour à l'accueil", "confirmationSent": "Un message de confirmation a été envoyé avec les informations utiles.", "amount": "Montant", "startDate": "Date de début", "endDate": "Date de fin", "paymentNumber": "N° de paiement", "submissionNumber": "N° de soumission", "submittedOn": "Soumis le", "reason": "Motif :", "steps": ["Effectuez votre paiement", "Envoyez la preuve par email", "Soumettez votre demande ici"], "pricingTitle": "Tarifs selon votre profil", "advantagesTitle": "Avantages par profil", "paymentInstructions": "Instructions de paiement", "bankTransfer": "Virement bancaire", "orangeMoney": "Orange Money", "mtnMomo": "MTN MoMo", "bank": "Banque", "accountNumber": "N° de compte", "swift": "Code SWIFT", "holder": "Titulaire", "address": "Adresse", "orangeNumber": "Numéro Orange Money", "mtnNumber": "Numéro MTN MoMo", "finalize": "Finaliser votre demande", "proofText": "Après votre paiement, envoyez la preuve et le formulaire rempli à", "downloadForm": "Télécharger le formulaire d'adhésion (Word)", "confirmation": "J'ai effectué mon paiement et envoyé la preuve avec le formulaire à {{email}}.", "processing": "Traitement en cours…", "submit": "Soumettre ma demande d'adhésion", "footerNote": "Un administrateur vérifiera votre paiement et activera votre adhésion sous quelques jours.", "authRequired": "Vous devez être connecté pour souscrire.", "proofRequired": "Veuillez confirmer que vous avez envoyé la preuve et le formulaire par email.", "submissionError": "Erreur lors de la soumission", "received": "Soumission reçue. En attente de validation.", "unexpectedError": "Une erreur est survenue", "pricing": ["Étudiant national", "Étudiant étranger", "Enseignant-Chercheur / Professionnel (National)", "Enseignant-Chercheur / Professionnel (Étranger - pays à revenus faibles)", "Enseignant-Chercheur / Professionnel (Étranger - pays à revenu élevé)"], "advantages": { "students": { "title": "Étudiants", "items": ["Participation gratuite aux activités", "Mentorat", "Prix de recherche", "Publication dans les bulletins"] }, "teachers": { "title": "Enseignants", "items": ["Réduction de 80% sur les conférences", "Bourses de recherche", "Publication gratuite ou à tarif réduit", "Participation aux comités scientifiques"] }, "professionals": { "title": "Professionnels", "items": ["Réduction de 80% sur les événements", "Accès aux réseaux partenaires", "Conférencier invité", "Promotion de leurs entreprises via l'AEGC"] } }
+    "activeTitle": "Cotisation Active",
+    "activeText": "Votre cotisation annuelle est en cours de validité.",
+    "pendingTitle": "Demande en attente",
+    "pendingText": "Votre demande d'adhésion a été reçue et est en cours de validation par un administrateur.",
+    "rejectedTitle": "Demande rejetée",
+    "rejectedText": "Votre demande d'adhésion a été rejetée par l'administrateur.",
+    "resubmit": "Resoumettre ma demande",
+    "annualTitle": "Cotisation Annuelle AEGC",
+    "annualText": "Rejoignez l'Association des Économistes et Gestionnaires du Cameroun et accédez à des avantages exclusifs pendant 1 an.",
+    "profile": "Voir mon profil",
+    "backProfile": "Retour au profil",
+    "loading": "Chargement...",
+    "wait": "Veuillez patienter quelques instants.",
+    "submissionSaved": "Soumission enregistrée",
+    "requestReceived": "Votre demande a bien été reçue",
+    "requestText": "Merci. Votre demande d'adhésion est bien enregistrée et sera traitée par l'équipe administrative.",
+    "requestState": "État de la demande",
+    "status": "Statut",
+    "rejectionReason": "Motif du rejet",
+    "backHome": "Retour à l'accueil",
+    "confirmationSent": "Un message de confirmation a été envoyé avec les informations utiles.",
+    "amount": "Montant",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "paymentNumber": "N° de paiement",
+    "submissionNumber": "N° de soumission",
+    "submittedOn": "Soumis le",
+    "reason": "Motif :",
+    "steps": [
+      "Effectuez votre paiement",
+      "Envoyez la preuve par email",
+      "Soumettez votre demande ici"
+    ],
+    "pricingTitle": "Tarifs selon votre profil",
+    "advantagesTitle": "Avantages par profil",
+    "paymentInstructions": "Instructions de paiement",
+    "bankTransfer": "Virement bancaire",
+    "orangeMoney": "Orange Money",
+    "mtnMomo": "MTN MoMo",
+    "bank": "Banque",
+    "accountNumber": "N° de compte",
+    "swift": "Code SWIFT",
+    "holder": "Titulaire",
+    "address": "Adresse",
+    "orangeNumber": "Numéro Orange Money",
+    "mtnNumber": "Numéro MTN MoMo",
+    "finalize": "Finaliser votre demande",
+    "proofText": "Après votre paiement, envoyez la preuve et le formulaire rempli à",
+    "downloadForm": "Télécharger le formulaire d'adhésion (Word)",
+    "confirmation": "J'ai effectué mon paiement et envoyé la preuve avec le formulaire à {{email}}.",
+    "processing": "Traitement en cours…",
+    "submit": "Soumettre ma demande d'adhésion",
+    "footerNote": "Un administrateur vérifiera votre paiement et activera votre adhésion sous quelques jours.",
+    "authRequired": "Vous devez être connecté pour souscrire.",
+    "proofRequired": "Veuillez confirmer que vous avez envoyé la preuve et le formulaire par email.",
+    "submissionError": "Erreur lors de la soumission",
+    "received": "Soumission reçue. En attente de validation.",
+    "unexpectedError": "Une erreur est survenue",
+    "pricing": [
+      "Étudiant national",
+      "Étudiant étranger",
+      "Enseignant-Chercheur / Professionnel (National)",
+      "Enseignant-Chercheur / Professionnel (Étranger - pays à revenus faibles)",
+      "Enseignant-Chercheur / Professionnel (Étranger - pays à revenu élevé)"
+    ],
+    "advantages": {
+      "students": {
+        "title": "Étudiants",
+        "items": [
+          "Participation gratuite aux activités",
+          "Mentorat",
+          "Prix de recherche",
+          "Publication dans les bulletins"
+        ]
+      },
+      "teachers": {
+        "title": "Enseignants",
+        "items": [
+          "Réduction de 80% sur les conférences",
+          "Bourses de recherche",
+          "Publication gratuite ou à tarif réduit",
+          "Participation aux comités scientifiques"
+        ]
+      },
+      "professionals": {
+        "title": "Professionnels",
+        "items": [
+          "Réduction de 80% sur les événements",
+          "Accès aux réseaux partenaires",
+          "Conférencier invité",
+          "Promotion de leurs entreprises via l'AEGC"
+        ]
+      }
+    }
   },
   "submissions": {
     "loading": "Chargement...",
